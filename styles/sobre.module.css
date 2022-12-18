@@ -1,0 +1,26 @@
+.aboutContainer {
+  text-align: justify;
+}
+.techDisplay,
+.infraDisplay {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  text-align: center;
+}
+.techDisplay > a {
+  margin: 20px;
+}
+.techDisplay img {
+  height: 50px;
+}
+.infraDisplay img {
+  width: 100%;
+  height: auto;
+}
+.aboutContainer p strong {
+  margin-bottom: 1px solid #c0c0c0 !important;
+  width: 100% !important;
+}
