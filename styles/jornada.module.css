@@ -1,0 +1,32 @@
+.jornadaDisplay {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+}
+.jornadaDisplay > div {
+  margin: 20px 5px 20px 5px;
+}
+.jornadaDisplay p {
+  font-weight: 700;
+}
+.jornadaDisplay input {
+  width: 80%;
+  padding: 5px;
+  text-align: center;
+  font-weight: 700;
+}
+.jornadaDisplay input:disabled {
+  color: #000000;
+  border: 1px solid #909090;
+}
+.jornadaDisplay.resultado input {
+  color: #3076f7;
+  padding: 15px;
+  font-size: 1.1rem;
+}
+.error {
+  color: #d81159;
+  font-weight: 700;
+}
