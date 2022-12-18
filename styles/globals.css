@@ -53,6 +53,7 @@ main {
   max-width: 800px;
   height: 90%;
   display: grid;
+  overflow-y: auto;
 }
 .menuContainer {
   gap: 25px 25px;
