@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Head from "next/head";
 import Link from "next/link";
 import CalcButton from "../components/ui/calcButton";
 import classes from "../styles/calculadora.module.css";
@@ -157,224 +158,234 @@ const Calculadora = () => {
   };
 
   return (
-    <main>
-      <div className="contentContainer">
-        <div className="breadcrumbs">
-          <span>
-            <Link href="/">Home</Link> &rarr; Calculadora
-          </span>
-        </div>
-        <div className="feature">
-          <div className={classes.calculadora}>
-            <div className={classes.history}>
-              <input
-                className={classes.historyInput}
-                type="text"
-                disabled
-                value={`${memory?.value || "0"} ${operator?.value || ""}`}
-              />
-            </div>
-            <div className={classes.display}>
-              <input
-                className={classes.displayInput}
-                type="text"
-                disabled
-                value={operand?.value || "0"}
-              />
-            </div>
-            <div className={classes.clear}>
-              <CalcButton
-                value={operand ? "CLEAR (CE)" : "CLEAR (C)"}
-                styling="clear"
-                onClick={() => {
-                  clear();
-                }}
-              />
-            </div>
-            <div>
-              <CalcButton
-                onClick={() => {
-                  addToOperand("7");
-                }}
-                value="7"
-                styling="digit"
-                disabled={operand?.hasMinute}
-              />
-            </div>
-            <div>
-              <CalcButton
-                onClick={() => {
-                  addToOperand("8");
-                }}
-                value="8"
-                styling="digit"
-                disabled={operand?.hasMinute}
-              />
-            </div>
-            <div>
-              <CalcButton
-                onClick={() => {
-                  addToOperand("9");
-                }}
-                value="9"
-                styling="digit"
-                disabled={operand?.hasMinute}
-              />
-            </div>
-            <div>
-              <CalcButton
-                value="/"
-                styling="operator"
-                onClick={() => {
-                  addOperator("/");
-                }}
-              />
-            </div>
-            <div>
-              <CalcButton
-                onClick={() => {
-                  addToOperand("4");
-                }}
-                value="4"
-                styling="digit"
-                disabled={operand?.hasMinute}
-              />
-            </div>
-            <div>
-              <CalcButton
-                onClick={() => {
-                  addToOperand("5");
-                }}
-                value="5"
-                styling="digit"
-                disabled={operand?.hasMinute}
-              />
-            </div>
-            <div>
-              <CalcButton
-                onClick={() => {
-                  addToOperand("6");
-                }}
-                value="6"
-                styling="digit"
-                disabled={operand?.hasMinute}
-              />
-            </div>
-            <div>
-              <CalcButton
-                value="*"
-                styling="operator"
-                onClick={() => {
-                  addOperator("*");
-                }}
-              />
-            </div>
-            <div>
-              <CalcButton
-                onClick={() => {
-                  addToOperand("1");
-                }}
-                value="1"
-                styling="digit"
-                disabled={operand?.hasMinute}
-              />
-            </div>
-            <div>
-              <CalcButton
-                onClick={() => {
-                  addToOperand("2");
-                }}
-                value="2"
-                styling="digit"
-                disabled={operand?.hasMinute}
-              />
-            </div>
-            <div>
-              <CalcButton
-                onClick={() => {
-                  addToOperand("3");
-                }}
-                value="3"
-                styling="digit"
-                disabled={operand?.hasMinute}
-              />
-            </div>
-            <div>
-              <CalcButton
-                value="-"
-                styling="operator"
-                onClick={() => {
-                  addOperator("-");
-                }}
-              />
-            </div>
-            <div>
-              <CalcButton
-                onClick={() => {
-                  addToOperand("0");
-                }}
-                value="0"
-                styling="digit"
-                disabled={operand?.hasMinute}
-              />
-            </div>
-            <div>
-              <CalcButton
-                onClick={() => {
-                  addToOperand("h");
-                }}
-                value="h"
-                styling="unity"
-                disabled={
-                  operand?.hasHour ||
-                  operand?.hasMinute ||
-                  ((memory?.hasHour || memory?.hasMinute) &&
-                    operator?.value === "*") ||
-                  (!memory?.hasHour &&
-                    !memory?.hasMinute &&
-                    operator?.value === "/")
-                }
-              />
-            </div>
-            <div>
-              <CalcButton
-                onClick={() => {
-                  addToOperand("min");
-                }}
-                value="min"
-                styling="unity"
-                disabled={
-                  operand?.hasMinute ||
-                  ((memory?.hasHour || memory?.hasMinute) &&
-                    operator?.value === "*") ||
-                  (!memory?.hasHour &&
-                    !memory?.hasMinute &&
-                    operator?.value === "/")
-                }
-              />
-            </div>
-            <div>
-              <CalcButton
-                value="+"
-                styling="operator"
-                onClick={() => {
-                  addOperator("+");
-                }}
-              />
-            </div>
-            <div className={classes.equal}>
-              <CalcButton
-                value="="
-                styling="equal"
-                onClick={() => {
-                  execCalc();
-                }}
-              />
+    <>
+      <Head>
+        <title>REP Calc - Calculadora - Leandro Faria</title>
+        <meta
+          name="description"
+          content="Calculadora de horas para uso com relógio eletrônico de ponto"
+        />
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+      <main>
+        <div className="contentContainer">
+          <div className="breadcrumbs">
+            <span>
+              <Link href="/">Home</Link> &rarr; Calculadora
+            </span>
+          </div>
+          <div className="feature">
+            <div className={classes.calculadora}>
+              <div className={classes.history}>
+                <input
+                  className={classes.historyInput}
+                  type="text"
+                  disabled
+                  value={`${memory?.value || "0"} ${operator?.value || ""}`}
+                />
+              </div>
+              <div className={classes.display}>
+                <input
+                  className={classes.displayInput}
+                  type="text"
+                  disabled
+                  value={operand?.value || "0"}
+                />
+              </div>
+              <div className={classes.clear}>
+                <CalcButton
+                  value={operand ? "CLEAR (CE)" : "CLEAR (C)"}
+                  styling="clear"
+                  onClick={() => {
+                    clear();
+                  }}
+                />
+              </div>
+              <div>
+                <CalcButton
+                  onClick={() => {
+                    addToOperand("7");
+                  }}
+                  value="7"
+                  styling="digit"
+                  disabled={operand?.hasMinute}
+                />
+              </div>
+              <div>
+                <CalcButton
+                  onClick={() => {
+                    addToOperand("8");
+                  }}
+                  value="8"
+                  styling="digit"
+                  disabled={operand?.hasMinute}
+                />
+              </div>
+              <div>
+                <CalcButton
+                  onClick={() => {
+                    addToOperand("9");
+                  }}
+                  value="9"
+                  styling="digit"
+                  disabled={operand?.hasMinute}
+                />
+              </div>
+              <div>
+                <CalcButton
+                  value="/"
+                  styling="operator"
+                  onClick={() => {
+                    addOperator("/");
+                  }}
+                />
+              </div>
+              <div>
+                <CalcButton
+                  onClick={() => {
+                    addToOperand("4");
+                  }}
+                  value="4"
+                  styling="digit"
+                  disabled={operand?.hasMinute}
+                />
+              </div>
+              <div>
+                <CalcButton
+                  onClick={() => {
+                    addToOperand("5");
+                  }}
+                  value="5"
+                  styling="digit"
+                  disabled={operand?.hasMinute}
+                />
+              </div>
+              <div>
+                <CalcButton
+                  onClick={() => {
+                    addToOperand("6");
+                  }}
+                  value="6"
+                  styling="digit"
+                  disabled={operand?.hasMinute}
+                />
+              </div>
+              <div>
+                <CalcButton
+                  value="*"
+                  styling="operator"
+                  onClick={() => {
+                    addOperator("*");
+                  }}
+                />
+              </div>
+              <div>
+                <CalcButton
+                  onClick={() => {
+                    addToOperand("1");
+                  }}
+                  value="1"
+                  styling="digit"
+                  disabled={operand?.hasMinute}
+                />
+              </div>
+              <div>
+                <CalcButton
+                  onClick={() => {
+                    addToOperand("2");
+                  }}
+                  value="2"
+                  styling="digit"
+                  disabled={operand?.hasMinute}
+                />
+              </div>
+              <div>
+                <CalcButton
+                  onClick={() => {
+                    addToOperand("3");
+                  }}
+                  value="3"
+                  styling="digit"
+                  disabled={operand?.hasMinute}
+                />
+              </div>
+              <div>
+                <CalcButton
+                  value="-"
+                  styling="operator"
+                  onClick={() => {
+                    addOperator("-");
+                  }}
+                />
+              </div>
+              <div>
+                <CalcButton
+                  onClick={() => {
+                    addToOperand("0");
+                  }}
+                  value="0"
+                  styling="digit"
+                  disabled={operand?.hasMinute}
+                />
+              </div>
+              <div>
+                <CalcButton
+                  onClick={() => {
+                    addToOperand("h");
+                  }}
+                  value="h"
+                  styling="unity"
+                  disabled={
+                    operand?.hasHour ||
+                    operand?.hasMinute ||
+                    ((memory?.hasHour || memory?.hasMinute) &&
+                      operator?.value === "*") ||
+                    (!memory?.hasHour &&
+                      !memory?.hasMinute &&
+                      operator?.value === "/")
+                  }
+                />
+              </div>
+              <div>
+                <CalcButton
+                  onClick={() => {
+                    addToOperand("min");
+                  }}
+                  value="min"
+                  styling="unity"
+                  disabled={
+                    operand?.hasMinute ||
+                    ((memory?.hasHour || memory?.hasMinute) &&
+                      operator?.value === "*") ||
+                    (!memory?.hasHour &&
+                      !memory?.hasMinute &&
+                      operator?.value === "/")
+                  }
+                />
+              </div>
+              <div>
+                <CalcButton
+                  value="+"
+                  styling="operator"
+                  onClick={() => {
+                    addOperator("+");
+                  }}
+                />
+              </div>
+              <div className={classes.equal}>
+                <CalcButton
+                  value="="
+                  styling="equal"
+                  onClick={() => {
+                    execCalc();
+                  }}
+                />
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </main>
+      </main>
+    </>
   );
 };
 

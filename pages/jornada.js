@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import Head from "next/head";
 import Link from "next/link";
 import MaskedInput from "react-text-mask";
 import classes from "../styles/jornada.module.css";
@@ -120,115 +121,125 @@ const Jornada = () => {
   }, [inicio, jornada, intervalo, tolerancia]);
 
   return (
-    <main>
-      <div className="contentContainer">
-        <div className="breadcrumbs">
-          <span>
-            <Link href="/">Home</Link> &rarr; Jornada de Trabalho
-          </span>
-        </div>
-        <div className="feature">
-          <span>
-            Para planejamento da sua jornada de trabalho preencha os campos
-            abaixo.
-          </span>
-          <div className={classes.jornadaDisplay}>
-            <div>
-              <p>Horário de Início</p>
-              <MaskedInput
-                mask={[/[0-2]/, /[0-9]/, ":", /[0-5]/, /[0-9]/]}
-                guide={true}
-                placeholder="__:__"
-                type="text"
-                value={inicio.value}
-                onKeyDown={validateInput}
-                onChange={onInicioChangeHandler}
-                onPaste={(e) => {
-                  e.preventDefault();
-                }}
-              />
-            </div>
-            <div>
-              <p>Duração da Jornada</p>
-              <MaskedInput
-                mask={[/[0-2]/, /[0-9]/, ":", /[0-5]/, /[0-9]/]}
-                guide={true}
-                placeholder="__:__"
-                type="text"
-                value={jornada.value}
-                onKeyDown={validateInput}
-                onChange={onJornadaChangeHandler}
-                onPaste={(e) => {
-                  e.preventDefault();
-                }}
-              />
-            </div>
-            <div>
-              <p>Duração do Intervalo</p>
-              <MaskedInput
-                mask={[/[0-2]/, /[0-9]/, ":", /[0-5]/, /[0-9]/]}
-                guide={true}
-                placeholder="__:__"
-                type="text"
-                value={intervalo.value}
-                onKeyDown={validateInput}
-                onChange={onIntervaloChangeHandler}
-                onPaste={(e) => {
-                  e.preventDefault();
-                }}
-              />
-            </div>
-            <div>
-              <p>Tolerância</p>
-              <MaskedInput
-                mask={[/[0-2]/, /[0-9]/, ":", /[0-5]/, /[0-9]/]}
-                guide={true}
-                placeholder="__:__"
-                type="text"
-                value={tolerancia.value}
-                onKeyDown={validateInput}
-                onChange={onToleranciaChangeHandler}
-                onPaste={(e) => {
-                  e.preventDefault();
-                }}
-              />
-            </div>
+    <>
+      <Head>
+        <title>REP Calc - Jornada de Trabalho - Leandro Faria</title>
+        <meta
+          name="description"
+          content="Calculadora de horas para uso com relógio eletrônico de ponto"
+        />
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+      <main>
+        <div className="contentContainer">
+          <div className="breadcrumbs">
+            <span>
+              <Link href="/">Home</Link> &rarr; Jornada de Trabalho
+            </span>
           </div>
-          <hr />
-          {(!inicio.valid ||
-            !jornada.valid ||
-            !intervalo.valid ||
-            !tolerancia.valid) && (
-            <p className={classes.error}>
-              Aguardando o preenchimento correto de todos os campos.
-            </p>
-          )}
-          {inicio.valid &&
-            jornada.valid &&
-            intervalo.valid &&
-            tolerancia.valid && (
-              <>
-                <div
-                  className={`${classes.jornadaDisplay} ${classes.resultado}`}
-                >
-                  <p>Sua jornada está prevista para terminar às:</p>
-                  <input type="text" disabled value={fimDaJornada.value} />
-                </div>
-                <div
-                  className={`${classes.jornadaDisplay} ${classes.resultado}`}
-                >
-                  <p>Contando a tolerância, você pode sair às:</p>
-                  <input
-                    type="text"
-                    disabled
-                    value={fimDaJornadaComTolerancia.value}
-                  />
-                </div>
-              </>
+          <div className="feature">
+            <span>
+              Para planejamento da sua jornada de trabalho preencha os campos
+              abaixo.
+            </span>
+            <div className={classes.jornadaDisplay}>
+              <div>
+                <p>Horário de Início</p>
+                <MaskedInput
+                  mask={[/[0-2]/, /[0-9]/, ":", /[0-5]/, /[0-9]/]}
+                  guide={true}
+                  placeholder="__:__"
+                  type="text"
+                  value={inicio.value}
+                  onKeyDown={validateInput}
+                  onChange={onInicioChangeHandler}
+                  onPaste={(e) => {
+                    e.preventDefault();
+                  }}
+                />
+              </div>
+              <div>
+                <p>Duração da Jornada</p>
+                <MaskedInput
+                  mask={[/[0-2]/, /[0-9]/, ":", /[0-5]/, /[0-9]/]}
+                  guide={true}
+                  placeholder="__:__"
+                  type="text"
+                  value={jornada.value}
+                  onKeyDown={validateInput}
+                  onChange={onJornadaChangeHandler}
+                  onPaste={(e) => {
+                    e.preventDefault();
+                  }}
+                />
+              </div>
+              <div>
+                <p>Duração do Intervalo</p>
+                <MaskedInput
+                  mask={[/[0-2]/, /[0-9]/, ":", /[0-5]/, /[0-9]/]}
+                  guide={true}
+                  placeholder="__:__"
+                  type="text"
+                  value={intervalo.value}
+                  onKeyDown={validateInput}
+                  onChange={onIntervaloChangeHandler}
+                  onPaste={(e) => {
+                    e.preventDefault();
+                  }}
+                />
+              </div>
+              <div>
+                <p>Tolerância</p>
+                <MaskedInput
+                  mask={[/[0-2]/, /[0-9]/, ":", /[0-5]/, /[0-9]/]}
+                  guide={true}
+                  placeholder="__:__"
+                  type="text"
+                  value={tolerancia.value}
+                  onKeyDown={validateInput}
+                  onChange={onToleranciaChangeHandler}
+                  onPaste={(e) => {
+                    e.preventDefault();
+                  }}
+                />
+              </div>
+            </div>
+            <hr />
+            {(!inicio.valid ||
+              !jornada.valid ||
+              !intervalo.valid ||
+              !tolerancia.valid) && (
+              <p className={classes.error}>
+                Aguardando o preenchimento correto de todos os campos.
+              </p>
             )}
+            {inicio.valid &&
+              jornada.valid &&
+              intervalo.valid &&
+              tolerancia.valid && (
+                <>
+                  <div
+                    className={`${classes.jornadaDisplay} ${classes.resultado}`}
+                  >
+                    <p>Sua jornada está prevista para terminar às:</p>
+                    <input type="text" disabled value={fimDaJornada.value} />
+                  </div>
+                  <div
+                    className={`${classes.jornadaDisplay} ${classes.resultado}`}
+                  >
+                    <p>Contando a tolerância, você pode sair às:</p>
+                    <input
+                      type="text"
+                      disabled
+                      value={fimDaJornadaComTolerancia.value}
+                    />
+                  </div>
+                </>
+              )}
+          </div>
         </div>
-      </div>
-    </main>
+      </main>
+    </>
   );
 };
 
