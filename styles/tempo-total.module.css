@@ -7,6 +7,7 @@
 }
 .tempoTotalDisplay > div {
   margin: 10px 5px 10px 5px;
+  max-width: 47%;
 }
 .tempoTotalDisplay p {
   font-weight: 700;
