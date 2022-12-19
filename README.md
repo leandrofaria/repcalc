@@ -82,4 +82,4 @@ MIT
 
 > [LeandroFaria.com](https://www.leandrofaria.com) &nbsp;&middot;&nbsp;
 > GitHub [@leandrofaria](https://github.com/leandrofaria) &nbsp;&middot;&nbsp;
-> LinkedIn [@farialaf](https://www.linkedin.com/in/farialaf/?lipi=urn%3Ali%3Apage%3Ad_flagship3_feed%3Bm2OTWwO6ROGrKAWIc3LEOQ%3D%3D)
+> LinkedIn [@farialaf](https://www.linkedin.com/in/farialaf)
