@@ -26,7 +26,7 @@
 
 <p align="center">
   <a href="#funcionalidades">Funcionalidades</a> •
-  <a href="#como-rodar">Como Usar</a> •
+  <a href="#como-rodar">Como Rodar</a> •
   <a href="#créditos">Créditos</a> •
   <a href="#licença">Licença</a>
 </p>
