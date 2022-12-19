@@ -4,23 +4,16 @@ import MaskedInput from "react-text-mask";
 import classes from "../styles/jornada.module.css";
 
 const Jornada = () => {
-  const [inicio, setInicio] = useState({ value: "13:00", valid: true });
+  const [inicio, setInicio] = useState({ value: "", valid: false });
   const [jornada, setJornada] = useState({ value: "05:45", valid: true });
   const [intervalo, setIntervalo] = useState({ value: "00:15", valid: true });
   const [tolerancia, setTolerancia] = useState({ value: "00:10", valid: true });
-  const [fimDaJornada, setFimDaJornada] = useState({ value: "19:00" });
+  const [fimDaJornada, setFimDaJornada] = useState({ value: "" });
   const [fimDaJornadaComTolerancia, setFimDaJornadaComTolerancia] = useState({
-    value: "18:50",
+    value: "",
   });
 
   const regex = "^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$";
-
-  const mask = (input) => {
-    if (input.indexOf(":") !== -1) {
-    } else {
-    }
-    return input;
-  };
 
   const validateInput = (e) => {
     const allowedKeys = [
@@ -47,46 +40,46 @@ const Jornada = () => {
   };
 
   const onInicioChangeHandler = (e) => {
-    const maskedInput = mask(e.target.value);
+    const input = e.target.value;
 
     setInicio((prevState) => {
       return {
         ...prevState,
-        value: maskedInput,
-        valid: maskedInput.match(regex),
+        value: input,
+        valid: input.match(regex),
       };
     });
   };
   const onJornadaChangeHandler = (e) => {
-    const maskedInput = mask(e.target.value);
+    const input = e.target.value;
 
     setJornada((prevState) => {
       return {
         ...prevState,
-        value: maskedInput,
-        valid: maskedInput.match(regex),
+        value: input,
+        valid: input.match(regex),
       };
     });
   };
   const onIntervaloChangeHandler = (e) => {
-    const maskedInput = mask(e.target.value);
+    const input = e.target.value;
 
     setIntervalo((prevState) => {
       return {
         ...prevState,
-        value: maskedInput,
-        valid: maskedInput.match(regex),
+        value: input,
+        valid: input.match(regex),
       };
     });
   };
   const onToleranciaChangeHandler = (e) => {
-    const maskedInput = mask(e.target.value);
+    const input = e.target.value;
 
     setTolerancia((prevState) => {
       return {
         ...prevState,
-        value: maskedInput,
-        valid: maskedInput.match(regex),
+        value: input,
+        valid: input.match(regex),
       };
     });
   };
