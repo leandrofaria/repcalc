@@ -7,6 +7,9 @@
 </h1>
 
 <h4 align="center">Uma calculadora de horas (e algumas funções a mais) para uso com relógio eletrônico de ponto.</h4>
+<h4 align="center">Online em <a href="https://repcalc.leandrofaria.com">https://repcalc.leandrofaria.com</a></h4>
+
+<br>
 
 <p align="center">
   <a href="https://reactjs.org/">
@@ -36,7 +39,11 @@
 
 ## Como Rodar
 
-Para clonar e rodar esta aplicação você precisará do [Git](https://git-scm.com) e [Node.js](https://nodejs.org/en/download/) (que vem com o [npm](http://npmjs.com)) instalados em sua máquina. Da sua linha de comando:
+A aplicação encontra-se online e disponível no endereço:
+
+[REP Calc (https://repcalc.leandrofaria.com)](https://repcalc.leandrofaria.com)
+
+Para clonar e rodar esta aplicação localmente você precisará do [Git](https://git-scm.com) e [Node.js](https://nodejs.org/en/download/) (que vem com o [npm](http://npmjs.com)) instalados em sua máquina. Da sua linha de comando:
 
 ```bash
 # Faça um clone deste repositório
