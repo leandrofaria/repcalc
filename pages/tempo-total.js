@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Head from "next/head";
 import { useState, useEffect, useCallback } from "react";
 import MaskedInput from "react-text-mask";
 import classes from "../styles/tempo-total.module.css";
@@ -93,89 +94,99 @@ const TempoTotal = () => {
   }, [pares]);
 
   return (
-    <main>
-      <div className="contentContainer">
-        <div className="breadcrumbs">
-          <span>
-            <Link href="/">Home</Link> &rarr; Tempo Total
-          </span>
-        </div>
-        <div className="feature">
-          <span>
-            Para cálculo de tempo total de trabalho entre pontos preencha os
-            campos abaixo.
-          </span>
-
-          {pares.map((par, index) => {
-            return (
-              <div key={index} className={classes.tempoTotalDisplay}>
-                <div>
-                  {index === 0 && <p>Início</p>}
-                  <MaskedInput
-                    mask={[/[0-2]/, /[0-9]/, ":", /[0-5]/, /[0-9]/]}
-                    guide={true}
-                    placeholder="__:__"
-                    type="text"
-                    value={par.inicio}
-                    onKeyDown={validateInput}
-                    onChange={(e) =>
-                      updateValue(e.target.value, "inicio", index)
-                    }
-                    onPaste={(e) => {
-                      e.preventDefault();
-                    }}
-                  />
-                </div>
-                <div>
-                  {index === 0 && <p>Término</p>}
-                  <MaskedInput
-                    mask={[/[0-2]/, /[0-9]/, ":", /[0-5]/, /[0-9]/]}
-                    guide={true}
-                    placeholder="__:__"
-                    type="text"
-                    value={par.termino}
-                    onKeyDown={validateInput}
-                    onChange={(e) =>
-                      updateValue(e.target.value, "termino", index)
-                    }
-                    onPaste={(e) => {
-                      e.preventDefault();
-                    }}
-                  />
-                </div>
-              </div>
-            );
-          })}
-          <br />
-          <div className={classes.tempoTotalDisplay}>
-            <button
-              onClick={() => {
-                const newPares = [...pares, parTemplate];
-                setPares(newPares);
-              }}
-              disabled={pares.length >= 4}
-            >
-              Novo Par de Pontos
-            </button>
+    <>
+      <Head>
+        <title>REP Calc - Tempo Total - Leandro Faria</title>
+        <meta
+          name="description"
+          content="Calculadora de horas para uso com relógio eletrônico de ponto"
+        />
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+      <main>
+        <div className="contentContainer">
+          <div className="breadcrumbs">
+            <span>
+              <Link href="/">Home</Link> &rarr; Tempo Total
+            </span>
           </div>
-          <br />
-          <hr />
-          {invalidInput && (
-            <p className={classes.error}>
-              Aguardando o preenchimento correto de todos os campos.
-            </p>
-          )}
-          {!invalidInput && (
-            <div
-              className={`${classes.tempoTotalDisplay} ${classes.resultado}`}
-            >
-              <p>O total trabalhado foi:</p>
-              <input type="text" value={total} disabled />
+          <div className="feature">
+            <span>
+              Para cálculo de tempo total de trabalho entre pontos preencha os
+              campos abaixo.
+            </span>
+
+            {pares.map((par, index) => {
+              return (
+                <div key={index} className={classes.tempoTotalDisplay}>
+                  <div>
+                    {index === 0 && <p>Início</p>}
+                    <MaskedInput
+                      mask={[/[0-2]/, /[0-9]/, ":", /[0-5]/, /[0-9]/]}
+                      guide={true}
+                      placeholder="__:__"
+                      type="text"
+                      value={par.inicio}
+                      onKeyDown={validateInput}
+                      onChange={(e) =>
+                        updateValue(e.target.value, "inicio", index)
+                      }
+                      onPaste={(e) => {
+                        e.preventDefault();
+                      }}
+                    />
+                  </div>
+                  <div>
+                    {index === 0 && <p>Término</p>}
+                    <MaskedInput
+                      mask={[/[0-2]/, /[0-9]/, ":", /[0-5]/, /[0-9]/]}
+                      guide={true}
+                      placeholder="__:__"
+                      type="text"
+                      value={par.termino}
+                      onKeyDown={validateInput}
+                      onChange={(e) =>
+                        updateValue(e.target.value, "termino", index)
+                      }
+                      onPaste={(e) => {
+                        e.preventDefault();
+                      }}
+                    />
+                  </div>
+                </div>
+              );
+            })}
+            <br />
+            <div className={classes.tempoTotalDisplay}>
+              <button
+                onClick={() => {
+                  const newPares = [...pares, parTemplate];
+                  setPares(newPares);
+                }}
+                disabled={pares.length >= 4}
+              >
+                Novo Par de Pontos
+              </button>
             </div>
-          )}
+            <br />
+            <hr />
+            {invalidInput && (
+              <p className={classes.error}>
+                Aguardando o preenchimento correto de todos os campos.
+              </p>
+            )}
+            {!invalidInput && (
+              <div
+                className={`${classes.tempoTotalDisplay} ${classes.resultado}`}
+              >
+                <p>O total trabalhado foi:</p>
+                <input type="text" value={total} disabled />
+              </div>
+            )}
+          </div>
         </div>
-      </div>
-    </main>
+      </main>
+    </>
   );
 };
 
