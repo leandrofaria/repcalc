@@ -7,11 +7,6 @@ const Sobre = () => {
     <>
       <Head>
         <title>REP Calc - Sobre - Leandro Faria</title>
-        <meta
-          name="description"
-          content="Calculadora de horas para uso com relógio eletrônico de ponto"
-        />
-        <link rel="icon" href="/favicon.ico" />
       </Head>
       <main>
         <div className="contentContainer">

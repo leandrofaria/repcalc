@@ -124,11 +124,6 @@ const Jornada = () => {
     <>
       <Head>
         <title>REP Calc - Jornada de Trabalho - Leandro Faria</title>
-        <meta
-          name="description"
-          content="Calculadora de horas para uso com relógio eletrônico de ponto"
-        />
-        <link rel="icon" href="/favicon.ico" />
       </Head>
       <main>
         <div className="contentContainer">
