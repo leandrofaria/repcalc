@@ -16,6 +16,7 @@ const TempoTotal = () => {
 
   const [invalidInput, setInvalidInput] = useState(true);
   const [total, setTotal] = useState(0);
+
   let multiplier = 0;
 
   const regex = "^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$";
@@ -121,7 +122,7 @@ const TempoTotal = () => {
                       mask={[/[0-2]/, /[0-9]/, ":", /[0-5]/, /[0-9]/]}
                       guide={true}
                       placeholder="__:__"
-                      type="text"
+                      type="phone"
                       value={par.inicio}
                       onKeyDown={validateInput}
                       onChange={(e) =>
@@ -138,7 +139,7 @@ const TempoTotal = () => {
                       mask={[/[0-2]/, /[0-9]/, ":", /[0-5]/, /[0-9]/]}
                       guide={true}
                       placeholder="__:__"
-                      type="text"
+                      type="phone"
                       value={par.termino}
                       onKeyDown={validateInput}
                       onChange={(e) =>
@@ -156,7 +157,7 @@ const TempoTotal = () => {
             <div className={classes.tempoTotalDisplay}>
               <button
                 onClick={() => {
-                  const newPares = [...pares, parTemplate];
+                  const newPares = [...pares, { ...parTemplate }];
                   setPares(newPares);
                 }}
                 disabled={pares.length >= 4}
