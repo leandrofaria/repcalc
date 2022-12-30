@@ -144,7 +144,7 @@ const Jornada = () => {
                   mask={[/[0-2]/, /[0-9]/, ":", /[0-5]/, /[0-9]/]}
                   guide={true}
                   placeholder="__:__"
-                  type="text"
+                  type="phone"
                   value={inicio.value}
                   onKeyDown={validateInput}
                   onChange={onInicioChangeHandler}
@@ -159,7 +159,7 @@ const Jornada = () => {
                   mask={[/[0-2]/, /[0-9]/, ":", /[0-5]/, /[0-9]/]}
                   guide={true}
                   placeholder="__:__"
-                  type="text"
+                  type="phone"
                   value={jornada.value}
                   onKeyDown={validateInput}
                   onChange={onJornadaChangeHandler}
@@ -174,7 +174,7 @@ const Jornada = () => {
                   mask={[/[0-2]/, /[0-9]/, ":", /[0-5]/, /[0-9]/]}
                   guide={true}
                   placeholder="__:__"
-                  type="text"
+                  type="phone"
                   value={intervalo.value}
                   onKeyDown={validateInput}
                   onChange={onIntervaloChangeHandler}
@@ -184,12 +184,12 @@ const Jornada = () => {
                 />
               </div>
               <div>
-                <p>Tolerância</p>
+                <p>Tolerância Permitida</p>
                 <MaskedInput
                   mask={[/[0-2]/, /[0-9]/, ":", /[0-5]/, /[0-9]/]}
                   guide={true}
                   placeholder="__:__"
-                  type="text"
+                  type="phone"
                   value={tolerancia.value}
                   onKeyDown={validateInput}
                   onChange={onToleranciaChangeHandler}

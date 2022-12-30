@@ -6,8 +6,13 @@
   align-content: center;
 }
 .tempoTotalDisplay > div {
-  margin: 10px 5px 10px 5px;
+  margin: 10px 5px 0px 5px;
   max-width: 47%;
+}
+@media all and (max-width: 1152px) {
+  .tempoTotalDisplay > div {
+    max-width: 42%;
+  }
 }
 .tempoTotalDisplay p {
   font-weight: 700;

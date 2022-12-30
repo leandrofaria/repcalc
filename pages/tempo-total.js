@@ -16,6 +16,7 @@ const TempoTotal = () => {
 
   const [invalidInput, setInvalidInput] = useState(true);
   const [total, setTotal] = useState(0);
+  let multiplier = 0;
 
   const regex = "^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$";
 
@@ -115,7 +116,7 @@ const TempoTotal = () => {
               return (
                 <div key={index} className={classes.tempoTotalDisplay}>
                   <div>
-                    {index === 0 && <p>Início</p>}
+                    <p>Marcação {index + 1 + multiplier}</p>
                     <MaskedInput
                       mask={[/[0-2]/, /[0-9]/, ":", /[0-5]/, /[0-9]/]}
                       guide={true}
@@ -132,7 +133,7 @@ const TempoTotal = () => {
                     />
                   </div>
                   <div>
-                    {index === 0 && <p>Término</p>}
+                    <p>Marcação {index + 2 + multiplier++}</p>
                     <MaskedInput
                       mask={[/[0-2]/, /[0-9]/, ":", /[0-5]/, /[0-9]/]}
                       guide={true}

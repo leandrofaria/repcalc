@@ -9,6 +9,11 @@
   margin: 10px 5px 10px 5px;
   max-width: 47%;
 }
+@media all and (max-width: 1152px) {
+  .jornadaDisplay > div {
+    max-width: 42%;
+  }
+}
 .jornadaDisplay p {
   font-weight: 700;
 }
