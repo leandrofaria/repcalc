@@ -11,7 +11,11 @@ const Calculadora = () => {
 
   const addToOperand = (value) => {
     let newValue;
-    if (operand === null || operand.value === "0") {
+    if (
+      operand === null ||
+      operand.value === "0" ||
+      operand.value === "Infinity"
+    ) {
       if (value === "min") {
         newValue = "0" + value;
       } else if (value === "h") {
@@ -115,9 +119,11 @@ const Calculadora = () => {
 
       if (hasHour || hasMinute) {
         if (
-          (memory?.hasHour || memory?.hasMinute) &&
-          (operand?.hasHour || operand?.hasMinute) &&
-          operator.value === "/"
+          ((memory?.hasHour || memory?.hasMinute) &&
+            (operand?.hasHour || operand?.hasMinute) &&
+            operator.value === "/") ||
+          result === 0 ||
+          result === Infinity
         ) {
           hasHour = false;
           hasMinute = false;
@@ -320,7 +326,7 @@ const Calculadora = () => {
                   }}
                   value="0"
                   styling="digit"
-                  disabled={operand?.hasMinute}
+                  disabled={operand?.hasMinute || operator?.value === "/"}
                 />
               </div>
               <div>
