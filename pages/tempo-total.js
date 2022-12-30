@@ -122,7 +122,7 @@ const TempoTotal = () => {
                       mask={[/[0-2]/, /[0-9]/, ":", /[0-5]/, /[0-9]/]}
                       guide={true}
                       placeholder="__:__"
-                      type="phone"
+                      type="tel"
                       value={par.inicio}
                       onKeyDown={validateInput}
                       onChange={(e) =>
@@ -139,7 +139,7 @@ const TempoTotal = () => {
                       mask={[/[0-2]/, /[0-9]/, ":", /[0-5]/, /[0-9]/]}
                       guide={true}
                       placeholder="__:__"
-                      type="phone"
+                      type="tel"
                       value={par.termino}
                       onKeyDown={validateInput}
                       onChange={(e) =>
