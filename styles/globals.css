@@ -49,16 +49,17 @@ main {
 }
 .menuContainer,
 .contentContainer {
+  padding: 5px;
   width: 60%;
   max-width: 800px;
   height: 90%;
   display: grid;
-  overflow-y: auto;
+  overflow-y: hidden;
 }
 .menuContainer {
   gap: 25px 25px;
   grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr 1fr;
+  grid-template-rows: 33% 33%;
 }
 .contentContainer {
   gap: 25px 25px;
