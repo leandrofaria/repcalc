@@ -164,6 +164,16 @@ const TempoTotal = () => {
               >
                 Novo Par de Pontos
               </button>
+              <button
+                onClick={() => {
+                  const newPares = pares.slice(0, -1);
+                  setPares(newPares);
+                }}
+                className={classes.redButton}
+                disabled={pares.length === 1}
+              >
+                Excluir Último Par
+              </button>
             </div>
             <br />
             <hr />
