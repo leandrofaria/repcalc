@@ -326,7 +326,11 @@ const Calculadora = () => {
                   }}
                   value="0"
                   styling="digit"
-                  disabled={operand?.hasMinute || operator?.value === "/"}
+                  disabled={
+                    operand?.hasMinute ||
+                    (operator?.value === "/" &&
+                      (operand === null || operand?.value === 0))
+                  }
                 />
               </div>
               <div>
