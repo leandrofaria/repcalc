@@ -65,6 +65,13 @@ $ npm run build
 $ npm start
 ```
 
+A aplicação ficará disponível no endereço: http://localhost:3000
+
+Observações:
+- A porta patrão de execução da aplicação é a 3000
+
+- O analytics (Google Analytics) inicia desativado por padrão. Para ativá-lo, crie o arquivo .env.local com o seguinte par chave/valor: NEXT_PUBLIC_GA_ID=\<sua chave do Google Analytics\>
+
 ## Créditos
 
 Esta aplicação utiliza as seguintes bibliotecas/frameworks e dependências.
