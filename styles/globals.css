@@ -51,7 +51,7 @@ main {
 .contentContainer {
   padding: 5px;
   width: 60%;
-  max-width: 800px;
+  max-width: 900px;
   height: 90%;
   display: grid;
   overflow-y: hidden;
