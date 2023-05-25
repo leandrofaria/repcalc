@@ -1,0 +1,66 @@
+.calcBase {
+  display: grid !important;
+  flex-grow: 1;
+  margin-right: 18px;
+  padding: 24px 24px 9px 24px;
+  background-color: var(--base-background);
+  border: 1px solid var(--calc-border);
+  box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.06);
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+  grid-template-rows: 36px 99px 1fr 1fr 1fr 1fr;
+  grid-template-areas:
+    "memory memory memory memory memory"
+    "display display display display display"
+    ". . . clear clear"
+    ". . . . ."
+    ". . . . ."
+    ". . . equal equal";
+  gap: 18px 18px;
+}
+@media all and (max-width: 800px) {
+  .calcBase {
+    margin-right: 0px;
+    gap: 6px 6px;
+  }
+}
+.calcBase div {
+  width: 100% !important;
+  height: 100% !important;
+  box-shadow: 0 0 1px 1px rgba(0, 0, 0, 0.06);
+}
+.memory {
+  grid-area: memory;
+}
+.memory input {
+  width: 100%;
+  height: 100%;
+  text-align: right;
+  padding-left: 24px;
+  padding-right: 24px;
+  border-color: var(--calc-border);
+  font-size: 12pt;
+  background-color: var(--dark-grey);
+  color: var(--white);
+}
+.display {
+  grid-area: display;
+}
+.display input {
+  width: 100%;
+  height: 100%;
+  text-align: right;
+  padding-left: 24px;
+  padding-right: 24px;
+  border-color: var(--calc-border);
+  font-size: 18pt;
+}
+.clear {
+  grid-area: clear;
+}
+.equal {
+  grid-area: equal;
+}
+.historyMessage {
+  padding: 9px;
+  margin: 0;
+}
