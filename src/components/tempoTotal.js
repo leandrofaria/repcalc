@@ -155,7 +155,7 @@ const TempoTotal = () => {
               }}
               disabled={pares.length >= 4}
             >
-              Adicionar Par de Pontos
+              Adicionar Novo Par
             </button>
           </div>
           <div className="flexInput">

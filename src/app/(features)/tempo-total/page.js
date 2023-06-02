@@ -9,8 +9,8 @@ const TempoTotalPage = () => {
     <>
       <h2>Tempo Total de Trabalho</h2>
       <p>
-        Para cálculo de tempo total de trabalho entre pontos preencha os campos
-        abaixo.
+        Para cálculo de tempo total de trabalho entre pares de pontos preencha
+        os campos abaixo.
       </p>
       <TempoTotal />
     </>
