@@ -52,6 +52,7 @@
   padding-left: 24px;
   padding-right: 24px;
   border-color: var(--calc-border);
+  background-color: var(--white);
   font-size: 18pt;
 }
 .clear {
