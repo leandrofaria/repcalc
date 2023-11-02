@@ -1,194 +1,43 @@
-:root {
-  --black: #333333;
-  --base-blue: #2f5da1;
-  --light-blue: #599cff;
-  --lighter-blue: #adceff;
-  --base-background: #eff3f8;
-  --light-grey: #eaeaea;
-  --medium-grey: #c7c7c7;
-  --dark-grey: #a0a0a0;
-  --darker-grey: #7e7d80;
-  --white: #ffffff;
-  --red: #e3554c;
-  --dark-red: #b83930;
-  --green: #54c03f;
-  --dark-green: #1a8c02;
-  --calc-border: #c6d1df;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.container {
+  max-width: 1152px !important;
 }
-* {
-  box-sizing: border-box;
-  transition: all 0.3s ease;
-}
-html,
-body {
-  margin: 0;
-  padding: 0;
-  color: var(--black);
-}
-body {
-  height: 100vh;
-  display: flex;
-  flex-flow: column nowrap;
-  justify-content: center;
-  align-items: center;
-  align-content: space-between;
-  background-color: var(--base-background);
-}
-a {
-  text-decoration: none;
-  color: var(--base-blue);
-  font-weight: 600;
-}
-main {
-  width: 100vw;
-  height: 100%;
-  display: flex;
-  flex-flow: column nowrap;
-  align-items: center;
-  align-content: center;
-  justify-content: flex-start;
-  flex-grow: 1;
-  padding: 72px;
-  overflow-y: auto;
-}
-@media all and (max-width: 800px) {
-  main {
-    padding: 24px;
-  }
-}
-.centered {
+
+input[type="text"],
+input[type="text"]:disabled {
   text-align: center;
-}
-.desktopOnly {
-  display: block;
-}
-.mobileOnly {
-  display: none;
-}
-img {
-  max-width: 100%;
-}
-@media all and (max-width: 800px) {
-  .desktopOnly {
-    display: none;
-  }
-  .mobileOnly {
-    display: block;
-  }
-}
-.splitContainer {
-  display: flex;
-  flex-flow: row wrap;
-  flex-grow: 1;
-  justify-content: space-between;
-  align-items: flex-start;
-  align-content: center;
-  text-align: center;
-}
-.splitContainer h4 {
-  font-weight: 600;
-  padding: 0;
-  margin: 9px;
-}
-.splitContainer div {
-  width: 50%;
-  display: flex;
-  flex-flow: row wrap;
-  align-items: center;
-  align-content: center;
-  justify-content: center;
-  margin-bottom: 18px;
-}
-.flexInput,
-.warning {
-  display: flex;
-  flex-flow: column nowrap !important;
-}
-.warning {
-  width: 100% !important;
-  color: var(--red);
-  font-weight: 600;
-}
-.warning p {
-  text-align: center !important;
-  margin-bottom: 0;
-}
-.sideBar {
-  width: 30% !important;
-  display: flex;
-  flex-flow: column nowrap !important;
-}
-.sideBar .flexInput {
-  width: 100%;
-}
-.mainArea {
-  padding-right: 18px;
-  margin-right: 18px;
-  border-right: 1px solid var(--medium-grey);
-}
-@media all and (max-width: 800px) {
-  .splitContainer div {
-    width: 50%;
-  }
-  .sideBar {
-    width: 100% !important;
-    flex-flow: row wrap !important;
-  }
-  .sideBar .flexInput {
-    width: 50%;
-  }
-  .mainArea {
-    margin: 0;
-    border: 0;
-    padding: 0;
-    padding-bottom: 9px;
-    border-bottom: 1px solid var(--medium-grey);
-  }
-}
-input {
-  width: 90%;
+  font-size: 21px;
+  color: #1976d2 !important;
+  font-weight: 700;
+  border-color: #1976d2 !important;
+  background-color: #ffffff;
   padding: 9px;
-  text-align: center;
-  font-weight: 600;
-  font-size: 14pt;
-  color: var(--base-blue);
-  border: 1px solid var(--lighter-blue);
 }
-.sideBar input {
-  background-color: var(--base-background);
+input[type="text"]:disabled {
+  background-color: #eff3f8;
 }
-.error {
-  color: var(--red);
+fieldset {
+  border-color: #1976d2 !important;
 }
-button {
-  width: 90%;
-  padding: 9px;
-  text-align: center;
-  font-weight: 600;
-  border: 0;
-  background-color: var(--light-blue);
-  color: var(--white);
-  cursor: pointer;
+.MuiTextField-root {
+  background-color: #ffffff !important;
 }
-button:hover {
-  background-color: var(--base-blue);
+.customInput fieldset {
+  border-radius: 0 4px 4px 0 !important;
 }
-button.redButton {
-  background-color: var(--red);
+.calculadora .display,
+.calculadora .display:disabled,
+.calculadora .history,
+.calculadora .history:disabled {
+  text-align: right;
+  font-size: 30px;
+  background-color: #ffffff;
+  border-color: #c6d1df !important;
 }
-button.redButton:hover {
-  background-color: var(--dark-red);
-}
-button:active {
-  box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.12);
-  transition: all 0.1s;
-}
-button:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-@media all and (max-width: 800px) {
-  .sideBar button:first-of-type {
-    margin-top: 9px;
-  }
+.calculadora .history,
+.calculadora .history:disabled {
+  color: #ffffff !important;
 }

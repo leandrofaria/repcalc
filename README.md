@@ -1,6 +1,6 @@
 <h1 align="center">
   <br>
-  <img src="https://repcalc.leandrofaria.com/img/calc.png" alt="REP Calc" width="64">
+  <img src="https://repcalc.leandrofaria.com/img/calculadora.webp" alt="REP Calc" width="64">
   <br>
   REP Calc
   <br>
@@ -13,16 +13,34 @@
 <br>
 
 <p align="center">
-  <a href="https://reactjs.org/">
-    <img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB"
-         alt="React">
-  </a>
-  <a href="https://nextjs.org/">
-      <img src="https://img.shields.io/badge/next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white">
-  </a>
-  <a href="https://nodejs.org/">
-    <img src="https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white">
-  </a>
+  <a href="https://nextjs.org/" target="_blank">
+          <img
+            src="https://img.shields.io/badge/Next-%23333333?style=for-the-badge&logo=next.js&logoColor=#FFFFFF"
+            alt="NextJS"
+            height="30px"
+          />
+        </a>
+        <a href="https://tailwindcss.com/" target="_blank">
+          <img
+            src="https://img.shields.io/badge/tailwindcss-%23333333.svg?style=flat-square&logo=tailwindcss&logoColor=#61DAFB"
+            alt="TailwindCSS"
+            height="30px"
+          />
+        </a>
+        <a href="https://mui.com/" target="_blank">
+          <img
+            src="https://img.shields.io/badge/mui-%23333333.svg?style=flat-square&logo=mui&logoColor=#003FFF"
+            alt="MaterialUI"
+            height="30px"
+          />
+        </a>
+        <a href="https://nodejs.org/" target="_blank">
+          <img
+            src="https://img.shields.io/badge/node.js-%23333333?style=for-the-badge&logo=node.js&logoColor=#19d241"
+            alt="NodeJS"
+            height="30px"
+          />
+        </a>
 </p>
 
 <p align="center">
@@ -44,7 +62,7 @@ A aplicação encontra-se online e disponível no endereço:
 
 [REP Calc (https://repcalc.leandrofaria.com)](https://repcalc.leandrofaria.com)
 
-Para clonar e rodar esta aplicação localmente você precisará do [Git](https://git-scm.com) e [Node.js](https://nodejs.org/en/download/) (que vem com o [npm](http://npmjs.com)) instalados em sua máquina. Da sua linha de comando:
+Para clonar e rodar esta aplicação localmente você precisará do [Git](https://git-scm.com), [Node.js](https://nodejs.org/en/download/) e [npm](http://npmjs.com) instalados em sua máquina. Da sua linha de comando:
 
 ```bash
 # Faça um clone deste repositório
@@ -78,9 +96,10 @@ Observações:
 
 Esta aplicação utiliza as seguintes bibliotecas/frameworks e dependências.
 
-- [Node.js](https://nodejs.org/)
-- [ReactJS](https://reactjs.org/)
 - [NextJS](https://nextjs.org/)
+- [Node.js](https://nodejs.org/)
+- [Tailwind CSS](https://tailwindcss.com/)
+- [MUI](https://mui.com/)
 - Ícones por Icons8 (https://icons8.com/)
 
 ## Licença
