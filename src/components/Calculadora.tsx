@@ -6,7 +6,7 @@ import LeftAreaContainer from "./layout/LeftAreaContainer";
 import RightAreaContainer from "./layout/RightAreaContainer";
 import SectionTitle from "./ui/SectionTitle";
 import { Button } from "@mui/material";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 const Calculadora = () => {
   type Operand = {
@@ -24,58 +24,170 @@ const Calculadora = () => {
   const [operator, setOperator] = useState<Operator | null>(null);
   const [history, setHistory] = useState<string[]>([]);
 
-  const addToOperand = (value: string) => {
-    let newValue: string;
-    if (
-      operand === null ||
-      operand.value === "0" ||
-      operand.value === "Infinity"
-    ) {
-      if (value === "min") {
-        newValue = "0" + value;
-      } else if (value === "h") {
-        newValue = "0" + value;
-      } else {
-        newValue = value;
-      }
-    } else {
-      if (operand.value.substr(operand.value.length - 1, 1) === "h") {
-        newValue = operand.value + " ";
-        if (value === "min") {
-          newValue += "0";
+  const execCalc = useCallback(
+    (newOperator: string | null = null) => {
+      let resultObj = operand;
+      if (operator) {
+        let op1;
+        let op2;
+        if (!memory?.hasHour && !memory?.hasMinute) {
+          op1 = Number(memory?.value || 0);
+        } else {
+          op1 = convertFromTime(memory?.value);
         }
-        newValue += value;
-      } else {
-        newValue = operand.value + value;
-      }
-    }
-    setOperand((prevState) => {
-      return {
-        ...prevState,
-        value: newValue,
-        hasHour: value === "h" ? true : prevState?.hasHour,
-        hasMinute: value === "min" ? true : prevState?.hasMinute,
-      };
-    });
-  };
+        if (!operand?.hasHour && !operand?.hasMinute) {
+          op2 = Number(operand?.value || 0);
+        } else {
+          op2 = convertFromTime(operand?.value);
+        }
+        let result;
+        switch (operator.value) {
+          case "+":
+            result = op1 + op2;
+            break;
+          case "-":
+            result = op1 - op2;
+            break;
+          case "*":
+            result = op1 * op2;
+            break;
+          case "/":
+            result = op1 / op2;
+            break;
+          default:
+            break;
+        }
 
-  const addOperator = (value: string) => {
-    if (!memory) {
-      setMemory(operand);
-      setOperator((prevState) => {
-        return { ...prevState, value: value };
-      });
+        let hasHour = memory?.hasHour || operand?.hasHour;
+        let hasMinute = memory?.hasMinute || operand?.hasMinute;
+
+        if (hasHour || hasMinute) {
+          if (
+            ((memory?.hasHour || memory?.hasMinute) &&
+              (operand?.hasHour || operand?.hasMinute) &&
+              operator.value === "/") ||
+            result === 0 ||
+            result === Infinity
+          ) {
+            hasHour = false;
+            hasMinute = false;
+          } else {
+            result = convertToTime(`${result}`);
+          }
+        }
+
+        resultObj = {
+          ...memory,
+          value: "" + result,
+          hasHour: hasHour,
+          hasMinute: hasMinute,
+        };
+
+        let historyMsg =
+          (memory?.value || "0") +
+          " " +
+          operator.value +
+          " " +
+          (operand?.value || "0") +
+          " = " +
+          result;
+
+        setHistory((prevState) => {
+          let newHistory = [...prevState];
+          if (newHistory.length === 12) newHistory.pop();
+          newHistory.unshift(historyMsg);
+          return newHistory;
+        });
+      }
+
+      if (!newOperator) {
+        setMemory(null);
+        setOperand(resultObj);
+        setOperator(null);
+      } else {
+        setMemory(resultObj);
+        setOperand(null);
+        setOperator({ value: newOperator });
+      }
+    },
+    [memory, operand, operator]
+  );
+
+  const clear = useCallback(() => {
+    if (operand) {
       setOperand(null);
       return;
     }
-    if (memory && !operand) {
-      setOperator((prevState) => {
-        return { ...prevState, value: value };
-      });
+    if (memory) {
+      setMemory(null);
+      setOperator(null);
       return;
     }
-    execCalc(value);
-  };
+  }, [memory, operand]);
+
+  const addToOperand = useCallback(
+    (value: string) => {
+      let newValue: string;
+      if (
+        operand === null ||
+        operand.value === "0" ||
+        operand.value === "Infinity"
+      ) {
+        if (value === "min") {
+          newValue = "0" + value;
+        } else if (value === "h") {
+          newValue = "0" + value;
+        } else {
+          newValue = value;
+        }
+      } else {
+        if (
+          operand.value.substring(
+            operand.value.length - 1,
+            operand.value.length
+          ) === "h"
+        ) {
+          newValue = operand.value + " ";
+          if (value === "min") {
+            newValue += "0";
+          }
+          newValue += value;
+        } else {
+          newValue = operand.value + value;
+        }
+      }
+      setOperand((prevState) => {
+        return {
+          ...prevState,
+          value: newValue,
+          hasHour: value === "h" ? true : prevState?.hasHour,
+          hasMinute: value === "min" ? true : prevState?.hasMinute,
+        };
+      });
+    },
+    [operand]
+  );
+
+  const addOperator = useCallback(
+    (value: string) => {
+      if (!memory) {
+        setMemory(operand);
+        setOperator((prevState) => {
+          return { ...prevState, value: value };
+        });
+        setOperand(null);
+        return;
+      }
+      if (memory && !operand) {
+        setOperator((prevState) => {
+          return { ...prevState, value: value };
+        });
+        return;
+      }
+      execCalc(value);
+    },
+    [execCalc, memory, operand]
+  );
 
   const convertFromTime = (value: string) => {
     const p1 = value.indexOf("h");
@@ -96,103 +208,29 @@ const Calculadora = () => {
     return resultString;
   };
 
-  const execCalc = (newOperator: string | null = null) => {
-    let resultObj = operand;
-    if (operator) {
-      let op1;
-      let op2;
-      if (!memory?.hasHour && !memory?.hasMinute) {
-        op1 = Number(memory?.value || 0);
-      } else {
-        op1 = convertFromTime(memory?.value);
+  useEffect(() => {
+    const handleKeyPress = (event: KeyboardEvent) => {
+      event.preventDefault();
+      const numbers = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
+      if (numbers.includes(event.key)) {
+        return addToOperand(event.key);
       }
-      if (!operand?.hasHour && !operand?.hasMinute) {
-        op2 = Number(operand?.value || 0);
-      } else {
-        op2 = convertFromTime(operand?.value);
+      if (event.key === "Enter" || event.key === "=") return execCalc();
+      const operators = ["+", "-", "*", "/"];
+      if (operators.includes(event.key)) {
+        return addOperator(event.key);
       }
-      let result;
-      switch (operator.value) {
-        case "+":
-          result = op1 + op2;
-          break;
-        case "-":
-          result = op1 - op2;
-          break;
-        case "*":
-          result = op1 * op2;
-          break;
-        case "/":
-          result = op1 / op2;
-          break;
-        default:
-          break;
-      }
+      if (event.key === "c") return clear();
+      if (event.key === "h") return addToOperand("h");
+      if (event.key === "m") return addToOperand("min");
+    };
 
-      let hasHour = memory?.hasHour || operand?.hasHour;
-      let hasMinute = memory?.hasMinute || operand?.hasMinute;
+    window.addEventListener("keypress", handleKeyPress);
 
-      if (hasHour || hasMinute) {
-        if (
-          ((memory?.hasHour || memory?.hasMinute) &&
-            (operand?.hasHour || operand?.hasMinute) &&
-            operator.value === "/") ||
-          result === 0 ||
-          result === Infinity
-        ) {
-          hasHour = false;
-          hasMinute = false;
-        } else {
-          result = convertToTime(`${result}`);
-        }
-      }
-
-      resultObj = {
-        ...memory,
-        value: "" + result,
-        hasHour: hasHour,
-        hasMinute: hasMinute,
-      };
-
-      let historyMsg =
-        (memory?.value || "0") +
-        " " +
-        operator.value +
-        " " +
-        (operand?.value || "0") +
-        " = " +
-        result;
-
-      setHistory((prevState) => {
-        let newHistory = [...prevState];
-        if (newHistory.length === 12) newHistory.pop();
-        newHistory.unshift(historyMsg);
-        return newHistory;
-      });
-    }
-
-    if (!newOperator) {
-      setMemory(null);
-      setOperand(resultObj);
-      setOperator(null);
-    } else {
-      setMemory(resultObj);
-      setOperand(null);
-      setOperator({ value: newOperator });
-    }
-  };
-
-  const clear = () => {
-    if (operand) {
-      setOperand(null);
-      return;
-    }
-    if (memory) {
-      setMemory(null);
-      setOperator(null);
-      return;
-    }
-  };
+    return () => {
+      window.removeEventListener("keypress", handleKeyPress);
+    };
+  }, [addToOperand, addOperator, clear, execCalc]);
 
   return (
     <ContentContainer>
