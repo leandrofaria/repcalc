@@ -13,34 +13,10 @@
 <br>
 
 <p align="center">
-  <a href="https://nextjs.org/" target="_blank">
-          <img
-            src="https://img.shields.io/badge/Next-%23333333?style=for-the-badge&logo=next.js&logoColor=#FFFFFF"
-            alt="NextJS"
-            height="30px"
-          />
-        </a>
-        <a href="https://tailwindcss.com/" target="_blank">
-          <img
-            src="https://img.shields.io/badge/tailwindcss-%23333333.svg?style=flat-square&logo=tailwindcss&logoColor=#61DAFB"
-            alt="TailwindCSS"
-            height="30px"
-          />
-        </a>
-        <a href="https://mui.com/" target="_blank">
-          <img
-            src="https://img.shields.io/badge/mui-%23333333.svg?style=flat-square&logo=mui&logoColor=#003FFF"
-            alt="MaterialUI"
-            height="30px"
-          />
-        </a>
-        <a href="https://nodejs.org/" target="_blank">
-          <img
-            src="https://img.shields.io/badge/node.js-%23333333?style=for-the-badge&logo=node.js&logoColor=#19d241"
-            alt="NodeJS"
-            height="30px"
-          />
-        </a>
+  <a href="https://nextjs.org/" target="_blank"><img src="https://img.shields.io/badge/Next-%23333333?style=for-the-badge&logo=next.js&logoColor=#FFFFFF" alt="NextJS" height="30px" /></a>
+  <a href="https://tailwindcss.com/" target="_blank"><img src="https://img.shields.io/badge/tailwindcss-%23333333.svg?style=flat-square&logo=tailwindcss&logoColor=#61DAFB" alt="TailwindCSS" height="30px" /></a>
+  <a href="https://mui.com/" target="_blank"><img src="https://img.shields.io/badge/mui-%23333333.svg?style=flat-square&logo=mui&logoColor=#003FFF" alt="MaterialUI" height="30px" /></a>
+  <a href="https://nodejs.org/" target="_blank"><img src="https://img.shields.io/badge/node.js-%23333333?style=for-the-badge&logo=node.js&logoColor=#19d241" alt="NodeJS" height="30px" /></a>
 </p>
 
 <p align="center">
