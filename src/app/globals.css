@@ -13,6 +13,7 @@ input[type="text"]:disabled {
   color: #1976d2 !important;
   font-weight: 700;
   border-color: #1976d2 !important;
+  -webkit-text-fill-color: inherit;
   background-color: #ffffff;
   padding: 9px;
 }
