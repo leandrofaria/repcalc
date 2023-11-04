@@ -16,6 +16,24 @@ export const metadata: Metadata = {
   title: "REP Calc v3",
   description:
     "Calculadora de horas e funcionalidades adicionais de planejamento de jornada de trabalho para uso com relógio eletrônico de ponto.",
+  metadataBase: new URL("https://repcalc.leandrofaria.com/"),
+  openGraph: {
+    title: "REP Calc v3",
+    description:
+      "Calculadora de horas e funcionalidades adicionais de planejamento de jornada de trabalho para uso com relógio eletrônico de ponto.",
+    url: "https://repcalc.leandrofaria.com",
+    siteName: "REP Calc v3",
+    images: [
+      {
+        url: "https://repcalc.leandrofaria.com/og.jpg",
+        width: 1200,
+        height: 630,
+        alt: "REP Calc v3",
+      },
+    ],
+    locale: "pt_BR",
+    type: "website",
+  },
 };
 
 export default function RootLayout({
