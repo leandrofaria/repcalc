@@ -221,8 +221,25 @@ const Calculadora = () => {
         return addOperator(event.key);
       }
       if (event.key === "c") return clear();
-      if (event.key === "h") return addToOperand("h");
-      if (event.key === "m") return addToOperand("min");
+      if (
+        event.key === "h" &&
+        !(
+          operand?.hasHour ||
+          operand?.hasMinute ||
+          ((memory?.hasHour || memory?.hasMinute) && operator?.value === "*") ||
+          (!memory?.hasHour && !memory?.hasMinute && operator?.value === "/")
+        )
+      )
+        return addToOperand("h");
+      if (
+        event.key === "m" &&
+        !(
+          operand?.hasMinute ||
+          ((memory?.hasHour || memory?.hasMinute) && operator?.value === "*") ||
+          (!memory?.hasHour && !memory?.hasMinute && operator?.value === "/")
+        )
+      )
+        return addToOperand("min");
     };
 
     window.addEventListener("keypress", handleKeyPress);
@@ -230,7 +247,18 @@ const Calculadora = () => {
     return () => {
       window.removeEventListener("keypress", handleKeyPress);
     };
-  }, [addToOperand, addOperator, clear, execCalc]);
+  }, [
+    addToOperand,
+    addOperator,
+    clear,
+    execCalc,
+    memory?.hasHour,
+    memory?.hasMinute,
+    operand?.hasHour,
+    operand?.hasMinute,
+    operand?.value,
+    operator?.value,
+  ]);
 
   return (
     <ContentContainer>
