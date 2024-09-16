@@ -18,13 +18,34 @@ const Jornada = () => {
   const [earlyClockOut, setEarlyClockOut] = useState<Dayjs | null>(null);
 
   const [showModal, setShowModal] = useState(false);
+  const [showSalvoComSucesso, setShowSalvoComSucesso] = useState(false);
+  const [showResetadoComSucesso, setShowResetadoComSucesso] = useState(false);
 
   type entry = Dayjs | null;
+
+  let defaultJornada = "05:45";
+  let defaultIntervalo = "00:15";
+  let defaultTolerancia = "00:10";
+
+  if (process.browser && window.localStorage) {
+    defaultJornada = window.localStorage.getItem("defaultJornada") || "05:45";
+    defaultIntervalo =
+      window.localStorage.getItem("defaultIntervalo") || "00:15";
+    defaultTolerancia =
+      window.localStorage.getItem("defaultTolerancia") || "00:10";
+  }
+
   const [entries, setEntries] = useState<[entry, entry, entry, entry]>([
     null, // Horário de início
-    dayjs().hour(5).minute(45), // Duração da Jornada
-    dayjs().hour(0).minute(15), // Duração do Intervalo
-    dayjs().hour(0).minute(10), // Tolerância Permitida
+    dayjs()
+      .hour(Number(defaultJornada.split(":")[0]))
+      .minute(Number(defaultJornada.split(":")[1])), // Duração da Jornada
+    dayjs()
+      .hour(Number(defaultIntervalo.split(":")[0]))
+      .minute(Number(defaultIntervalo.split(":")[1])), // Duração do Intervalo
+    dayjs()
+      .hour(Number(defaultTolerancia.split(":")[0]))
+      .minute(Number(defaultTolerancia.split(":")[1])), // Tolerância Permitida
   ]);
 
   useEffect(() => {
@@ -201,6 +222,81 @@ const Jornada = () => {
                   : "--:--"
               }
             />
+            <div className="w-full flex flex-row sm:flex-col justify-start items-center mt-6">
+              <Button
+                variant="contained"
+                sx={{
+                  marginBottom: "12px",
+                  textTransform: "capitalize",
+                  fontWeight: 600,
+                }}
+                className="w-full my-3"
+                disabled={
+                  !entries[1]?.isValid() ||
+                  !entries[2]?.isValid() ||
+                  !entries[3]?.isValid()
+                }
+                onClick={() => {
+                  window.localStorage.setItem(
+                    "defaultJornada",
+                    entries[1]!.format("HH:mm")
+                  );
+                  window.localStorage.setItem(
+                    "defaultIntervalo",
+                    entries[2]!.format("HH:mm")
+                  );
+                  window.localStorage.setItem(
+                    "defaultTolerancia",
+                    entries[3]!.format("HH:mm")
+                  );
+                  setShowSalvoComSucesso(true);
+                  setTimeout(() => {
+                    setShowSalvoComSucesso(false);
+                  }, 1500);
+                }}
+              >
+                Salvar Definições
+              </Button>
+              <div className="sm:hidden w-[21px]"></div>
+              <Button
+                variant="contained"
+                sx={{
+                  marginBottom: "12px",
+                  textTransform: "capitalize",
+                  fontWeight: 600,
+                }}
+                className="w-full my-3"
+                color="error"
+                disabled={false}
+                onClick={() => {
+                  window.localStorage.removeItem("defaultJornada");
+                  window.localStorage.removeItem("defaultIntervalo");
+                  window.localStorage.removeItem("defaultTolerancia");
+                  setEntries([
+                    null,
+                    dayjs().hour(5).minute(45),
+                    dayjs().hour(0).minute(15),
+                    dayjs().hour(0).minute(10),
+                  ]);
+                  setShowResetadoComSucesso(true);
+                  setTimeout(() => {
+                    setShowResetadoComSucesso(false);
+                  }, 1500);
+                }}
+              >
+                Resetar Definições
+              </Button>
+              {showSalvoComSucesso && (
+                <p className="pt-1 text-green-900 font-semibold">
+                  Definições salvas com sucesso!
+                </p>
+              )}
+              {showResetadoComSucesso && (
+                <p className="pt-1 text-green-900 font-semibold">
+                  Definições resetadas com sucesso!
+                </p>
+              )}
+            </div>
           </RightAreaContainer>
         </FeatureContainer>
       </ContentContainer>
