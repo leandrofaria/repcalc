@@ -11,13 +11,15 @@ import ContentContainer from "./layout/ContentContainer";
 import LeftAreaContainer from "./layout/LeftAreaContainer";
 import RightAreaContainer from "./layout/RightAreaContainer";
 import FeatureContainer from "./layout/FeatureContainer";
+import TempoRealDialog from "./ui/TempoRealDialog";
 
 const Jornada = () => {
   const [allValid, setAllValid] = useState<boolean>(false);
   const [clockOut, setClockOut] = useState<Dayjs | null>(null);
   const [earlyClockOut, setEarlyClockOut] = useState<Dayjs | null>(null);
 
-  const [showModal, setShowModal] = useState(false);
+  const [showIntervaloDialog, setShowIntervaloDialog] = useState(false);
+  const [showTempoRealDialog, setShowTempoRealDialog] = useState(false);
   const [showSalvoComSucesso, setShowSalvoComSucesso] = useState(false);
   const [showResetadoComSucesso, setShowResetadoComSucesso] = useState(false);
 
@@ -85,7 +87,7 @@ const Jornada = () => {
   }, [entries]);
 
   const handleClickOpen = () => {
-    setShowModal(true);
+    setShowIntervaloDialog(true);
   };
 
   const setBreakDuration = (duration: Dayjs | null) => {
@@ -97,9 +99,15 @@ const Jornada = () => {
   return (
     <>
       <IntervaloDialog
-        showModal={showModal}
-        setShowModal={setShowModal}
+        showIntervaloDialog={showIntervaloDialog}
+        setShowIntervaloDialog={setShowIntervaloDialog}
         setBreakDuration={setBreakDuration}
+      />
+
+      <TempoRealDialog
+        showTempoRealDialog={showTempoRealDialog}
+        setShowTempoRealDialog={setShowTempoRealDialog}
+        entries={entries}
       />
 
       <ContentContainer>
@@ -222,7 +230,29 @@ const Jornada = () => {
                   : "--:--"
               }
             />
-            <div className="w-full flex flex-row sm:flex-col justify-start items-center mt-6">
+            <div className="w-full flex flex-col justify-start items-start mt-6">
+              <Button
+                variant="outlined"
+                sx={{
+                  marginBottom: "12px",
+                  textTransform: "capitalize",
+                  fontWeight: 600,
+                }}
+                className="w-full my-3"
+                disabled={
+                  !entries[0]?.isValid() ||
+                  !entries[1]?.isValid() ||
+                  !entries[2]?.isValid() ||
+                  !entries[3]?.isValid()
+                }
+                onClick={() => {
+                  setShowTempoRealDialog(true);
+                }}
+              >
+                Painel em Tempo Real
+              </Button>
+            </div>
+            <div className="w-full flex flex-row sm:flex-col justify-start items-center">
               <Button
                 variant="contained"
                 sx={{

@@ -14,8 +14,8 @@ import dayjs, { Dayjs } from "dayjs";
 import { useState, useEffect } from "react";
 
 const IntervaloDialog = (props: {
-  showModal: boolean;
-  setShowModal: (value: boolean) => void;
+  showIntervaloDialog: boolean;
+  setShowIntervaloDialog: (value: boolean) => void;
   setBreakDuration: (value: Dayjs | null) => void;
 }) => {
   const [allValid, setAllValid] = useState<boolean>(false);
@@ -52,11 +52,15 @@ const IntervaloDialog = (props: {
   const closeModal = () => {
     setDuration(null);
     setEntries([null, null]);
-    props.setShowModal(false);
+    props.setShowIntervaloDialog(false);
   };
 
   return (
-    <Dialog maxWidth={"xs"} open={props.showModal} onClose={() => closeModal()}>
+    <Dialog
+      maxWidth={"xs"}
+      open={props.showIntervaloDialog}
+      onClose={() => closeModal()}
+    >
       <DialogTitle>Cálculo de Duração</DialogTitle>
       <DialogContent>
         <DialogContentText>
