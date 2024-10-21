@@ -193,7 +193,10 @@ const Calculadora = () => {
     const p1 = value.indexOf("h");
     const h = p1 !== -1 ? Number(value.substring(0, p1)) * 60 : 0;
     const p2 = value.indexOf("m", p1);
-    const m = p2 !== -1 ? Number(value.substring(p1 + 1, p2)) : 0;
+    const m =
+      p2 !== -1
+        ? Number(value.substring(p1 + 1, p2))
+        : Number(value.substring(p1 + 1, value.length));
 
     return h + m;
   };
