@@ -11,7 +11,7 @@ import ContentContainer from "./layout/ContentContainer";
 import LeftAreaContainer from "./layout/LeftAreaContainer";
 import RightAreaContainer from "./layout/RightAreaContainer";
 import FeatureContainer from "./layout/FeatureContainer";
-import TempoRealDialog from "./ui/TempoRealDialog";
+import TempoRealDialog from "./TempoRealDialog";
 
 const Jornada = () => {
   const [allValid, setAllValid] = useState<boolean>(false);
