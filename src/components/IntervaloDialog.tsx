@@ -7,6 +7,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  Divider,
   TextField,
 } from "@mui/material";
 import { TimePicker } from "@mui/x-date-pickers";
@@ -20,6 +21,7 @@ const IntervaloDialog = (props: {
 }) => {
   const [allValid, setAllValid] = useState<boolean>(false);
   const [duration, setDuration] = useState<Dayjs | null>(null);
+  const [total, setTotal] = useState<Dayjs | null>(null);
 
   type entry = Dayjs | null;
   const [entries, setEntries] = useState<[entry, entry]>([
@@ -57,7 +59,7 @@ const IntervaloDialog = (props: {
 
   return (
     <Dialog
-      maxWidth={"xs"}
+      maxWidth={"sm"}
       open={props.showIntervaloDialog}
       onClose={() => closeModal()}
     >
@@ -67,7 +69,7 @@ const IntervaloDialog = (props: {
           Para calcular automaticamente a duração do intervalo, preencha os
           campos abaixo.
         </DialogContentText>
-        <div className="mt-3 w-full grid grid-flow-col grid-cols-2 gap-3">
+        <div className="mt-3 w-full grid grid-flow-row grid-cols-2 md:grid-cols-3 gap-3">
           <div>
             <p className="font-semibold">Início:</p>
             <TimePicker
@@ -94,17 +96,13 @@ const IntervaloDialog = (props: {
               }}
             />
           </div>
-        </div>
-        {!allValid && (
-          <p className="mt-3 font-semibold text-red-600 text-center text-base">
-            Aguardando o preenchimento correto de todos os campos.
-          </p>
-        )}
-        <div className="mt-3 w-full grid grid-flow-col grid-cols-2 gap-3">
+          <div className="block md:hidden">
+            <p>&nbsp;</p>
+          </div>
           <div>
             <p className="font-semibold">Duração Calculada:</p>
             <TextField
-              id="outlined-basic"
+              id="duracaoCalculada"
               disabled
               fullWidth
               variant="outlined"
@@ -116,22 +114,89 @@ const IntervaloDialog = (props: {
               }
             />
           </div>
-          <div></div>
+        </div>
+        {!allValid && total === null && (
+          <p className="mt-3 font-semibold text-red-600 text-center text-base">
+            Aguardando o preenchimento correto de todos os campos.
+          </p>
+        )}
+        {!allValid && total !== null && (
+          <p className="mt-3 font-semibold text-blue-600 text-center text-base">
+            Opcionalmente, preencha novamente para adicionar mais intervalos.
+          </p>
+        )}
+        <div className="mt-3 w-full grid grid-flow-row grid-cols-2 md:grid-cols-3 gap-3">
+          <div className="flex flex-col justify-end items-center">
+            <p>&nbsp;</p>
+            <Button
+              fullWidth
+              variant="outlined"
+              className="h-full"
+              disabled={total === null}
+              onClick={() => {
+                setTotal(null);
+              }}
+            >
+              Resetar o Total
+            </Button>
+          </div>
+          <div className="flex flex-col justify-end items-center">
+            <p>&nbsp;</p>
+            <Button
+              fullWidth
+              variant="contained"
+              className="h-full"
+              disabled={duration === null}
+              onClick={() => {
+                setDuration(null);
+                setEntries([null, null]);
+                setTotal((prevState) => {
+                  if (prevState?.isValid()) {
+                    return prevState
+                      ?.add(duration!.hour(), "hour")
+                      .add(duration!.minute(), "minute");
+                  } else {
+                    return duration;
+                  }
+                });
+              }}
+            >
+              Adicionar ao Total
+            </Button>
+          </div>
+          <div className="block md:hidden">
+            <p>&nbsp;</p>
+          </div>
+          <div>
+            <p className="font-semibold">Total:</p>
+            <TextField
+              id="total"
+              disabled
+              fullWidth
+              variant="outlined"
+              color="primary"
+              value={total === null ? "--:--" : total.format("HH:mm")}
+            />
+          </div>
         </div>
       </DialogContent>
+      <Divider className="!mt-6 !mb-6" />
       <DialogActions>
         <Button variant="outlined" onClick={() => closeModal()}>
           Cancelar
         </Button>
         <Button
           variant="contained"
-          disabled={!allValid}
+          disabled={total === null}
           onClick={() => {
-            props.setBreakDuration(duration);
+            setTotal(null);
+            setEntries([null, null]);
+            setDuration(null);
+            props.setBreakDuration(total);
             closeModal();
           }}
         >
-          Inserir Valor
+          Inserir Valor Total
         </Button>
       </DialogActions>
     </Dialog>
