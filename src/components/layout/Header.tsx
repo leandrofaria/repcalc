@@ -16,7 +16,7 @@ const Header = () => {
             </div>
             <div>
               <Link href="/sobre" className="font-semibold text-base">
-                <h2>v3.3.0</h2>
+                <h2>v3.3.1</h2>
               </Link>
             </div>
           </Toolbar>
