@@ -74,13 +74,25 @@ const TempoRealDialog = (props: {
           "hour"
         ).subtract(tempoTrabalhado.minute(), "minute");
         setTempoRestanteTotal(tempoRestanteTotal);
-        const tempoRestanteComTolerancia = props.entries[1]!.subtract(
-          tempoTrabalhado.hour(),
-          "hour"
-        )
-          .subtract(tempoTrabalhado.minute(), "minute")
-          .subtract(props.entries[3]!.hour(), "hour")
-          .subtract(props.entries[3]!.minute(), "minute");
+
+        let tempoRestanteComTolerancia = null;
+        if (
+          tempoTrabalhado.isAfter(
+            props.entries[1]
+              ?.subtract(props.entries[3]!.hour(), "hour")
+              .subtract(props.entries[3]!.minute(), "minute")
+          )
+        ) {
+          tempoRestanteComTolerancia = null;
+        } else {
+          tempoRestanteComTolerancia = props.entries[1]!.subtract(
+            tempoTrabalhado.hour(),
+            "hour"
+          )
+            .subtract(tempoTrabalhado.minute(), "minute")
+            .subtract(props.entries[3]!.hour(), "hour")
+            .subtract(props.entries[3]!.minute(), "minute");
+        }
         setTempoRestanteComTolerancia(tempoRestanteComTolerancia);
       }
     }, 1000);
