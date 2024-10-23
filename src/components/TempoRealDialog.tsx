@@ -42,7 +42,7 @@ const TempoRealDialog = (props: {
     if (!props.showTempoRealDialog) return;
 
     const timer = setInterval(() => {
-      const tempoTrabalhado = computarComIntervalo
+      let tempoTrabalhado: Dayjs | null = computarComIntervalo
         ? dayjs()
             .subtract(props.entries[0]!.hour(), "hour")
             .subtract(props.entries[0]!.minute(), "minute")
@@ -51,7 +51,16 @@ const TempoRealDialog = (props: {
         : dayjs()
             .subtract(props.entries[0]!.hour(), "hour")
             .subtract(props.entries[0]!.minute(), "minute");
+      if (tempoTrabalhado.isBefore(dayjs("00:00:00", "HH:mm:ss")))
+        tempoTrabalhado = null;
       setTempoTrabalhado(tempoTrabalhado);
+
+      if (tempoTrabalhado === null) {
+        setTempoExcedente(null);
+        setTempoRestanteTotal(null);
+        setTempoRestanteComTolerancia(null);
+        return;
+      }
 
       if (tempoTrabalhado.isAfter(props.entries[1]!)) {
         let tempoExcedente: Dayjs | null = tempoTrabalhado
@@ -137,9 +146,19 @@ const TempoRealDialog = (props: {
                 }}
               />
             }
-            label="Já tirei o intervalo"
+            label="Calcular incluindo o intervalo"
           ></FormControlLabel>
         </div>
+        {tempoTrabalhado === null && (
+          <div className="mb-6">
+            <p className="text-justify text-red-600">
+              De acordo com os valores informados, você ainda não trabalhou. O
+              horário de início informado é posterior ao atual, ou se computado
+              com intervalo, todo o horário corrido refere-se ao intervalo em
+              si. É impossível exibir dados em tempo real.
+            </p>
+          </div>
+        )}
         <Grid container spacing={3}>
           <Grid item xs={8}>
             <p>Total a trabalhar:&nbsp;</p>
@@ -164,7 +183,9 @@ const TempoRealDialog = (props: {
           </Grid>
           <Grid item xs={4}>
             <p className="text-blue-600 text-right">
-              {tempoTrabalhado?.format("HH:mm")}
+              {tempoTrabalhado !== null
+                ? tempoTrabalhado?.format("HH:mm")
+                : "N/A"}
             </p>
           </Grid>
           <Grid item xs={8}>
