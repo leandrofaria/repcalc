@@ -42,6 +42,14 @@ const TempoRealDialog = (props: {
     if (!props.showTempoRealDialog) return;
 
     const timer = setInterval(() => {
+      props.entries.every((entry) => {
+        if (entry?.date() !== dayjs().date()) {
+          closeModal();
+          window.location.reload();
+          return false;
+        }
+      });
+
       let tempoTrabalhado: Dayjs | null = computarComIntervalo
         ? dayjs()
             .subtract(props.entries[0]!.hour(), "hour")
