@@ -13,7 +13,7 @@ import {
   Grid,
 } from "@mui/material";
 import dayjs, { Dayjs } from "dayjs";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { clearInterval, setInterval, setTimeout } from "timers";
 
 type entry = Dayjs | null;
@@ -23,9 +23,9 @@ const TempoRealDialog = (props: {
   setShowTempoRealDialog: (value: boolean) => void;
   entries: [entry, entry, entry, entry];
 }) => {
-  const closeModal = () => {
+  const closeModal = useCallback(() => {
     props.setShowTempoRealDialog(false);
-  };
+  }, [props]);
 
   const [computarComIntervalo, setComputarComIntervalo] =
     useState<boolean>(true);
