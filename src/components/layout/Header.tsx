@@ -2,6 +2,7 @@ import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import Link from "next/link";
+import { version } from "../../../package.json";
 
 const Header = () => {
   return (
@@ -16,7 +17,7 @@ const Header = () => {
             </div>
             <div>
               <Link href="/sobre" className="font-semibold text-base">
-                <h2>v3.3.2</h2>
+                <h2>v{version}</h2>
               </Link>
             </div>
           </Toolbar>
