@@ -122,6 +122,7 @@ const TempoRealDialog = (props: {
     props.showTempoRealDialog,
     computarComIntervalo,
     tempoTrabalhado,
+    closeModal,
   ]);
 
   return (
