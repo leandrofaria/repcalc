@@ -6,9 +6,9 @@
   <br>
 </h1>
 
-<h4 align="center">Uma calculadora de horas (e algumas funções a mais) para uso com relógio eletrônico de ponto.</h4>
-<h4 align="center">Online em <a href="https://repcalc.leandrofaria.com">https://repcalc.leandrofaria.com</a></h4>
-<h4 align="center">Imagem para contêiner disponível em <a href="https://hub.docker.com/r/farialaf/repcalc">https://hub.docker.com/r/farialaf/repcalc</a></h4>
+<h4 align="center">An hours calculator (and a few things beyond that) for people who clock in and out on an electronic time clock.</h4>
+<h4 align="center">Live at <a href="https://repcalc.leandrofaria.com">https://repcalc.leandrofaria.com</a></h4>
+<h4 align="center">Container image at <a href="https://hub.docker.com/r/farialaf/repcalc">https://hub.docker.com/r/farialaf/repcalc</a></h4>
 
 <br>
 
@@ -20,65 +20,65 @@
 </p>
 
 <p align="center">
-  <a href="#funcionalidades">Funcionalidades</a> •
-  <a href="#como-rodar">Como Rodar</a> •
-  <a href="#créditos">Créditos</a> •
-  <a href="#licença">Licença</a>
+  <a href="#features">Features</a> •
+  <a href="#running-it">Running it</a> •
+  <a href="#credits">Credits</a> •
+  <a href="#license">License</a>
 </p>
 
-## Funcionalidades
+## Features
 
-- Calculadora básica e de tempo (horas e minutos)
-- Planejamento da jornada de trabalho
-- Cálculo de tempo entre marcações de ponto
+- A calculator for plain numbers and for time (hours and minutes)
+- Planning a working day: entry, exit and break times
+- Elapsed time between two punches
 
-## Como Rodar
+## Running it
 
-A aplicação encontra-se online e disponível no endereço:
+The app is already online at:
 
 [REP Calc (https://repcalc.leandrofaria.com)](https://repcalc.leandrofaria.com)
 
-Para clonar e rodar esta aplicação localmente você precisará do [Git](https://git-scm.com), [Node.js](https://nodejs.org/en/download/) e [npm](http://npmjs.com) instalados em sua máquina. Da sua linha de comando:
+To clone and run it locally you need [Git](https://git-scm.com), [Node.js](https://nodejs.org/en/download/) and [npm](http://npmjs.com) installed. From your command line:
 
 ```bash
-# Faça um clone deste repositório
+# Clone this repository
 $ git clone https://github.com/leandrofaria/repcalc
 
-# Entre no repositório
+# Enter the repository
 $ cd repcalc
 
-# Instale as dependências
+# Install the dependencies
 $ npm install
 
-# Rode o app (em modo de desenvolvimento)
+# Run the app (in development mode)
 $ npm run dev
 
-# Para rodar em modo de produção primeiro faça a build
+# For production mode, build it first
 $ npm run build
 
-# Depois inicie o app
+# Then start the app
 $ npm start
 ```
 
-A aplicação ficará disponível no endereço: http://localhost:3000
+The app will be available at http://localhost:3000
 
-Observações:
+Notes:
 
-- A porta patrão de execução da aplicação é a 3000
+- The app runs on port 3000 by default
 
-- O analytics (Google Analytics) inicia desativado por padrão. Para ativá-lo, crie o arquivo .env.local com o seguinte par chave/valor: NEXT_PUBLIC_GA_ID=\<sua chave do Google Analytics\>
+- Analytics (Google Analytics) starts disabled. To turn it on, create a `.env.local` file with the following key/value pair: `NEXT_PUBLIC_GA_ID=<your Google Analytics key>`
 
-## Créditos
+## Credits
 
-Esta aplicação utiliza as seguintes bibliotecas/frameworks e dependências.
+This app uses the following libraries, frameworks and dependencies.
 
 - [NextJS](https://nextjs.org/)
 - [Node.js](https://nodejs.org/)
 - [Tailwind CSS](https://tailwindcss.com/)
 - [MUI](https://mui.com/)
-- Ícones por Icons8 (https://icons8.com/)
+- Icons by Icons8 (https://icons8.com/)
 
-## Licença
+## License
 
 MIT
 
