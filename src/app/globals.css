@@ -29,16 +29,3 @@ fieldset {
 .customInput fieldset {
   border-radius: 0 4px 4px 0 !important;
 }
-.calculadora .display,
-.calculadora .display:disabled,
-.calculadora .history,
-.calculadora .history:disabled {
-  text-align: right;
-  font-size: 30px;
-  background-color: #ffffff;
-  border-color: #c6d1df !important;
-}
-.calculadora .history,
-.calculadora .history:disabled {
-  color: #ffffff !important;
-}
