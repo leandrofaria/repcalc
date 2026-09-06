@@ -47,7 +47,7 @@ const LiveStatusPanel = ({ input }: { input: LiveInput }) => {
     <>
       {status !== null && status.worked === null && (
         <div className="mb-6">
-          <p className="text-justify text-red-600">
+          <p className="text-justify text-[color:var(--mui-palette-error-main)]">
             De acordo com os valores informados, você ainda não trabalhou. O
             horário de início informado é posterior ao atual, ou se computado
             com intervalo, todo o horário corrido refere-se ao intervalo em si.
@@ -62,7 +62,7 @@ const LiveStatusPanel = ({ input }: { input: LiveInput }) => {
         {rows.map(([label, value]) => (
           <div key={label} className="contents">
             <dt>{label}:</dt>
-            <dd className="text-blue-600 text-right font-semibold">{value}</dd>
+            <dd className="text-brand text-right font-semibold">{value}</dd>
           </div>
         ))}
       </dl>
@@ -127,7 +127,7 @@ const TempoRealDialog = ({
           />
         </div>
         {liveInput !== null && <LiveStatusPanel input={liveInput} />}
-        <p className="text-center text-sm mt-6 text-gray-600/75">
+        <p className="text-center text-sm mt-6 text-ink-muted">
           * O excedente só é computado após exceder o total mais a tolerância.
         </p>
       </DialogContent>

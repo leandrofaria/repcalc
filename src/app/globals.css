@@ -1,31 +1,37 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* The layer order is declared before the import so it wins, and it is what
+   lets MUI and Tailwind coexist without a single !important. MUI emits into
+   @layer mui via enableCssLayer on AppRouterCacheProvider; Tailwind's
+   preflight lands in base, which is declared first, so MUI's CssBaseline
+   takes precedence where they overlap, and utilities take precedence over
+   both. */
+@layer theme, base, mui, components, utilities;
 
-.container {
-  max-width: 1152px !important;
+@import "tailwindcss";
+@import "./tokens.css";
+
+/* Tailwind's dark: variant keys off the same attribute MUI sets, so one
+   toggle drives both systems. */
+@custom-variant dark (&:where([data-mui-color-scheme="dark"], [data-mui-color-scheme="dark"] *));
+
+/* @theme inline, not @theme: the generated utilities reference the custom
+   property instead of snapshotting its value, which is what allows
+   bg-canvas to change when the colour scheme does. */
+@theme inline {
+  --font-sans: var(--font-blinker), ui-sans-serif, system-ui, sans-serif;
+  --color-brand: var(--rc-brand);
+  --color-brand-dark: var(--rc-brand-dark);
+  --color-canvas: var(--rc-canvas);
+  --color-surface: var(--rc-surface);
+  --color-ink: var(--rc-ink);
+  --color-ink-muted: var(--rc-ink-muted);
+  --color-hairline: var(--rc-hairline);
+  --color-calc-face: var(--rc-calc-face);
+  --color-calc-edge: var(--rc-calc-edge);
+  --color-calc-memory: var(--rc-calc-memory);
+  --color-footer-edge: var(--rc-footer-edge);
 }
 
-input[type="text"],
-input[type="text"]:disabled {
-  text-align: center;
-  font-size: 21px;
-  color: #1976d2 !important;
-  font-weight: 700;
-  border-color: #1976d2 !important;
-  -webkit-text-fill-color: inherit;
-  background-color: #ffffff;
-  padding: 9px;
-}
-input[type="text"]:disabled {
-  background-color: #eff3f8;
-}
-fieldset {
-  border-color: #1976d2 !important;
-}
-.MuiTextField-root {
-  background-color: #ffffff !important;
-}
-.customInput fieldset {
-  border-radius: 0 4px 4px 0 !important;
+@utility page-container {
+  max-width: 72rem;
+  margin-inline: auto;
 }

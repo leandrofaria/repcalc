@@ -27,7 +27,7 @@ const ResultReadout = ({
       <output
         aria-labelledby={id}
         aria-live="polite"
-        className="block w-full rounded border border-[#1976D2] bg-[#EFF3F8] px-3 py-[9px] text-center text-[21px] font-bold text-[#1976D2]"
+        className="block w-full rounded border border-brand bg-canvas px-3 py-[9px] text-center text-[21px] font-bold text-brand"
       >
         {value}
       </output>

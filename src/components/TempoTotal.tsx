@@ -96,13 +96,13 @@ const TempoTotal = () => {
             );
           })}
           {!valid && (
-            <p className="mt-12 font-semibold text-red-600 text-center text-base">
+            <p className="mt-12 font-semibold text-[color:var(--mui-palette-error-main)] text-center text-base">
               Aguardando o preenchimento correto de todos os campos.
             </p>
           )}
         </LeftAreaContainer>
         <RightAreaContainer>
-          <div className="sm:hidden my-6 w-full border-b-[1px] border-b-[#E9E9E9]" />
+          <div className="sm:hidden my-6 w-full border-b-[1px] border-b-hairline" />
           <ResultReadout
             label="O total trabalhado foi:"
             value={total !== null ? formatHHMM(total) : "--:--"}

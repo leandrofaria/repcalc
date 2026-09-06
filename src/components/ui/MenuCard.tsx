@@ -15,7 +15,7 @@ const MenuCard = (props: {
     <Link href={props.link}>
       <Card
         variant="outlined"
-        className="bg-white shadow-md p-3 py-6 hover:border-[#1976D2] flex flex-col justify-between min-h-[210px]"
+        className="bg-surface shadow-md p-3 py-6 hover:border-brand flex flex-col justify-between min-h-[210px]"
       >
         <CardContent>
           <div className="flex flex-row justify-between items-start">
@@ -28,10 +28,10 @@ const MenuCard = (props: {
               />
             </div>
             <div className="grow ml-[24px]">
-              <h2 className="text-lg font-semibold mb-2 border-b-[1px] border-b-[#E9E9E9]">
+              <h2 className="text-lg font-semibold mb-2 border-b-[1px] border-b-hairline">
                 {props.title}
               </h2>
-              <p className="text-base text-[#696969] text-justify">
+              <p className="text-base text-ink-muted text-justify">
                 {props.description}
               </p>
             </div>

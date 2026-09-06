@@ -1,11 +1,14 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Blinker } from "next/font/google";
+import { AppRouterCacheProvider } from "@mui/material-nextjs/v16-appRouter";
+import InitColorSchemeScript from "@mui/material/InitColorSchemeScript";
 import "./globals.css";
 import ThemeRegistry from "@/components/ThemeRegistry/ThemeRegistry";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import DateLocalizationProvider from "@/components/providers/DateLocalizationProvider";
 import Analytics from "@/components/Analytics/Analytics";
+import { COLOR_SCHEME_ATTRIBUTE, LIGHT } from "@/lib/design/tokens";
 
 const blinker = Blinker({
   subsets: ["latin"],
@@ -38,27 +41,41 @@ export const metadata: Metadata = {
   },
 };
 
+// A separate export since Next 14: themeColor inside metadata is deprecated.
+export const viewport: Viewport = {
+  themeColor: LIGHT.brand,
+};
+
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <html lang="pt-br" className={`${blinker.variable} h-[100vh]`}>
-      <ThemeRegistry>
-        <DateLocalizationProvider>
-          <body
-            className={`${blinker.className} h-[100vh] flex flex-col justify-between items-stretch`}
-          >
-            <Header />
-            <main className="grow py-6 px-6 bg-[#EFF3F8] text-[#333333] flex flex-col justify-center items-stretch">
-              {children}
-            </main>
-            <Footer />
-            <Analytics />
-          </body>
-        </DateLocalizationProvider>
-      </ThemeRegistry>
+    <html
+      lang="pt-br"
+      className={`${blinker.variable} h-dvh`}
+      suppressHydrationWarning
+    >
+      <body className="h-dvh flex flex-col justify-between items-stretch bg-canvas text-ink">
+        {/* Must be the first child of body: it stamps the colour scheme
+            before first paint, so the page never flashes the wrong theme. */}
+        <InitColorSchemeScript attribute={COLOR_SCHEME_ATTRIBUTE} />
+        {/* enableCssLayer is what puts MUI's styles into @layer mui, which is
+            the whole mechanism behind the Tailwind interop in globals.css. */}
+        <AppRouterCacheProvider options={{ key: "mui", enableCssLayer: true }}>
+          <ThemeRegistry>
+            <DateLocalizationProvider>
+              <Header />
+              <main className="grow py-6 px-6 flex flex-col justify-center items-stretch">
+                {children}
+              </main>
+              <Footer />
+            </DateLocalizationProvider>
+          </ThemeRegistry>
+        </AppRouterCacheProvider>
+        <Analytics />
+      </body>
     </html>
   );
 }

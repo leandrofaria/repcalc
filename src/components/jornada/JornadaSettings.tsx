@@ -40,7 +40,7 @@ const JornadaSettings = ({
       Resetar Definições
     </Button>
     <p
-      className="pt-1 text-green-900 font-semibold"
+      className="pt-1 text-[color:var(--mui-palette-success-dark)] font-semibold"
       role="status"
       aria-live="polite"
     >

@@ -1,0 +1,28 @@
+/* Mirrors src/lib/design/tokens.ts for Tailwind. Kept in sync by a test. */
+:root {
+  --rc-brand: #1976d2;
+  --rc-brand-dark: #115293;
+  --rc-canvas: #eff3f8;
+  --rc-surface: #ffffff;
+  --rc-ink: #333333;
+  --rc-ink-muted: #696969;
+  --rc-hairline: #e9e9e9;
+  --rc-calc-face: #eff3f8;
+  --rc-calc-edge: #c6d1df;
+  --rc-calc-memory: #94a3b8;
+  --rc-footer-edge: #a4d1ff;
+}
+
+[data-mui-color-scheme="dark"] {
+  --rc-brand: #7cb8f5;
+  --rc-brand-dark: #4e93d8;
+  --rc-canvas: #0b1017;
+  --rc-surface: #121a24;
+  --rc-ink: #e6edf5;
+  --rc-ink-muted: #9fb0c3;
+  --rc-hairline: #243040;
+  --rc-calc-face: #121a24;
+  --rc-calc-edge: #2a3947;
+  --rc-calc-memory: #37474f;
+  --rc-footer-edge: #2a3947;
+}

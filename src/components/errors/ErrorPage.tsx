@@ -20,7 +20,7 @@ const ErrorPage = ({
     <div className="mx-auto mt-12">
       <Link href="/" className="flex flex-col justify-center items-center">
         <Image src="/img/home.webp" alt="" width={60} height={60} />
-        <span className="font-semibold text-[#1976D2]">Página Inicial</span>
+        <span className="font-semibold text-brand">Página Inicial</span>
       </Link>
     </div>
   </ContentContainer>

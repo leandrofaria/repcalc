@@ -2,7 +2,7 @@ import Image from "next/image";
 import ContentContainer from "./layout/ContentContainer";
 import SectionTitle from "./ui/SectionTitle";
 
-const LINK_CLASS = "font-semibold text-[#1976D2]";
+const LINK_CLASS = "font-semibold text-brand";
 
 /**
  * The tech badges are served from public/img/badges rather than fetched from
@@ -67,7 +67,7 @@ const Sobre = () => {
         do autor.
       </p>
 
-      <h2 className="w-full text-lg font-semibold pb-2 mb-6 mt-12 border-b-[1px] border-b-[#E9E9E9]">
+      <h2 className="w-full text-lg font-semibold pb-2 mb-6 mt-12 border-b-[1px] border-b-hairline">
         Tecnologias
       </h2>
       <ul className="w-full flex flex-row flex-wrap justify-center items-center gap-3 list-none p-0 m-0">
@@ -90,7 +90,7 @@ const Sobre = () => {
         ))}
       </ul>
 
-      <h2 className="w-full text-lg font-semibold pb-2 mb-6 mt-12 border-b-[1px] border-b-[#E9E9E9]">
+      <h2 className="w-full text-lg font-semibold pb-2 mb-6 mt-12 border-b-[1px] border-b-hairline">
         Hospedagem e Infraestrutura
       </h2>
       <div className="w-full flex flex-col sm:flex-row justify-center items-center">

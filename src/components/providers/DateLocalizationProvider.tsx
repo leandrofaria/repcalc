@@ -2,7 +2,14 @@
 
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers";
+import { ptBR } from "@mui/x-date-pickers/locales";
 import "dayjs/locale/pt-br";
+
+// Without this the pickers' own strings stay in English: the hour and minute
+// sections announce as "Hours" and "Minutes", and the open button as
+// "Choose time", inside a Portuguese app.
+const localeText =
+  ptBR.components.MuiLocalizationProvider.defaultProps.localeText;
 
 /**
  * Supplies the date adapter to the pickers.
@@ -16,7 +23,11 @@ const DateLocalizationProvider = ({
 }: {
   children: React.ReactNode;
 }) => (
-  <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="pt-br">
+  <LocalizationProvider
+    dateAdapter={AdapterDayjs}
+    adapterLocale="pt-br"
+    localeText={localeText}
+  >
     {children}
   </LocalizationProvider>
 );
