@@ -2,73 +2,59 @@
 
 import { Button, TextField } from "@mui/material";
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
-import dayjs, { Dayjs } from "dayjs";
-import { useState, useEffect } from "react";
+import { useMemo, useRef, useState } from "react";
 import SectionTitle from "./ui/SectionTitle";
 import ContentContainer from "./layout/ContentContainer";
 import LeftAreaContainer from "./layout/LeftAreaContainer";
 import RightAreaContainer from "./layout/RightAreaContainer";
 import FeatureContainer from "./layout/FeatureContainer";
+import {
+  MAX_PAIRS,
+  MIN_PAIRS,
+  computePairs,
+  emptyPair,
+  type PunchPair,
+} from "@/lib/tempoTotal/pairs";
+import { formatHHMM } from "@/lib/time/duration";
+import {
+  dayjsToTimeOfDay,
+  pickerReferenceDate,
+  timeOfDayToDayjs,
+} from "@/lib/time/dayjs";
 
 const TempoTotal = () => {
-  const [allValid, setAllValid] = useState<boolean>(false);
-  const [total, setTotal] = useState<Dayjs | null>(null);
+  const [pairs, setPairs] = useState<PunchPair[]>([emptyPair("pair-0")]);
+  // Ids are handed out on user action only, so the server and the first
+  // client render always agree on the initial pair.
+  const nextId = useRef(1);
 
-  type pair = [Dayjs | null, Dayjs | null];
-  const [pairs, setPairs] = useState<pair[]>([[null, null]]);
+  const { total, valid, invalidIndices } = useMemo(
+    () => computePairs(pairs),
+    [pairs]
+  );
 
   const addNewPair = (): void => {
-    setPairs([...pairs, [null, null]]);
+    setPairs((previous) => [
+      ...previous,
+      emptyPair(`pair-${nextId.current++}`),
+    ]);
   };
 
   const removeLastPair = (): void => {
-    setPairs(pairs.slice(0, -1));
+    setPairs((previous) => previous.slice(0, -1));
   };
 
   const updateEntry = (
-    entryData: Dayjs | null,
-    pairIndex: number,
-    entryIndex: number
+    id: string,
+    side: "in" | "out",
+    value: ReturnType<typeof timeOfDayToDayjs>
   ): void => {
-    const updatedPairs = [...pairs];
-    updatedPairs[pairIndex][entryIndex] = entryData;
-    setPairs(updatedPairs);
+    setPairs((previous) =>
+      previous.map((pair) =>
+        pair.id === id ? { ...pair, [side]: dayjsToTimeOfDay(value) } : pair
+      )
+    );
   };
-
-  useEffect(() => {
-    let validEntries = true;
-    let lastEntry = 0;
-    let total: Dayjs | null = null;
-
-    setTotal(total);
-
-    pairs.forEach((pair) => {
-      if (
-        pair[0] === null ||
-        pair[1] === null ||
-        !pair[0].isValid() ||
-        !pair[1].isValid() ||
-        pair[0].unix() <= lastEntry ||
-        pair[1].unix() <= lastEntry ||
-        pair[1].unix() <= pair[0].unix()
-      ) {
-        validEntries = false;
-        return;
-      } else {
-        lastEntry = pair[1].unix();
-        const diff = dayjs(pair[1])
-          .subtract(pair[0].hour(), "hour")
-          .subtract(pair[0].minute(), "minute");
-        total =
-          total === null
-            ? diff
-            : total.add(diff.hour(), "hour").add(diff.minute(), "minute");
-      }
-    });
-
-    setAllValid(validEntries);
-    if (validEntries) setTotal(total);
-  }, [pairs]);
 
   return (
     <ContentContainer>
@@ -80,37 +66,41 @@ const TempoTotal = () => {
       <FeatureContainer>
         <LeftAreaContainer>
           {pairs.map((pair, index) => {
+            const invalid = invalidIndices.includes(index);
             return (
               <div
-                key={index}
+                key={pair.id}
                 className="w-full grid grid-flow-row grid-cols-2 gap-6 mb-6"
               >
                 <div>
                   <p className="font-semibold mb-1">
-                    Marcação {index + (1 + index * 1)}:
+                    Marcação {2 * index + 1}:
                   </p>
                   <TimePicker
                     sx={{ width: "100%" }}
                     ampm={false}
-                    value={pair[0]}
-                    onChange={(value) => updateEntry(value, index, 0)}
+                    referenceDate={pickerReferenceDate()}
+                    value={timeOfDayToDayjs(pair.in)}
+                    onChange={(value) => updateEntry(pair.id, "in", value)}
                   />
                 </div>
                 <div>
                   <p className="font-semibold mb-1">
-                    Marcação {index + (2 + index * 1)}:
+                    Marcação {2 * index + 2}:
                   </p>
                   <TimePicker
                     sx={{ width: "100%" }}
                     ampm={false}
-                    value={pair[1]}
-                    onChange={(value) => updateEntry(value, index, 1)}
+                    referenceDate={pickerReferenceDate()}
+                    value={timeOfDayToDayjs(pair.out)}
+                    onChange={(value) => updateEntry(pair.id, "out", value)}
+                    slotProps={{ textField: { error: invalid } }}
                   />
                 </div>
               </div>
             );
           })}
-          {!allValid && (
+          {!valid && (
             <p className="mt-12 font-semibold text-red-600 text-center text-base">
               Aguardando o preenchimento correto de todos os campos.
             </p>
@@ -120,16 +110,12 @@ const TempoTotal = () => {
           <div className="sm:hidden my-6 w-full border-b-[1px] border-b-[#E9E9E9]" />
           <h2 className="font-semibold mb-1">O total trabalhado foi:</h2>
           <TextField
-            id="outlined-basic"
+            id="tempo-total-resultado"
             disabled
             fullWidth
             variant="outlined"
             color="primary"
-            value={
-              total?.isValid()
-                ? total?.format("HH") + ":" + total?.format("mm")
-                : "--:--"
-            }
+            value={total !== null ? formatHHMM(total) : "--:--"}
           />
           <div className="w-full flex flex-row sm:flex-col justify-start items-center mt-6">
             <Button
@@ -140,10 +126,8 @@ const TempoTotal = () => {
                 fontWeight: 600,
               }}
               className="w-full my-3"
-              disabled={pairs.length >= 6}
-              onClick={() => {
-                addNewPair();
-              }}
+              disabled={pairs.length >= MAX_PAIRS}
+              onClick={addNewPair}
             >
               Adicionar Novo Par
             </Button>
@@ -157,10 +141,8 @@ const TempoTotal = () => {
               }}
               className="w-full my-3"
               color="error"
-              disabled={pairs.length <= 1}
-              onClick={() => {
-                removeLastPair();
-              }}
+              disabled={pairs.length <= MIN_PAIRS}
+              onClick={removeLastPair}
             >
               Excluir Último Par
             </Button>
