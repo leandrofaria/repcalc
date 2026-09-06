@@ -1,14 +1,8 @@
-import { Blinker } from "next/font/google";
 import { createTheme } from "@mui/material/styles";
 import { blueGrey } from "@mui/material/colors";
 
-const blinker = Blinker({
-  weight: ["300", "400", "600", "700"],
-  subsets: ["latin"],
-  display: "swap",
-});
-
-// Augment the palette to include an ochre color
+// Augment the palette with a neutral colour, used by the calculator's
+// operator keys.
 declare module "@mui/material/styles" {
   interface Palette {
     neutral: Palette["primary"];
@@ -19,7 +13,7 @@ declare module "@mui/material/styles" {
   }
 }
 
-// Update the Button's color options to include an ochre option
+// Make that colour available to Button's color prop.
 declare module "@mui/material/Button" {
   interface ButtonPropsColorOverrides {
     neutral: true;
@@ -43,7 +37,11 @@ const theme = createTheme({
     },
   },
   typography: {
-    fontFamily: blinker.style.fontFamily,
+    // The font is loaded once, in the root layout, and exposed as a CSS
+    // variable. Calling next/font here as well produced a second @font-face
+    // and a duplicated preload, and made this module unusable outside a
+    // Next build.
+    fontFamily: "var(--font-blinker), ui-sans-serif, system-ui, sans-serif",
   },
   components: {
     MuiAlert: {

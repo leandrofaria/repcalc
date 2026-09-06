@@ -9,7 +9,9 @@ import Analytics from "@/components/Analytics/Analytics";
 
 const blinker = Blinker({
   subsets: ["latin"],
-  weight: ["400", "600", "700"],
+  weight: ["300", "400", "600", "700"],
+  display: "swap",
+  variable: "--font-blinker",
 });
 
 export const metadata: Metadata = {
@@ -42,7 +44,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="pt-br" className="h-[100vh]">
+    <html lang="pt-br" className={`${blinker.variable} h-[100vh]`}>
       <ThemeRegistry>
         <DateLocalizationProvider>
           <body
