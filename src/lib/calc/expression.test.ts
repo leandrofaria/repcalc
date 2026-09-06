@@ -23,7 +23,9 @@ function press(keys: string, from: CalcState = initialState()): CalcState {
           ? { type: "equals" }
           : key === "c"
             ? { type: "clear" }
-            : { type: "operator", op: key as Operator };
+            : key === "<"
+              ? { type: "backspace" }
+              : { type: "operator", op: key as Operator };
     return reduce(state, action);
   }, from);
 }
@@ -94,6 +96,39 @@ describe("starting a new entry after a result", () => {
     // Production disabled every digit key whenever the result had minutes.
     const state = press("2 h 3 0 min + 1 h 4 5 min =");
     expect(isKeyEnabled(state, "7")).toBe(true);
+  });
+});
+
+describe("backspace", () => {
+  it("undoes one forward step at a time, in reverse", () => {
+    // Exactly mirrors the sequence in "builds an hours-and-minutes entry".
+    expect(shown("2 h 3 0 min <")).toBe("2h 30");
+    expect(shown("2 h 3 0 min < <")).toBe("2h 3");
+    expect(shown("2 h 3 0 min < < <")).toBe("2h");
+    expect(shown("2 h 3 0 min < < < <")).toBe("2");
+    expect(shown("2 h 3 0 min < < < < <")).toBe("0");
+  });
+
+  it("takes back the implied zero the same way", () => {
+    expect(shown("min <")).toBe("0");
+    expect(shown("h <")).toBe("0");
+  });
+
+  it("discards a result rather than editing its digits", () => {
+    // "4h 15m" is not a string of keystrokes, so there is no last one.
+    expect(shown("2 h 3 0 min + 1 h 4 5 min = <")).toBe("0");
+  });
+
+  it("does nothing on an untouched calculator", () => {
+    const state = press("<");
+    expect(state.entry).toBeNull();
+    expect(state.memory).toBeNull();
+  });
+
+  it("leaves the memory alone", () => {
+    const state = press("2 h + 3 5 <");
+    expect(displayLine(state)).toBe("3");
+    expect(memoryLine(state)).toBe("2h +");
   });
 });
 

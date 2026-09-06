@@ -1,86 +1,221 @@
 <h1 align="center">
   <br>
-  <img src="https://repcalc.leandrofaria.com/img/calculadora.webp" alt="REP Calc" width="64">
+  <img src="public/icons/icon-192.png" alt="REP Calc" width="72">
   <br>
   REP Calc
   <br>
 </h1>
 
-<h4 align="center">An hours calculator (and a few things beyond that) for people who clock in and out on an electronic time clock.</h4>
-<h4 align="center">Live at <a href="https://repcalc.leandrofaria.com">https://repcalc.leandrofaria.com</a></h4>
-<h4 align="center">Container image at <a href="https://hub.docker.com/r/farialaf/repcalc">https://hub.docker.com/r/farialaf/repcalc</a></h4>
-
-<br>
+<h4 align="center">Uma calculadora de horas para uso com relógio eletrônico de ponto.</h4>
 
 <p align="center">
-  <a href="https://nextjs.org/" target="_blank"><img src="https://img.shields.io/badge/Next-%23333333?style=for-the-badge&logo=next.js&logoColor=#FFFFFF" alt="NextJS" height="30px" /></a>
-  <a href="https://tailwindcss.com/" target="_blank"><img src="https://img.shields.io/badge/tailwindcss-%23333333.svg?style=flat-square&logo=tailwindcss&logoColor=#61DAFB" alt="TailwindCSS" height="30px" /></a>
-  <a href="https://mui.com/" target="_blank"><img src="https://img.shields.io/badge/mui-%23333333.svg?style=flat-square&logo=mui&logoColor=#003FFF" alt="MaterialUI" height="30px" /></a>
-  <a href="https://nodejs.org/" target="_blank"><img src="https://img.shields.io/badge/node.js-%23333333?style=for-the-badge&logo=node.js&logoColor=#19d241" alt="NodeJS" height="30px" /></a>
+  <a href="https://repcalc.leandrofaria.com"><strong>repcalc.leandrofaria.com</strong></a>
 </p>
 
 <p align="center">
-  <a href="#features">Features</a> •
-  <a href="#running-it">Running it</a> •
-  <a href="#credits">Credits</a> •
-  <a href="#license">License</a>
+  <img src="https://img.shields.io/badge/license-MIT-0F766E" alt="MIT">
 </p>
 
-## Features
+<p align="center">
+  <a href="#funcionalidades">Funcionalidades</a> •
+  <a href="#como-rodar">Como rodar</a> •
+  <a href="#arquitetura">Arquitetura</a> •
+  <a href="#testes">Testes</a> •
+  <a href="#contêiner">Contêiner</a> •
+  <a href="#licença">Licença</a>
+</p>
 
-- A calculator for plain numbers and for time (hours and minutes)
-- Planning a working day: entry, exit and break times
-- Elapsed time between two punches
+---
 
-## Running it
+## Funcionalidades
 
-The app is already online at:
+**Calculadora** — soma, subtrai, multiplica e divide, misturando durações e
+números puros. `2h 30min + 1h 45min` dá `4h 15m`; `7h 30min ÷ 2h 30min` dá `3`,
+porque duração dividida por duração é um número sem unidade. As combinações
+que não fazem sentido, como duração vezes duração, são recusadas em vez de
+produzirem um resultado sem significado.
 
-[REP Calc (https://repcalc.leandrofaria.com)](https://repcalc.leandrofaria.com)
+**Jornada de trabalho** — a partir do horário de início, da duração da jornada,
+do intervalo e da tolerância, calcula o término previsto e a saída com
+tolerância. Um turno que atravessa a meia-noite mostra `02:00 (+1)`, e não um
+`02:00` que parece estar no passado. As definições ficam salvas no navegador.
 
-To clone and run it locally you need [Git](https://git-scm.com), [Node.js](https://nodejs.org/en/download/) and [npm](http://npmjs.com) installed. From your command line:
+**Painel em tempo real** — acompanha, enquanto a jornada corre, quanto já foi
+trabalhado, quanto falta e quanto excedeu. O excedente só é contado depois de
+ultrapassar a jornada mais a tolerância.
+
+**Tempo total** — soma o tempo decorrido entre até seis pares de marcações,
+recusando pares fora de ordem cronológica.
+
+### Atalhos de teclado
+
+Na calculadora, o teclado físico faz tudo o que o teclado da tela faz:
+
+| Tecla                  | Ação                                      |
+| ---------------------- | ----------------------------------------- |
+| `0`–`9`                | Dígitos                                   |
+| `h`                    | Marca o valor digitado como horas         |
+| `m`                    | Marca o valor digitado como minutos       |
+| `+` `-` `*` `/`        | Operadores                                |
+| `Backspace`            | Apaga o último passo digitado             |
+| `Enter` ou `=`         | Calcula                                   |
+| `c`, `Esc` ou `Delete` | Limpa a entrada; de novo, limpa a memória |
+
+Combinações com Ctrl, Alt ou Cmd são deixadas para o navegador.
+
+### Instalação como aplicativo
+
+É um PWA: dá para instalar pelo navegador e usar **sem conexão**. Todas as
+telas funcionam offline — que é o caso de uso real, em pé na frente do
+relógio de ponto, num prédio sem sinal.
+
+---
+
+## Como rodar
+
+Requer [Node.js 22+](https://nodejs.org/) e npm.
 
 ```bash
-# Clone this repository
-$ git clone https://github.com/leandrofaria/repcalc
-
-# Enter the repository
-$ cd repcalc
-
-# Install the dependencies
-$ npm install
-
-# Run the app (in development mode)
-$ npm run dev
-
-# For production mode, build it first
-$ npm run build
-
-# Then start the app
-$ npm start
+git clone https://github.com/leandrofaria/repcalc
+cd repcalc
+npm ci
+npm run dev
 ```
 
-The app will be available at http://localhost:3000
+Disponível em http://localhost:3000. A porta padrão é a 3000.
 
-Notes:
+### Scripts
 
-- The app runs on port 3000 by default
+| Comando                 | O que faz                         |
+| ----------------------- | --------------------------------- |
+| `npm run dev`           | Servidor de desenvolvimento       |
+| `npm run build`         | Build de produção                 |
+| `npm start`             | Serve a build de produção         |
+| `npm test`              | Testes unitários e de componente  |
+| `npm run test:watch`    | Testes em modo observador         |
+| `npm run test:coverage` | Testes com relatório de cobertura |
+| `npm run lint`          | ESLint                            |
+| `npm run typecheck`     | TypeScript sem emitir             |
+| `npm run format`        | Prettier                          |
+| `npm run icons`         | Regera os ícones do PWA           |
 
-- Analytics (Google Analytics) starts disabled. To turn it on, create a `.env.local` file with the following key/value pair: `NEXT_PUBLIC_GA_ID=<your Google Analytics key>`
+### Variáveis de ambiente
 
-## Credits
+Copie `.env.example` para `.env.local`. Nenhuma é obrigatória. O Google
+Analytics fica desligado sem `NEXT_PUBLIC_GA_ID`, e também fora de produção.
 
-This app uses the following libraries, frameworks and dependencies.
+> `NEXT_PUBLIC_*` é embutido no bundle **durante o build**, não lido em tempo
+> de execução. Trocar o valor exige rebuildar.
 
-- [NextJS](https://nextjs.org/)
-- [Node.js](https://nodejs.org/)
-- [Tailwind CSS](https://tailwindcss.com/)
-- [MUI](https://mui.com/)
-- Icons by Icons8 (https://icons8.com/)
+### ⚠️ O build usa webpack de propósito
 
-## License
+`npm run build` roda `next build --webpack`. O servidor de produção tem uma
+glibc anterior à 2.29, então o binário nativo do SWC não carrega e o Next cai
+para WASM — e o Turbopack, padrão do Next 16, exige esse binário. O Serwist
+também injeta configuração de webpack, que o Next 16 recusa rodar sob
+Turbopack. Não remova a flag.
 
-MIT
+---
+
+## Arquitetura
+
+A regra é simples: **nenhuma lógica de negócio dentro de JSX**. Tudo o que
+calcula mora em `src/lib`, é função pura e tem teste.
+
+```
+src/
+├── app/                    Rotas (App Router), manifest e service worker
+├── components/             Componentes, agrupados por tela
+│   ├── calculadora/        Display, teclado e teclas
+│   ├── jornada/            Formulário, resultados e definições
+│   ├── fields/             TimeField: o único lugar que fala com o picker
+│   └── ui/                 Peças compartilhadas
+└── lib/
+    ├── time/               Duração e hora do dia, em minutos inteiros
+    ├── calc/               Álgebra de unidades e máquina de estados
+    ├── jornada/            Término previsto e painel em tempo real
+    ├── tempoTotal/         Validação e soma dos pares
+    └── design/             Tokens de cor
+```
+
+### Durações são minutos inteiros
+
+A versão anterior usava `Dayjs` — um **instante** — para representar
+**duração**. `dayjs().hour(5).minute(45)` significa "hoje às 05:45", mas era
+usado como "5h45". Daí vinham vários erros: totais acima de 24h davam a volta,
+subtração negativa imprimia `-1h -30m`, e o painel em tempo real precisava
+recarregar a página à meia-noite.
+
+Hoje há dois tipos, marcados de forma que o compilador se recusa a misturar:
+
+```ts
+type Duration = number & { readonly __unit: "Duration" }; // minutos, com sinal
+type TimeOfDay = number & { readonly __unit: "TimeOfDay" }; // 0..1439
+```
+
+`dayjs` sobrevive num arquivo só, `src/lib/time/dayjs.ts`, porque o TimePicker
+do MUI fala Dayjs. Os valores do picker ancoram numa data fixa, então a data
+de um campo não carrega significado e não envelhece.
+
+### Um sistema de cor, dois esquemas
+
+`src/lib/design/tokens.ts` é a fonte da verdade. O MUI lê os valores direto;
+o Tailwind lê pelas custom properties de `src/app/tokens.css`. **Um teste
+falha se os dois divergirem.**
+
+MUI e Tailwind convivem por camadas CSS, declaradas em `globals.css`:
+
+```css
+@layer theme, base, mui, components, utilities;
+```
+
+com `enableCssLayer` no `AppRouterCacheProvider`. É isso, e só isso, que
+dispensa qualquer `!important`.
+
+---
+
+## Testes
+
+```bash
+npm test
+```
+
+Dois ambientes: `src/lib` roda em Node puro, os componentes em jsdom. A
+cobertura é exigida só de `src/lib` — 90% de uma biblioteca de funções puras
+significa alguma coisa; um limite global contando JSX, não.
+
+Os casos de `src/lib` foram escritos a partir do comportamento **observado em
+produção** antes da refatoração, para que a mudança de representação não
+alterasse nenhum número em silêncio.
+
+---
+
+## Contêiner
+
+O site em produção **não** roda a partir desta imagem — lá o app é servido
+por `next start` sob o PM2. O `Dockerfile` existe para quem quiser hospedar a
+própria cópia:
+
+```bash
+docker build -t repcalc .
+docker run -p 3000:3000 repcalc
+```
+
+Multi-stage, output standalone, Node 22 e usuário sem privilégios.
+
+---
+
+## Créditos
+
+[Next.js](https://nextjs.org/) · [React](https://react.dev/) ·
+[TypeScript](https://www.typescriptlang.org/) ·
+[MUI](https://mui.com/) · [Tailwind CSS](https://tailwindcss.com/) ·
+[Day.js](https://day.js.org/) · [Vitest](https://vitest.dev/) ·
+[Serwist](https://serwist.pages.dev/) · ícones por [Icons8](https://icons8.com/)
+
+## Licença
+
+MIT. Veja [LICENSE](LICENSE).
 
 ---
 

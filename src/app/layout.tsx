@@ -26,7 +26,12 @@ const body = Public_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "REP Calc",
+  // Pages set only their own name; the template appends the app's. They used
+  // to hardcode "REP Calc v3", which went stale the moment the major changed.
+  title: {
+    default: "REP Calc",
+    template: "%s | REP Calc",
+  },
   description:
     "Calculadora de horas e funcionalidades adicionais de planejamento de jornada de trabalho para uso com relógio eletrônico de ponto.",
   metadataBase: new URL("https://repcalc.leandrofaria.com/"),
@@ -35,10 +40,6 @@ export const metadata: Metadata = {
     capable: true,
     title: "REP Calc",
     statusBarStyle: "default",
-  },
-  icons: {
-    icon: [{ url: "/icons/icon.svg", type: "image/svg+xml" }],
-    apple: [{ url: "/icons/apple-touch-icon.png", sizes: "180x180" }],
   },
   openGraph: {
     title: "REP Calc",

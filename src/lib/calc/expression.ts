@@ -38,6 +38,7 @@ export type CalcAction =
   | { type: "unit"; unit: Unit }
   | { type: "operator"; op: Operator }
   | { type: "equals" }
+  | { type: "backspace" }
   | { type: "clear" };
 
 const EMPTY_BUFFER: Entry = {
@@ -223,6 +224,40 @@ export function reduce(state: CalcState, action: CalcAction): CalcState {
         history,
         error: null,
       };
+    }
+
+    case "backspace": {
+      const { entry } = state;
+      if (entry === null) return state;
+      // A result is not a string of keystrokes, so there is no last one to
+      // take back; the whole thing goes.
+      if (entry.kind === "value") return { ...state, entry: null, error: null };
+
+      // Otherwise undo exactly one forward step, in reverse order of how the
+      // entry was built: min, then digits, then h.
+      if (entry.sealed) {
+        return { ...state, entry: { ...entry, sealed: false }, error: null };
+      }
+      if (entry.digits !== "") {
+        return {
+          ...state,
+          entry: { ...entry, digits: entry.digits.slice(0, -1) },
+          error: null,
+        };
+      }
+      if (entry.hours !== null) {
+        return {
+          ...state,
+          entry: {
+            kind: "buffer",
+            digits: entry.hours,
+            hours: null,
+            sealed: false,
+          },
+          error: null,
+        };
+      }
+      return { ...state, entry: null, error: null };
     }
 
     case "clear": {

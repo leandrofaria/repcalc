@@ -1,6 +1,6 @@
 {
-  "name": "repcalc-v3",
-  "version": "3.3.4",
+  "name": "repcalc",
+  "version": "4.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev --webpack",

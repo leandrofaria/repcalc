@@ -12,6 +12,9 @@ import { join } from "node:path";
 import sharp from "sharp";
 
 const OUT = join(process.cwd(), "public", "icons");
+// Next serves these two by file convention, which is what replaces
+// the old favicon.ico.
+const APP = join(process.cwd(), "src", "app");
 
 const BRAND = "#0F766E";
 const ON_BRAND = "#FFFFFF";
@@ -69,3 +72,12 @@ for (const target of TARGETS) {
   }
   console.log("wrote", target.file);
 }
+
+// The browser tab icon and the iOS home-screen icon, by Next's file
+// convention. Same source, so they cannot drift from the palette.
+await writeFile(join(APP, "icon.svg"), mark({}), "utf8");
+await sharp(Buffer.from(mark({ rounded: false })))
+  .resize(180)
+  .png()
+  .toFile(join(APP, "apple-icon.png"));
+console.log("wrote src/app/icon.svg and src/app/apple-icon.png");

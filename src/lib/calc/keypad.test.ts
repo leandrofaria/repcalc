@@ -14,11 +14,18 @@ describe("KEYPAD", () => {
     expect(OPERATOR_KEYS).toHaveLength(6);
   });
 
+  it("keeps keyboard-only keys out of the drawn pad", () => {
+    const drawn = [...NUMERIC_KEYS, ...OPERATOR_KEYS].map((key) => key.id);
+    expect(drawn).not.toContain("backspace");
+    expect(KEYPAD.map((key) => key.id)).toContain("backspace");
+  });
+
   it("maps physical keys to the same actions as the buttons", () => {
     expect(findKeyByKeyboardEvent("7")?.id).toBe("7");
     expect(findKeyByKeyboardEvent("m")?.id).toBe("min");
     expect(findKeyByKeyboardEvent("Enter")?.id).toBe("equals");
     expect(findKeyByKeyboardEvent("Escape")?.id).toBe("clear");
+    expect(findKeyByKeyboardEvent("Backspace")?.id).toBe("backspace");
     expect(findKeyByKeyboardEvent("x")).toBeUndefined();
   });
 

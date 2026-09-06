@@ -1,6 +1,6 @@
 import ErrorPage from "@/components/errors/ErrorPage";
 
-export const metadata = { title: "REP Calc - Sem conexão" };
+export const metadata = { title: "Sem conexão" };
 
 /**
  * Only reached for a URL outside the app: every real route is precached and
