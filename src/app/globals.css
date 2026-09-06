@@ -17,21 +17,49 @@
    property instead of snapshotting its value, which is what allows
    bg-canvas to change when the colour scheme does. */
 @theme inline {
-  --font-sans: var(--font-blinker), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-display), ui-sans-serif, system-ui, sans-serif;
+
   --color-brand: var(--rc-brand);
   --color-brand-dark: var(--rc-brand-dark);
+  --color-on-brand: var(--rc-on-brand);
+
   --color-canvas: var(--rc-canvas);
   --color-surface: var(--rc-surface);
+
   --color-ink: var(--rc-ink);
   --color-ink-muted: var(--rc-ink-muted);
+  --color-ink-faint: var(--rc-ink-faint);
+
   --color-hairline: var(--rc-hairline);
+  --color-field-edge: var(--rc-field-edge);
+
+  --color-figure: var(--rc-figure);
+  --color-result: var(--rc-result);
+  --color-result-edge: var(--rc-result-edge);
+
   --color-calc-face: var(--rc-calc-face);
   --color-calc-edge: var(--rc-calc-edge);
   --color-calc-memory: var(--rc-calc-memory);
-  --color-footer-edge: var(--rc-footer-edge);
+
+  --color-danger-face: var(--rc-danger-face);
+  --color-danger-ink: var(--rc-danger-ink);
+
+  --color-warn: var(--rc-warn);
+  --color-ok-bg: var(--rc-ok-bg);
+  --color-ok-text: var(--rc-ok-text);
+
+  --radius-panel: 12px;
+  --radius-control: 9px;
 }
 
 @utility page-container {
   max-width: 72rem;
   margin-inline: auto;
+}
+
+/* Figures line up in columns across the whole app: results, keypad,
+   the live panel. */
+@utility tabular {
+  font-variant-numeric: tabular-nums;
 }

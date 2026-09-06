@@ -2,9 +2,9 @@ import MenuCard from "@/components/ui/MenuCard";
 
 const Page = () => {
   return (
-    <div className="container mx-auto sm:w-[720px] h-full flex flex-col justify-start sm:justify-center items-center">
+    <div className="page-container flex h-full w-full flex-col items-center justify-start sm:max-w-[760px] sm:justify-center">
       <h1 className="sr-only">REP Calc</h1>
-      <div className="grid grid-flow-row grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-9 w-full">
+      <div className="grid w-full grid-flow-row grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5">
         <MenuCard
           icon="calculadora"
           title="Calculadora"

@@ -95,12 +95,12 @@ const IntervaloDialog = (props: {
           />
         </div>
         {outOfOrder && (
-          <p className="mt-3 font-semibold text-[color:var(--mui-palette-error-main)] text-center text-base">
+          <p className="mt-3 font-semibold text-danger-ink text-center text-base">
             O fim do intervalo precisa ser posterior ao início.
           </p>
         )}
         {!complete && total === null && (
-          <p className="mt-3 font-semibold text-[color:var(--mui-palette-error-main)] text-center text-base">
+          <p className="mt-3 font-semibold text-danger-ink text-center text-base">
             Aguardando o preenchimento correto de todos os campos.
           </p>
         )}

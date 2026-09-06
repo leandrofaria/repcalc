@@ -1,28 +1,77 @@
-/* Mirrors src/lib/design/tokens.ts for Tailwind. Kept in sync by a test. */
+/* Mirrors src/lib/design/tokens.ts for Tailwind. Kept in sync by a test:
+   src/lib/design/tokens.test.ts fails if a value here drifts from there. */
 :root {
-  --rc-brand: #1976d2;
-  --rc-brand-dark: #115293;
-  --rc-canvas: #eff3f8;
+  --rc-brand: #0f766e;
+  --rc-brand-dark: #0b5d57;
+  --rc-on-brand: #ffffff;
+
+  --rc-canvas: #f2f4f3;
   --rc-surface: #ffffff;
-  --rc-ink: #333333;
-  --rc-ink-muted: #696969;
-  --rc-hairline: #e9e9e9;
-  --rc-calc-face: #eff3f8;
-  --rc-calc-edge: #c6d1df;
-  --rc-calc-memory: #94a3b8;
-  --rc-footer-edge: #a4d1ff;
+
+  --rc-ink: #131817;
+  --rc-ink-muted: #576260;
+  --rc-ink-faint: #8a9491;
+
+  --rc-hairline: #e6ebe9;
+  --rc-field-edge: #dde2e0;
+
+  --rc-figure: #0b3d38;
+  --rc-result: #e6f2f0;
+  --rc-result-edge: #b9d6d2;
+
+  --rc-calc-face: #f7f9f8;
+  --rc-calc-edge: #dde2e0;
+  --rc-calc-memory: #eef2f1;
+
+  --rc-key-face: #e9edec;
+  --rc-key-ink: #1a2422;
+  --rc-unit-face: #a7d5ce;
+  --rc-unit-ink: #06322e;
+  --rc-op-face: #cfdcda;
+  --rc-op-ink: #17332f;
+
+  --rc-danger-face: #f5ded9;
+  --rc-danger-ink: #9c3520;
+
+  --rc-warn: #b4531d;
+  --rc-ok-bg: #dcece9;
+  --rc-ok-text: #0f766e;
 }
 
 [data-mui-color-scheme="dark"] {
-  --rc-brand: #7cb8f5;
-  --rc-brand-dark: #4e93d8;
-  --rc-canvas: #0b1017;
-  --rc-surface: #121a24;
-  --rc-ink: #e6edf5;
-  --rc-ink-muted: #9fb0c3;
-  --rc-hairline: #243040;
-  --rc-calc-face: #121a24;
-  --rc-calc-edge: #2a3947;
-  --rc-calc-memory: #37474f;
-  --rc-footer-edge: #2a3947;
+  --rc-brand: #4fd1c5;
+  --rc-brand-dark: #3bb5aa;
+  --rc-on-brand: #08201e;
+
+  --rc-canvas: #0f1413;
+  --rc-surface: #171d1c;
+
+  --rc-ink: #e7ecea;
+  --rc-ink-muted: #9aa5a2;
+  --rc-ink-faint: #6f7a77;
+
+  --rc-hairline: #212827;
+  --rc-field-edge: #2b3433;
+
+  --rc-figure: #b8f0e9;
+  --rc-result: #142825;
+  --rc-result-edge: #2f4b47;
+
+  --rc-calc-face: #141a19;
+  --rc-calc-edge: #242c2b;
+  --rc-calc-memory: #131817;
+
+  --rc-key-face: #1e2625;
+  --rc-key-ink: #e7ecea;
+  --rc-unit-face: #17423c;
+  --rc-unit-ink: #8fe5db;
+  --rc-op-face: #2a3937;
+  --rc-op-ink: #bfd0cd;
+
+  --rc-danger-face: #33201c;
+  --rc-danger-ink: #eb9481;
+
+  --rc-warn: #e8975a;
+  --rc-ok-bg: #122b28;
+  --rc-ok-text: #4fd1c5;
 }

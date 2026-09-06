@@ -6,7 +6,7 @@
  */
 const SectionTitle = ({ children }: { children: React.ReactNode }) => {
   return (
-    <h1 className="w-full text-lg font-semibold pb-2 mb-6 border-b-[1px] border-b-hairline">
+    <h1 className="w-full font-display text-xl font-bold tracking-tight pb-3 mb-5 border-b border-hairline">
       {children}
     </h1>
   );

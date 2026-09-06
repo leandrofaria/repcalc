@@ -21,13 +21,13 @@ const ResultReadout = ({
 
   return (
     <div className={`w-full ${className}`}>
-      <p id={id} className="font-semibold mb-1">
+      <p id={id} className="mb-1 text-sm font-medium text-ink-muted">
         {label}
       </p>
       <output
         aria-labelledby={id}
         aria-live="polite"
-        className="block w-full rounded border border-brand bg-canvas px-3 py-[9px] text-center text-[21px] font-bold text-brand"
+        className="tabular block w-full rounded-[9px] border border-result-edge bg-result px-3 py-2.5 text-center font-display text-2xl font-bold text-figure"
       >
         {value}
       </output>

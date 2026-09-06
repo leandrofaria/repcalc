@@ -16,15 +16,15 @@ const ERROR_MESSAGES: Record<string, string> = {
  * result as it changes.
  */
 const CalcDisplay = ({ state }: { state: CalcState }) => (
-  <div>
+  <div className="flex flex-col gap-2">
     <output
-      className="history block w-full mb-3 h-[36px] leading-[36px] px-3 bg-calc-memory border-[1px] border-calc-edge shadow-inner text-lg font-semibold text-right text-white overflow-hidden"
+      className="tabular block min-h-[28px] w-full rounded-[9px] bg-calc-memory px-3 py-1 text-right text-sm font-medium text-ink-muted"
       aria-label="Memória e operação pendente"
     >
       {memoryLine(state)}
     </output>
     <output
-      className="display flex w-full h-[69px] border-[1px] border-calc-edge bg-surface shadow-inner p-3 flex-col justify-center items-end overflow-hidden text-3xl text-right"
+      className="tabular flex min-h-[64px] w-full flex-col items-end justify-center overflow-hidden rounded-[9px] border border-field-edge bg-surface px-4 py-2 font-display text-4xl font-bold text-figure"
       aria-live="polite"
       aria-label="Resultado"
     >
@@ -33,7 +33,7 @@ const CalcDisplay = ({ state }: { state: CalcState }) => (
     {state.error !== null && (
       <p
         role="alert"
-        className="mt-3 text-[color:var(--mui-palette-error-main)] font-semibold text-center"
+        className="rounded-[9px] bg-danger-face px-3 py-2 text-center text-sm font-semibold text-danger-ink"
       >
         {ERROR_MESSAGES[state.error]}
       </p>

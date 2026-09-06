@@ -20,11 +20,7 @@ import {
 import { formatHHMM } from "@/lib/time/duration";
 import { dayjsToTimeOfDay, timeOfDayToDayjs } from "@/lib/time/dayjs";
 
-const ACTION_SX = {
-  marginBottom: "12px",
-  textTransform: "capitalize",
-  fontWeight: 600,
-} as const;
+const ACTION_SX = { fontWeight: 600 } as const;
 
 const TempoTotal = () => {
   const [pairs, setPairs] = useState<PunchPair[]>([emptyPair("pair-0")]);
@@ -63,7 +59,7 @@ const TempoTotal = () => {
   return (
     <ContentContainer>
       <SectionTitle>Tempo Total de Trabalho</SectionTitle>
-      <p className="text-justify mb-6">
+      <p className="mb-6 max-w-[62ch] text-ink-muted">
         Para calcular o tempo total de trabalho entre pares de pontos, preencha
         os campos abaixo.
       </p>
@@ -96,13 +92,13 @@ const TempoTotal = () => {
             );
           })}
           {!valid && (
-            <p className="mt-12 font-semibold text-[color:var(--mui-palette-error-main)] text-center text-base">
+            <p className="mt-12 font-semibold text-danger-ink text-center text-base">
               Aguardando o preenchimento correto de todos os campos.
             </p>
           )}
         </LeftAreaContainer>
         <RightAreaContainer>
-          <div className="sm:hidden my-6 w-full border-b-[1px] border-b-hairline" />
+          <div className="my-5 w-full border-b border-hairline sm:hidden" />
           <ResultReadout
             label="O total trabalhado foi:"
             value={total !== null ? formatHHMM(total) : "--:--"}
@@ -111,18 +107,18 @@ const TempoTotal = () => {
             <Button
               variant="contained"
               sx={ACTION_SX}
-              className="w-full my-3"
+              className="w-full"
               disabled={pairs.length >= MAX_PAIRS}
               onClick={addNewPair}
             >
               Adicionar Novo Par
             </Button>
-            <div className="sm:hidden w-[21px]" />
+            <div className="hidden sm:block sm:w-0" />
             <Button
               variant="contained"
               color="error"
               sx={ACTION_SX}
-              className="w-full my-3"
+              className="w-full"
               disabled={pairs.length <= MIN_PAIRS}
               onClick={removeLastPair}
             >

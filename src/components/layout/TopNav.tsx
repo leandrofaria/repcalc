@@ -12,7 +12,7 @@ const TopNav = () => {
   return (
     <nav
       aria-label="Navegação principal"
-      className="container mx-auto min-h-[45px] mb-[12px] grid grid-flow-row grid-cols-5 gap-3"
+      className="page-container mb-4 grid w-full grid-cols-5 gap-2"
     >
       {NAV_ITEMS.map((item) => {
         const active = isActive(item, pathname);
@@ -21,25 +21,25 @@ const TopNav = () => {
             key={item.href}
             component={Link}
             href={item.href}
-            variant="outlined"
-            size="large"
+            variant={active ? "contained" : "outlined"}
+            color="primary"
             aria-current={active ? "page" : undefined}
-            className="flex flex-row justify-center items-center shadow-sm"
+            className="flex flex-row items-center justify-center"
             sx={{
               minWidth: 0,
-              paddingInline: "9px",
-              fontSize: "15px",
-              fontWeight: "bold",
-              textTransform: "capitalize",
-              backgroundColor: active ? "primary.main" : "#FFFFFF",
-              color: active ? "primary.contrastText" : "primary.main",
+              paddingInline: "8px",
+              fontSize: "14px",
+              backgroundColor: active ? "primary.main" : "background.paper",
+              borderColor: "divider",
+              color: active ? "primary.contrastText" : "text.primary",
               "&:hover": {
-                backgroundColor: active ? "primary.main" : "inherit",
+                backgroundColor: active ? "primary.dark" : "background.paper",
+                borderColor: "primary.main",
               },
             }}
           >
-            <Image src={item.icon} alt="" width={24} height={24} />
-            <span className="ml-3 hidden sm:inline-block whitespace-nowrap">
+            <Image src={item.icon} alt="" width={22} height={22} />
+            <span className="ml-2 hidden whitespace-nowrap sm:inline-block">
               {item.label}
             </span>
           </Button>

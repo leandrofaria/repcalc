@@ -5,12 +5,10 @@ import { ThemeProvider } from "@mui/material/styles";
 import theme from "./theme";
 
 /**
- * Pinned to light for now. Both colour schemes are defined in the theme, but
- * the toggle and the system default arrive with the visual pass, so this
- * migration does not change what anyone currently sees.
+ * Follows the operating system by default, and remembers an explicit choice.
  */
 const ThemeRegistry = ({ children }: { children: React.ReactNode }) => (
-  <ThemeProvider theme={theme} defaultMode="light">
+  <ThemeProvider theme={theme} defaultMode="system">
     <CssBaseline />
     {children}
   </ThemeProvider>

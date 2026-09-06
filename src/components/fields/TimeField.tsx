@@ -6,18 +6,20 @@ import type { Dayjs } from "dayjs";
 import { pickerReferenceDate } from "@/lib/time/dayjs";
 
 /**
- * Large, bold, centred figures. This used to be a global
- * `input[type="text"]` rule in globals.css, full of !important, that hit
- * every input on every page; scoping it here is what let that rule go.
+ * Large, centred figures. This used to be a global `input[type="text"]` rule
+ * in globals.css, full of !important, that hit every input on every page;
+ * scoping it here is what let that rule go.
  */
 const FIELD_SX = {
   width: "100%",
   "& .MuiPickersInputBase-sectionsContainer": {
     justifyContent: "center",
-    fontSize: "21px",
+    fontFamily: "var(--font-display), sans-serif",
+    fontSize: "22px",
     fontWeight: 700,
-    color: "primary.main",
-    paddingBlock: "9px",
+    fontVariantNumeric: "tabular-nums",
+    color: "var(--rc-figure)",
+    paddingBlock: "10px",
   },
 } as const;
 
@@ -52,11 +54,11 @@ const TimeField = ({
   const labelId = useId();
 
   return (
-    <div>
-      <p id={labelId} className="block font-semibold mb-1">
+    <div className="min-w-0">
+      <p id={labelId} className="mb-1 block text-sm font-medium text-ink-muted">
         {label}
       </p>
-      <div className="flex flex-row justify-center items-center">
+      <div className="flex flex-row items-center justify-center gap-2">
         {startAdornment}
         <TimePicker
           sx={FIELD_SX}

@@ -2,12 +2,6 @@
 
 import { Button } from "@mui/material";
 
-const ACTION_SX = {
-  marginBottom: "12px",
-  textTransform: "capitalize",
-  fontWeight: 600,
-} as const;
-
 const JornadaSettings = ({
   canSave,
   confirmation,
@@ -19,28 +13,25 @@ const JornadaSettings = ({
   onSave: () => void;
   onReset: () => void;
 }) => (
-  <div className="w-full flex flex-row sm:flex-col justify-start items-center">
+  <div className="mt-4 flex w-full flex-row items-center gap-2 sm:flex-col sm:gap-3">
     <Button
       variant="contained"
-      sx={ACTION_SX}
-      className="w-full my-3"
+      className="w-full"
       disabled={!canSave}
       onClick={onSave}
     >
-      Salvar Definições
+      Salvar definições
     </Button>
-    <div className="sm:hidden w-[21px]" />
     <Button
-      variant="contained"
-      color="error"
-      sx={ACTION_SX}
-      className="w-full my-3"
+      variant="outlined"
+      color="primary"
+      className="w-full"
       onClick={onReset}
     >
-      Resetar Definições
+      Resetar definições
     </Button>
     <p
-      className="pt-1 text-[color:var(--mui-palette-success-dark)] font-semibold"
+      className="min-h-[20px] text-sm font-semibold text-brand"
       role="status"
       aria-live="polite"
     >

@@ -47,7 +47,7 @@ const LiveStatusPanel = ({ input }: { input: LiveInput }) => {
     <>
       {status !== null && status.worked === null && (
         <div className="mb-6">
-          <p className="text-justify text-[color:var(--mui-palette-error-main)]">
+          <p className="text-justify text-danger-ink">
             De acordo com os valores informados, você ainda não trabalhou. O
             horário de início informado é posterior ao atual, ou se computado
             com intervalo, todo o horário corrido refere-se ao intervalo em si.

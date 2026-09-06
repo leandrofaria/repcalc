@@ -67,7 +67,7 @@ const Sobre = () => {
         do autor.
       </p>
 
-      <h2 className="w-full text-lg font-semibold pb-2 mb-6 mt-12 border-b-[1px] border-b-hairline">
+      <h2 className="w-full text-lg font-semibold pb-2 mb-6 mt-12 border-b border-hairline">
         Tecnologias
       </h2>
       <ul className="w-full flex flex-row flex-wrap justify-center items-center gap-3 list-none p-0 m-0">
@@ -90,7 +90,7 @@ const Sobre = () => {
         ))}
       </ul>
 
-      <h2 className="w-full text-lg font-semibold pb-2 mb-6 mt-12 border-b-[1px] border-b-hairline">
+      <h2 className="w-full text-lg font-semibold pb-2 mb-6 mt-12 border-b border-hairline">
         Hospedagem e Infraestrutura
       </h2>
       <div className="w-full flex flex-col sm:flex-row justify-center items-center">

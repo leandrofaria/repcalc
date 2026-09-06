@@ -26,7 +26,7 @@ export type KeyDef = {
   /** A function where the label depends on state, as with the CE/C swap. */
   label: string | ((state: CalcState) => string);
   action: CalcAction;
-  color: "primary" | "secondary" | "neutral" | "error" | "success";
+  color: "primary" | "secondary" | "neutral" | "unit" | "error" | "success";
   group: "numeric" | "ops";
   colSpan?: 2;
   textTransform?: "lowercase" | "uppercase";
@@ -69,7 +69,7 @@ export const KEYPAD: readonly KeyDef[] = [
     id: "h",
     label: "h",
     action: { type: "unit", unit: "h" },
-    color: "primary",
+    color: "unit",
     group: "numeric",
     textTransform: "lowercase",
     keys: ["h"],
@@ -79,7 +79,7 @@ export const KEYPAD: readonly KeyDef[] = [
     id: "min",
     label: "min",
     action: { type: "unit", unit: "min" },
-    color: "primary",
+    color: "unit",
     group: "numeric",
     textTransform: "lowercase",
     keys: ["m"],

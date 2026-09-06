@@ -23,29 +23,21 @@ const JornadaResults = ({
   canOpenLivePanel: boolean;
   onOpenLivePanel: () => void;
 }) => (
-  <>
-    <ResultReadout label="Término Previsto:" value={formatClockOut(clockOut)} />
+  <div className="flex w-full flex-col gap-4">
+    <ResultReadout label="Término previsto" value={formatClockOut(clockOut)} />
     <ResultReadout
-      label="Saída com Tolerância:"
+      label="Saída com tolerância"
       value={formatClockOut(earlyClockOut)}
-      className="mt-6"
     />
-    <div className="w-full flex flex-col justify-start items-start mt-6">
-      <Button
-        variant="outlined"
-        sx={{
-          marginBottom: "12px",
-          textTransform: "capitalize",
-          fontWeight: 600,
-        }}
-        className="w-full my-3"
-        disabled={!canOpenLivePanel}
-        onClick={onOpenLivePanel}
-      >
-        Painel em Tempo Real
-      </Button>
-    </div>
-  </>
+    <Button
+      variant="outlined"
+      className="w-full"
+      disabled={!canOpenLivePanel}
+      onClick={onOpenLivePanel}
+    >
+      Painel em tempo real
+    </Button>
+  </div>
 );
 
 export default JornadaResults;

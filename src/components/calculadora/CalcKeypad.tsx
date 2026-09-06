@@ -24,9 +24,9 @@ const CalcKeypad = ({
     ));
 
   return (
-    <div className="mt-6 flex flex-row justify-center items-start gap-3">
-      <div className="w-3/5 grid grid-cols-3 gap-3">{render(NUMERIC_KEYS)}</div>
-      <div className="w-2/5 grid grid-cols-2 gap-3">
+    <div className="mt-4 flex flex-row items-start justify-center gap-2">
+      <div className="grid w-3/5 grid-cols-3 gap-2">{render(NUMERIC_KEYS)}</div>
+      <div className="grid w-2/5 grid-cols-2 gap-2">
         {render(OPERATOR_KEYS)}
       </div>
     </div>

@@ -74,7 +74,7 @@ const Jornada = () => {
 
       <ContentContainer>
         <SectionTitle>Jornada de Trabalho</SectionTitle>
-        <p className="text-justify mb-6">
+        <p className="mb-6 max-w-[62ch] text-ink-muted">
           Para planejamento da sua jornada de trabalho preencha os campos
           abaixo.
         </p>
@@ -86,13 +86,13 @@ const Jornada = () => {
               onOpenBreakCalculator={() => setShowIntervaloDialog(true)}
             />
             {!complete && (
-              <p className="mt-12 font-semibold text-[color:var(--mui-palette-error-main)] text-center text-base">
+              <p className="mt-12 font-semibold text-danger-ink text-center text-base">
                 Aguardando o preenchimento correto de todos os campos.
               </p>
             )}
           </LeftAreaContainer>
           <RightAreaContainer>
-            <div className="sm:hidden my-6 w-full border-b-[1px] border-b-hairline" />
+            <div className="my-5 w-full border-b border-hairline sm:hidden" />
             <JornadaResults
               clockOut={clockOut}
               earlyClockOut={earlyClockOut}

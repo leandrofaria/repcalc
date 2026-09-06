@@ -21,13 +21,13 @@ const Calculadora = () => {
       <SectionTitle>Calculadora</SectionTitle>
       <FeatureContainer>
         <LeftAreaContainer>
-          <div className="calculadora w-full bg-calc-face border-[1px] border-calc-edge shadow-[0_0_3px_3px_rgba(0,0,0,0.06)] p-[15px]">
+          <div className="w-full rounded-[12px] border border-calc-edge bg-calc-face p-4">
             <CalcDisplay state={state} />
             <CalcKeypad state={state} dispatch={dispatch} />
           </div>
         </LeftAreaContainer>
         <RightAreaContainer>
-          <div className="sm:hidden my-6 w-full border-b-[1px] border-b-hairline" />
+          <div className="my-5 w-full border-b border-hairline sm:hidden" />
           <CalcHistory entries={state.history} />
         </RightAreaContainer>
       </FeatureContainer>
