@@ -3,6 +3,7 @@ import MenuCard from "@/components/ui/MenuCard";
 const Page = () => {
   return (
     <div className="container mx-auto sm:w-[720px] h-full flex flex-col justify-start sm:justify-center items-center">
+      <h1 className="sr-only">REP Calc</h1>
       <div className="grid grid-flow-row grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-9 w-full">
         <MenuCard
           icon="calculadora"

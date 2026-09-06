@@ -8,18 +8,14 @@ import {
   DialogContentText,
   DialogTitle,
   Divider,
-  TextField,
 } from "@mui/material";
-import { TimePicker } from "@mui/x-date-pickers";
 import { useMemo, useState } from "react";
+import TimeField from "./fields/TimeField";
+import ResultReadout from "./ui/ResultReadout";
 import type { Duration, TimeOfDay } from "@/lib/time/units";
 import { ZERO, add, formatHHMM } from "@/lib/time/duration";
 import { difference } from "@/lib/time/timeOfDay";
-import {
-  dayjsToTimeOfDay,
-  pickerReferenceDate,
-  timeOfDayToDayjs,
-} from "@/lib/time/dayjs";
+import { dayjsToTimeOfDay, timeOfDayToDayjs } from "@/lib/time/dayjs";
 
 type Entries = { start: TimeOfDay | null; end: TimeOfDay | null };
 
@@ -71,51 +67,32 @@ const IntervaloDialog = (props: {
           campos abaixo.
         </DialogContentText>
         <div className="mt-3 w-full grid grid-flow-row grid-cols-2 md:grid-cols-3 gap-3">
-          <div>
-            <p className="font-semibold">Início:</p>
-            <TimePicker
-              sx={{ width: "100%" }}
-              ampm={false}
-              referenceDate={pickerReferenceDate()}
-              value={timeOfDayToDayjs(entries.start)}
-              onChange={(value) =>
-                setEntries((previous) => ({
-                  ...previous,
-                  start: dayjsToTimeOfDay(value),
-                }))
-              }
-            />
-          </div>
-          <div>
-            <p className="font-semibold">Fim:</p>
-            <TimePicker
-              sx={{ width: "100%" }}
-              ampm={false}
-              referenceDate={pickerReferenceDate()}
-              value={timeOfDayToDayjs(entries.end)}
-              onChange={(value) =>
-                setEntries((previous) => ({
-                  ...previous,
-                  end: dayjsToTimeOfDay(value),
-                }))
-              }
-              slotProps={{ textField: { error: outOfOrder } }}
-            />
-          </div>
-          <div className="block md:hidden">
-            <p>&nbsp;</p>
-          </div>
-          <div>
-            <p className="font-semibold">Duração Calculada:</p>
-            <TextField
-              id="intervalo-duracao-calculada"
-              disabled
-              fullWidth
-              variant="outlined"
-              color="primary"
-              value={duration === null ? "--:--" : formatHHMM(duration)}
-            />
-          </div>
+          <TimeField
+            label="Início"
+            value={timeOfDayToDayjs(entries.start)}
+            onChange={(value) =>
+              setEntries((previous) => ({
+                ...previous,
+                start: dayjsToTimeOfDay(value),
+              }))
+            }
+          />
+          <TimeField
+            label="Fim"
+            value={timeOfDayToDayjs(entries.end)}
+            onChange={(value) =>
+              setEntries((previous) => ({
+                ...previous,
+                end: dayjsToTimeOfDay(value),
+              }))
+            }
+            error={outOfOrder}
+          />
+          <div className="block md:hidden" />
+          <ResultReadout
+            label="Duração Calculada:"
+            value={duration === null ? "--:--" : formatHHMM(duration)}
+          />
         </div>
         {outOfOrder && (
           <p className="mt-3 font-semibold text-red-600 text-center text-base">
@@ -160,20 +137,11 @@ const IntervaloDialog = (props: {
               Adicionar ao Total
             </Button>
           </div>
-          <div className="block md:hidden">
-            <p>&nbsp;</p>
-          </div>
-          <div>
-            <p className="font-semibold">Total:</p>
-            <TextField
-              id="intervalo-total"
-              disabled
-              fullWidth
-              variant="outlined"
-              color="primary"
-              value={total === null ? "--:--" : formatHHMM(total)}
-            />
-          </div>
+          <div className="block md:hidden" />
+          <ResultReadout
+            label="Total:"
+            value={total === null ? "--:--" : formatHHMM(total)}
+          />
         </div>
       </DialogContent>
       <Divider className="!mt-6 !mb-6" />

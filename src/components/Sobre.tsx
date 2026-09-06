@@ -1,5 +1,32 @@
+import Image from "next/image";
 import ContentContainer from "./layout/ContentContainer";
 import SectionTitle from "./ui/SectionTitle";
+
+const LINK_CLASS = "font-semibold text-[#1976D2]";
+
+/**
+ * The tech badges are served from public/img/badges rather than fetched from
+ * shields.io on every page view: one fewer third-party origin, no layout
+ * shift, and they keep working offline.
+ */
+const TECHNOLOGIES = [
+  { file: "next", alt: "Next.js", href: "https://nextjs.org/", width: 78 },
+  { file: "react", alt: "React", href: "https://react.dev/", width: 87 },
+  {
+    file: "typescript",
+    alt: "TypeScript",
+    href: "https://www.typescriptlang.org/",
+    width: 127,
+  },
+  {
+    file: "tailwind",
+    alt: "Tailwind CSS",
+    href: "https://tailwindcss.com/",
+    width: 139,
+  },
+  { file: "mui", alt: "MUI", href: "https://mui.com/", width: 71 },
+  { file: "node", alt: "Node.js", href: "https://nodejs.org/", width: 101 },
+] as const;
 
 const Sobre = () => {
   return (
@@ -8,9 +35,10 @@ const Sobre = () => {
       <p className="text-justify">
         Desenvolvido por{" "}
         <a
-          href="http://www.leandrofaria.com/"
+          href="https://www.leandrofaria.com/"
           target="_blank"
-          className="font-semibold text-[#1976D2]"
+          rel="noopener noreferrer"
+          className={LINK_CLASS}
         >
           Leandro Faria
         </a>
@@ -22,75 +50,82 @@ const Sobre = () => {
         <a
           href="https://www.linkedin.com/in/farialaf/"
           target="_blank"
-          className="font-semibold text-[#1976D2]"
+          rel="noopener noreferrer"
+          className={LINK_CLASS}
         >
           LinkedIn
         </a>{" "}
         e/ou o{" "}
         <a
-          href="https://github.com/leandrofaria"
+          href="https://github.com/leandrofaria/repcalc"
           target="_blank"
-          className="font-semibold text-[#1976D2]"
+          rel="noopener noreferrer"
+          className={LINK_CLASS}
         >
           GitHub
         </a>{" "}
         do autor.
       </p>
-      <br className="my-6" />
-      <SectionTitle>Tecnologias</SectionTitle>
+
+      <h2 className="w-full text-lg font-semibold pb-2 mb-6 mt-12 border-b-[1px] border-b-[#E9E9E9]">
+        Tecnologias
+      </h2>
+      <ul className="w-full flex flex-row flex-wrap justify-center items-center gap-3 list-none p-0 m-0">
+        {TECHNOLOGIES.map((tech) => (
+          <li key={tech.file}>
+            <a
+              href={tech.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={tech.alt}
+            >
+              <Image
+                src={`/img/badges/${tech.file}.svg`}
+                alt={tech.alt}
+                width={tech.width}
+                height={28}
+              />
+            </a>
+          </li>
+        ))}
+      </ul>
+
+      <h2 className="w-full text-lg font-semibold pb-2 mb-6 mt-12 border-b-[1px] border-b-[#E9E9E9]">
+        Hospedagem e Infraestrutura
+      </h2>
       <div className="w-full flex flex-col sm:flex-row justify-center items-center">
-        <a href="https://nextjs.org/" target="_blank">
-          <img
-            src="https://img.shields.io/badge/Next-%23333333?style=for-the-badge&logo=next.js&logoColor=#FFFFFF"
-            alt="NextJS"
-            className="h-[39px] m-3"
-          />
-        </a>
-        <a href="https://tailwindcss.com/" target="_blank">
-          <img
-            src="https://img.shields.io/badge/tailwindcss-%23333333.svg?style=flat-square&logo=tailwindcss&logoColor=#61DAFB"
-            alt="TailwindCSS"
-            className="h-[39px] m-3"
-          />
-        </a>
-        <a href="https://mui.com/" target="_blank">
-          <img
-            src="https://img.shields.io/badge/mui-%23333333.svg?style=flat-square&logo=mui&logoColor=#003FFF"
-            alt="MaterialUI"
-            className="h-[39px] m-3"
-          />
-        </a>
-        <a href="https://nodejs.org/" target="_blank">
-          <img
-            src="https://img.shields.io/badge/node.js-%23333333?style=for-the-badge&logo=node.js&logoColor=#19d241"
-            alt="NodeJS"
-            className="h-[39px] m-3"
-          />
-        </a>
-      </div>
-      <br className="my-6" />
-      <SectionTitle>Hospedagem e Infraestrutura</SectionTitle>
-      <div className="w-full flex flex-col sm:flex-row justify-center items-center">
+        {/* Affiliate banners, which have to be served from the advertiser's
+            own host, so next/image is not appropriate here. */}
+        {/* eslint-disable @next/next/no-img-element */}
         <a
           href="https://www.interserver.net/r/480102"
           target="_blank"
+          rel="noopener noreferrer sponsored"
           className="hidden sm:inline-block"
         >
           <img
             src="https://www.interserver.net/logos/12946839.gif"
             alt="InterServer"
+            width={728}
+            height={90}
+            className="h-auto max-w-full"
           />
         </a>
         <a
           href="https://www.interserver.net/r/480102"
           target="_blank"
+          rel="noopener noreferrer sponsored"
           className="inline-block sm:hidden"
         >
           <img
             src="https://www.interserver.net/logos/12946831.gif"
             alt="InterServer"
+            width={250}
+            height={250}
+            className="h-auto max-w-full"
           />
         </a>
+        {/* eslint-enable @next/next/no-img-element */}
       </div>
     </ContentContainer>
   );

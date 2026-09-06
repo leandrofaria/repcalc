@@ -4,7 +4,7 @@ import "./globals.css";
 import ThemeRegistry from "@/components/ThemeRegistry/ThemeRegistry";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
-import MultiProvider from "@/components/providers/MultiProvider";
+import DateLocalizationProvider from "@/components/providers/DateLocalizationProvider";
 import Analytics from "@/components/Analytics/Analytics";
 
 const blinker = Blinker({
@@ -44,7 +44,7 @@ export default function RootLayout({
   return (
     <html lang="pt-br" className="h-[100vh]">
       <ThemeRegistry>
-        <MultiProvider>
+        <DateLocalizationProvider>
           <body
             className={`${blinker.className} h-[100vh] flex flex-col justify-between items-stretch`}
           >
@@ -55,7 +55,7 @@ export default function RootLayout({
             <Footer />
             <Analytics />
           </body>
-        </MultiProvider>
+        </DateLocalizationProvider>
       </ThemeRegistry>
     </html>
   );

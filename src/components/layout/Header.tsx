@@ -1,28 +1,25 @@
 import AppBar from "@mui/material/AppBar";
-import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import Link from "next/link";
-import pack from "../../../package.json";
+import { APP_VERSION } from "@/lib/version";
 
 const Header = () => {
   return (
     <header className="z-50">
-      <Box sx={{ flexGrow: 1 }}>
-        <AppBar position="static">
-          <Toolbar>
-            <div className="grow text-2xl font-semibold">
-              <Link href="/">
-                <h1>REP Calc</h1>
-              </Link>
-            </div>
-            <div>
-              <Link href="/sobre" className="font-semibold text-base">
-                <h2>v{pack.version}</h2>
-              </Link>
-            </div>
-          </Toolbar>
-        </AppBar>
-      </Box>
+      <AppBar position="static">
+        <Toolbar>
+          <div className="grow text-2xl font-semibold">
+            <Link href="/">REP Calc</Link>
+          </div>
+          <Link
+            href="/sobre"
+            className="font-semibold text-base"
+            aria-label={`Versão ${APP_VERSION}, sobre o sistema`}
+          >
+            v{APP_VERSION}
+          </Link>
+        </Toolbar>
+      </AppBar>
     </header>
   );
 };

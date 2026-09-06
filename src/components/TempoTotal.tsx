@@ -1,13 +1,15 @@
 "use client";
 
-import { Button, TextField } from "@mui/material";
-import { TimePicker } from "@mui/x-date-pickers/TimePicker";
+import { Button } from "@mui/material";
 import { useMemo, useRef, useState } from "react";
+import type { Dayjs } from "dayjs";
 import SectionTitle from "./ui/SectionTitle";
 import ContentContainer from "./layout/ContentContainer";
 import LeftAreaContainer from "./layout/LeftAreaContainer";
 import RightAreaContainer from "./layout/RightAreaContainer";
 import FeatureContainer from "./layout/FeatureContainer";
+import TimeField from "./fields/TimeField";
+import ResultReadout from "./ui/ResultReadout";
 import {
   MAX_PAIRS,
   MIN_PAIRS,
@@ -16,11 +18,13 @@ import {
   type PunchPair,
 } from "@/lib/tempoTotal/pairs";
 import { formatHHMM } from "@/lib/time/duration";
-import {
-  dayjsToTimeOfDay,
-  pickerReferenceDate,
-  timeOfDayToDayjs,
-} from "@/lib/time/dayjs";
+import { dayjsToTimeOfDay, timeOfDayToDayjs } from "@/lib/time/dayjs";
+
+const ACTION_SX = {
+  marginBottom: "12px",
+  textTransform: "capitalize",
+  fontWeight: 600,
+} as const;
 
 const TempoTotal = () => {
   const [pairs, setPairs] = useState<PunchPair[]>([emptyPair("pair-0")]);
@@ -47,7 +51,7 @@ const TempoTotal = () => {
   const updateEntry = (
     id: string,
     side: "in" | "out",
-    value: ReturnType<typeof timeOfDayToDayjs>
+    value: Dayjs | null
   ): void => {
     setPairs((previous) =>
       previous.map((pair) =>
@@ -72,31 +76,22 @@ const TempoTotal = () => {
                 key={pair.id}
                 className="w-full grid grid-flow-row grid-cols-2 gap-6 mb-6"
               >
-                <div>
-                  <p className="font-semibold mb-1">
-                    Marcação {2 * index + 1}:
-                  </p>
-                  <TimePicker
-                    sx={{ width: "100%" }}
-                    ampm={false}
-                    referenceDate={pickerReferenceDate()}
-                    value={timeOfDayToDayjs(pair.in)}
-                    onChange={(value) => updateEntry(pair.id, "in", value)}
-                  />
-                </div>
-                <div>
-                  <p className="font-semibold mb-1">
-                    Marcação {2 * index + 2}:
-                  </p>
-                  <TimePicker
-                    sx={{ width: "100%" }}
-                    ampm={false}
-                    referenceDate={pickerReferenceDate()}
-                    value={timeOfDayToDayjs(pair.out)}
-                    onChange={(value) => updateEntry(pair.id, "out", value)}
-                    slotProps={{ textField: { error: invalid } }}
-                  />
-                </div>
+                <TimeField
+                  label={`Marcação ${2 * index + 1}`}
+                  value={timeOfDayToDayjs(pair.in)}
+                  onChange={(value) => updateEntry(pair.id, "in", value)}
+                />
+                <TimeField
+                  label={`Marcação ${2 * index + 2}`}
+                  value={timeOfDayToDayjs(pair.out)}
+                  onChange={(value) => updateEntry(pair.id, "out", value)}
+                  error={invalid}
+                  helperText={
+                    invalid
+                      ? "Deve ser posterior à marcação anterior."
+                      : undefined
+                  }
+                />
               </div>
             );
           })}
@@ -108,39 +103,26 @@ const TempoTotal = () => {
         </LeftAreaContainer>
         <RightAreaContainer>
           <div className="sm:hidden my-6 w-full border-b-[1px] border-b-[#E9E9E9]" />
-          <h2 className="font-semibold mb-1">O total trabalhado foi:</h2>
-          <TextField
-            id="tempo-total-resultado"
-            disabled
-            fullWidth
-            variant="outlined"
-            color="primary"
+          <ResultReadout
+            label="O total trabalhado foi:"
             value={total !== null ? formatHHMM(total) : "--:--"}
           />
           <div className="w-full flex flex-row sm:flex-col justify-start items-center mt-6">
             <Button
               variant="contained"
-              sx={{
-                marginBottom: "12px",
-                textTransform: "capitalize",
-                fontWeight: 600,
-              }}
+              sx={ACTION_SX}
               className="w-full my-3"
               disabled={pairs.length >= MAX_PAIRS}
               onClick={addNewPair}
             >
               Adicionar Novo Par
             </Button>
-            <div className="sm:hidden w-[21px]"></div>
+            <div className="sm:hidden w-[21px]" />
             <Button
               variant="contained"
-              sx={{
-                marginBottom: "12px",
-                textTransform: "capitalize",
-                fontWeight: 600,
-              }}
-              className="w-full my-3"
               color="error"
+              sx={ACTION_SX}
+              className="w-full my-3"
               disabled={pairs.length <= MIN_PAIRS}
               onClick={removeLastPair}
             >

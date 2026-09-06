@@ -28,12 +28,12 @@ const MenuCard = (props: {
               />
             </div>
             <div className="grow ml-[24px]">
-              <h3 className="text-lg font-semibold mb-2 border-b-[1px] border-b-[#E9E9E9]">
+              <h2 className="text-lg font-semibold mb-2 border-b-[1px] border-b-[#E9E9E9]">
                 {props.title}
-              </h3>
-              <h4 className="text-base text-[#696969] text-justify">
+              </h2>
+              <p className="text-base text-[#696969] text-justify">
                 {props.description}
-              </h4>
+              </p>
             </div>
           </div>
         </CardContent>
