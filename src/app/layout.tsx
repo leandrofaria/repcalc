@@ -93,7 +93,7 @@ export default function RootLayout({
           <ThemeRegistry>
             <DateLocalizationProvider>
               <Header />
-              <main className="grow px-4 py-6 sm:px-6 flex flex-col justify-center items-stretch">
+              <main className="flex grow flex-col items-stretch justify-start px-4 pt-4 pb-[76px] sm:justify-center sm:px-6 sm:py-6 sm:pb-6">
                 {children}
               </main>
               <Footer />

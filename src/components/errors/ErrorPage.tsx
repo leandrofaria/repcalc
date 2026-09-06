@@ -1,7 +1,5 @@
-import ContentContainer from "@/components/layout/ContentContainer";
-import SectionTitle from "@/components/ui/SectionTitle";
-import Image from "next/image";
 import Link from "next/link";
+import ScheduleOutlinedIcon from "@mui/icons-material/ScheduleOutlined";
 
 /** Shared body for the error and not-found pages, which were near-identical. */
 const ErrorPage = ({
@@ -13,17 +11,18 @@ const ErrorPage = ({
   message: string;
   action?: React.ReactNode;
 }) => (
-  <ContentContainer>
-    <SectionTitle>{title}</SectionTitle>
-    <p>{message}</p>
+  <div className="page-container flex w-full flex-col items-start gap-4 rounded-[12px] border border-hairline bg-surface p-6 sm:max-w-[760px]">
+    <h1 className="font-display text-xl font-bold tracking-tight">{title}</h1>
+    <p className="text-ink-muted">{message}</p>
     {action}
-    <div className="mx-auto mt-12">
-      <Link href="/" className="flex flex-col justify-center items-center">
-        <Image src="/img/home.webp" alt="" width={60} height={60} unoptimized />
-        <span className="font-semibold text-brand">Página Inicial</span>
-      </Link>
-    </div>
-  </ContentContainer>
+    <Link
+      href="/jornada"
+      className="mx-auto mt-6 flex flex-col items-center gap-1 font-semibold text-brand"
+    >
+      <ScheduleOutlinedIcon fontSize="large" aria-hidden />
+      Ir para a jornada
+    </Link>
+  </div>
 );
 
 export default ErrorPage;

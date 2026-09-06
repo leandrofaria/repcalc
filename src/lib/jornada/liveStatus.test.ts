@@ -71,6 +71,25 @@ describe("computeLiveStatus", () => {
     ).toBe("05:35");
   });
 
+  describe("phase", () => {
+    const phaseAt = (hour: number, minute: number) =>
+      computeLiveStatus(INPUT, timeFromHM(hour, minute)).phase;
+
+    it.each([
+      ["before the start time", 7, 59, "before"],
+      ["while the break still covers it", 8, 10, "before"],
+      ["mid shift", 12, 0, "working"],
+      ["one minute short of the tolerance window", 13, 49, "working"],
+      // 05:35 worked is the journey minus the tolerance: leaving is allowed.
+      ["at the tolerance window", 13, 50, "mayLeave"],
+      ["at the full journey", 14, 0, "mayLeave"],
+      ["over, but inside the tolerance", 14, 5, "mayLeave"],
+      ["past the journey plus the tolerance", 14, 11, "overtime"],
+    ])("%s", (_label, hour, minute, expected) => {
+      expect(phaseAt(hour as number, minute as number)).toBe(expected);
+    });
+  });
+
   it("does not depend on the calendar date", () => {
     // The previous implementation reloaded the page when the day rolled over.
     const late = computeLiveStatus(

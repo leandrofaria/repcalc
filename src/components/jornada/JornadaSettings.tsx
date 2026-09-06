@@ -13,25 +13,17 @@ const JornadaSettings = ({
   onSave: () => void;
   onReset: () => void;
 }) => (
-  <div className="mt-4 flex w-full flex-row items-center gap-2 sm:flex-col sm:gap-3">
-    <Button
-      variant="contained"
-      className="w-full"
-      disabled={!canSave}
-      onClick={onSave}
-    >
-      Salvar definições
-    </Button>
-    <Button
-      variant="outlined"
-      color="primary"
-      className="w-full"
-      onClick={onReset}
-    >
-      Resetar definições
-    </Button>
+  <div className="flex w-full flex-col gap-2">
+    <div className="grid grid-cols-2 gap-2">
+      <Button variant="outlined" disabled={!canSave} onClick={onSave}>
+        Salvar definições
+      </Button>
+      <Button variant="outlined" color="primary" onClick={onReset}>
+        Resetar
+      </Button>
+    </div>
     <p
-      className="min-h-[20px] text-sm font-semibold text-brand"
+      className="min-h-[20px] text-center text-sm font-semibold text-brand"
       role="status"
       aria-live="polite"
     >

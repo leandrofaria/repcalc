@@ -26,10 +26,10 @@ describe("Jornada", () => {
   it("starts from the built-in defaults", async () => {
     renderWithProviders(<Jornada />);
     await waitFor(() => {
-      expect(fieldValue("Duração da Jornada")).toBe("05:45");
+      expect(fieldValue("Jornada")).toBe("05:45");
     });
-    expect(fieldValue("Duração do Intervalo")).toBe("00:15");
-    expect(fieldValue("Tolerância Permitida")).toBe("00:10");
+    expect(fieldValue("Intervalo")).toBe("00:15");
+    expect(fieldValue("Tolerância")).toBe("00:10");
   });
 
   it("picks up settings saved in a previous session", async () => {
@@ -41,10 +41,10 @@ describe("Jornada", () => {
     renderWithProviders(<Jornada />);
 
     await waitFor(() => {
-      expect(fieldValue("Duração da Jornada")).toBe("06:00");
+      expect(fieldValue("Jornada")).toBe("06:00");
     });
-    expect(fieldValue("Duração do Intervalo")).toBe("00:30");
-    expect(fieldValue("Tolerância Permitida")).toBe("00:10");
+    expect(fieldValue("Intervalo")).toBe("00:30");
+    expect(fieldValue("Tolerância")).toBe("00:10");
   });
 
   it("survives a corrupt stored value", async () => {
@@ -54,7 +54,7 @@ describe("Jornada", () => {
     renderWithProviders(<Jornada />);
 
     await waitFor(() => {
-      expect(fieldValue("Duração da Jornada")).toBe("05:45");
+      expect(fieldValue("Jornada")).toBe("05:45");
     });
   });
 });

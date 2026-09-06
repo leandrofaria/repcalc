@@ -1,6 +1,6 @@
 const Footer = () => {
   return (
-    <footer className="z-50 flex min-h-[40px] flex-row items-center justify-center bg-brand px-4 text-sm text-on-brand">
+    <footer className="z-40 hidden min-h-[40px] flex-row items-center justify-center bg-brand px-4 text-sm text-on-brand sm:flex">
       <a
         href="https://www.leandrofaria.com"
         target="_blank"

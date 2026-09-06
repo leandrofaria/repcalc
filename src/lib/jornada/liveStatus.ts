@@ -10,7 +10,20 @@ export type LiveInput = {
   includeBreak: boolean;
 };
 
+/**
+ * Where the shift is right now.
+ *
+ * Named in the domain rather than derived in the view, because the boundaries
+ * are the tolerance rules and those are worth a test.
+ */
+export type ShiftPhase =
+  | "before" // the informed start time has not arrived
+  | "working" // under way, tolerance not yet reached
+  | "mayLeave" // inside the tolerance window: leaving now is allowed
+  | "overtime"; // past the journey plus the tolerance
+
 export type LiveStatus = {
+  phase: ShiftPhase;
   /** Null when the informed start time has not arrived yet. */
   worked: Duration | null;
   /** Only counted once the excess passes the tolerance. */
@@ -43,6 +56,7 @@ export function computeLiveStatus(
 
   if (worked < 0) {
     return {
+      phase: "before",
       worked: null,
       overtime: null,
       remainingTotal: null,
@@ -53,9 +67,11 @@ export function computeLiveStatus(
 
   if (worked > workday) {
     const excess = D.subtract(worked, workday);
+    const withinTolerance = tolerance > excess;
     return {
+      phase: withinTolerance ? "mayLeave" : "overtime",
       worked,
-      overtime: tolerance > excess ? null : excess,
+      overtime: withinTolerance ? null : excess,
       remainingTotal: null,
       remainingWithTolerance: null,
       targetWithTolerance,
@@ -63,6 +79,9 @@ export function computeLiveStatus(
   }
 
   return {
+    // Reaching the tolerance window is what turns "still working" into
+    // "you may leave", which is the moment the user actually cares about.
+    phase: worked >= targetWithTolerance ? "mayLeave" : "working",
     worked,
     overtime: null,
     remainingTotal: D.subtract(workday, worked),

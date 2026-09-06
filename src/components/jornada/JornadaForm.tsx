@@ -1,7 +1,5 @@
 "use client";
 
-import { Button } from "@mui/material";
-import CalculateIcon from "@mui/icons-material/Calculate";
 import TimeField from "../fields/TimeField";
 import type { JornadaInput } from "@/lib/jornada/schedule";
 import {
@@ -14,42 +12,28 @@ import {
 const JornadaForm = ({
   input,
   onChange,
-  onOpenBreakCalculator,
 }: {
   input: JornadaInput;
   onChange: (patch: Partial<JornadaInput>) => void;
-  onOpenBreakCalculator: () => void;
 }) => (
-  <div className="w-full grid grid-flow-row grid-cols-2 gap-6 mb-6">
+  <div className="grid w-full grid-cols-2 gap-3">
     <TimeField
-      label="Horário de Início"
+      label="Início"
       value={timeOfDayToDayjs(input.start)}
       onChange={(value) => onChange({ start: dayjsToTimeOfDay(value) })}
     />
     <TimeField
-      label="Duração da Jornada"
+      label="Jornada"
       value={durationToDayjs(input.workday)}
       onChange={(value) => onChange({ workday: dayjsToDuration(value) })}
     />
     <TimeField
-      label="Duração do Intervalo"
+      label="Intervalo"
       value={durationToDayjs(input.breakTime)}
       onChange={(value) => onChange({ breakTime: dayjsToDuration(value) })}
-      startAdornment={
-        <Button
-          variant="contained"
-          disableElevation
-          size="medium"
-          aria-label="Calcular a duração do intervalo"
-          sx={{ padding: "6.6px", borderRadius: "4px 0 0 4px" }}
-          onClick={onOpenBreakCalculator}
-        >
-          <CalculateIcon fontSize="large" />
-        </Button>
-      }
     />
     <TimeField
-      label="Tolerância Permitida"
+      label="Tolerância"
       value={durationToDayjs(input.tolerance)}
       onChange={(value) => onChange({ tolerance: dayjsToDuration(value) })}
     />

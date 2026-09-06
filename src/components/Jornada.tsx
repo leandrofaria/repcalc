@@ -1,17 +1,14 @@
 "use client";
 
 import { useCallback, useMemo, useState } from "react";
-import IntervaloDialog from "@/components/IntervaloDialog";
-import SectionTitle from "./ui/SectionTitle";
 import ContentContainer from "./layout/ContentContainer";
-import LeftAreaContainer from "./layout/LeftAreaContainer";
-import RightAreaContainer from "./layout/RightAreaContainer";
-import FeatureContainer from "./layout/FeatureContainer";
-import TempoRealDialog from "./TempoRealDialog";
 import JornadaForm from "./jornada/JornadaForm";
-import JornadaResults from "./jornada/JornadaResults";
+import JornadaHero from "./jornada/JornadaHero";
 import JornadaSettings from "./jornada/JornadaSettings";
+import IntervaloSection from "./jornada/IntervaloSection";
 import { computeJornada, type JornadaInput } from "@/lib/jornada/schedule";
+import type { LiveInput } from "@/lib/jornada/liveStatus";
+import { formatHHMM } from "@/lib/time/duration";
 import {
   resetDefaults,
   saveDefaults,
@@ -33,14 +30,27 @@ const Jornada = () => {
     [stored, edits]
   );
 
-  const [showIntervaloDialog, setShowIntervaloDialog] = useState(false);
-  const [showTempoRealDialog, setShowTempoRealDialog] = useState(false);
   const [confirmation, setConfirmation] = useState<string | null>(null);
 
   const { complete, clockOut, earlyClockOut } = useMemo(
     () => computeJornada(input),
     [input]
   );
+
+  // The live panel used to be a modal behind a button. It is now part of the
+  // answer, so it needs the same inputs the schedule does.
+  const liveInput: LiveInput | null = useMemo(() => {
+    const { start, workday, breakTime, tolerance } = input;
+    if (
+      start === null ||
+      workday === null ||
+      breakTime === null ||
+      tolerance === null
+    ) {
+      return null;
+    }
+    return { start, workday, breakTime, tolerance, includeBreak: true };
+  }, [input]);
 
   const settingsReady =
     input.workday !== null &&
@@ -59,68 +69,42 @@ const Jornada = () => {
   };
 
   return (
-    <>
-      <IntervaloDialog
-        showIntervaloDialog={showIntervaloDialog}
-        setShowIntervaloDialog={setShowIntervaloDialog}
-        setBreakDuration={(breakTime) => patch({ breakTime })}
+    <ContentContainer>
+      <h1 className="sr-only">Jornada de trabalho</h1>
+
+      <JornadaHero
+        complete={complete}
+        clockOut={clockOut}
+        earlyClockOut={earlyClockOut}
+        liveInput={liveInput}
+        toleranceLabel={
+          input.tolerance === null ? "--:--" : formatHHMM(input.tolerance)
+        }
       />
 
-      <TempoRealDialog
-        showTempoRealDialog={showTempoRealDialog}
-        setShowTempoRealDialog={setShowTempoRealDialog}
-        input={input}
-      />
+      <JornadaForm input={input} onChange={patch} />
 
-      <ContentContainer>
-        <SectionTitle>Jornada de Trabalho</SectionTitle>
-        <p className="mb-6 max-w-[62ch] text-ink-muted">
-          Para planejamento da sua jornada de trabalho preencha os campos
-          abaixo.
-        </p>
-        <FeatureContainer>
-          <LeftAreaContainer>
-            <JornadaForm
-              input={input}
-              onChange={patch}
-              onOpenBreakCalculator={() => setShowIntervaloDialog(true)}
-            />
-            {!complete && (
-              <p className="mt-12 font-semibold text-danger-ink text-center text-base">
-                Aguardando o preenchimento correto de todos os campos.
-              </p>
-            )}
-          </LeftAreaContainer>
-          <RightAreaContainer>
-            <div className="my-5 w-full border-b border-hairline sm:hidden" />
-            <JornadaResults
-              clockOut={clockOut}
-              earlyClockOut={earlyClockOut}
-              canOpenLivePanel={complete}
-              onOpenLivePanel={() => setShowTempoRealDialog(true)}
-            />
-            <JornadaSettings
-              canSave={settingsReady}
-              confirmation={confirmation}
-              onSave={() => {
-                saveDefaults({
-                  workday: input.workday!,
-                  breakTime: input.breakTime!,
-                  tolerance: input.tolerance!,
-                });
-                setEdits({});
-                announce("Definições salvas com sucesso!");
-              }}
-              onReset={() => {
-                resetDefaults();
-                setEdits({});
-                announce("Definições resetadas com sucesso!");
-              }}
-            />
-          </RightAreaContainer>
-        </FeatureContainer>
-      </ContentContainer>
-    </>
+      <IntervaloSection onApply={(breakTime) => patch({ breakTime })} />
+
+      <JornadaSettings
+        canSave={settingsReady}
+        confirmation={confirmation}
+        onSave={() => {
+          saveDefaults({
+            workday: input.workday!,
+            breakTime: input.breakTime!,
+            tolerance: input.tolerance!,
+          });
+          setEdits({});
+          announce("Definições salvas.");
+        }}
+        onReset={() => {
+          resetDefaults();
+          setEdits({});
+          announce("Definições resetadas.");
+        }}
+      />
+    </ContentContainer>
   );
 };
 

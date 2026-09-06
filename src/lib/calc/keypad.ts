@@ -29,8 +29,6 @@ export type KeyDef = {
   action: CalcAction;
   color: "primary" | "secondary" | "neutral" | "unit" | "error" | "success";
   group: "numeric" | "ops";
-  /** Bound to the physical keyboard but not drawn on the pad. */
-  keyboardOnly?: true;
   colSpan?: 2;
   textTransform?: "lowercase" | "uppercase";
   /** KeyboardEvent.key values that trigger this key. */
@@ -89,15 +87,11 @@ export const KEYPAD: readonly KeyDef[] = [
     ariaLabel: "Minutos",
   },
   {
-    // Keyboard only: the pad has no room for it, and a physical Backspace is
-    // what people reach for. Keeping it in KEYPAD means the keyboard handler
-    // still asks isKeyEnabled about it, like every other key.
     id: "backspace",
     label: "⌫",
     action: { type: "backspace" },
     color: "neutral",
     group: "ops",
-    keyboardOnly: true,
     keys: ["Backspace"],
     ariaLabel: "Apagar",
   },
@@ -107,7 +101,6 @@ export const KEYPAD: readonly KeyDef[] = [
     action: { type: "clear" },
     color: "error",
     group: "ops",
-    colSpan: 2,
     textTransform: "uppercase",
     keys: ["c", "C", "Escape", "Delete"],
     ariaLabel: "Limpar",
@@ -161,10 +154,8 @@ export const KEYPAD: readonly KeyDef[] = [
   },
 ];
 
-const DRAWN = KEYPAD.filter((key) => key.keyboardOnly !== true);
-
-export const NUMERIC_KEYS = DRAWN.filter((key) => key.group === "numeric");
-export const OPERATOR_KEYS = DRAWN.filter((key) => key.group === "ops");
+export const NUMERIC_KEYS = KEYPAD.filter((key) => key.group === "numeric");
+export const OPERATOR_KEYS = KEYPAD.filter((key) => key.group === "ops");
 
 export function findKeyByKeyboardEvent(key: string): KeyDef | undefined {
   return KEYPAD.find((def) => def.keys.includes(key));

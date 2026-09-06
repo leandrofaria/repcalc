@@ -35,19 +35,17 @@ function ControlledField({
 describe("TimeField", () => {
   it("gives the focusable control an accessible name", () => {
     renderWithProviders(
-      <TimeField label="Duração da Jornada" value={null} onChange={() => {}} />
+      <TimeField label="Jornada" value={null} onChange={() => {}} />
     );
     // Since x-date-pickers v9 the element holding the id is a hidden input,
     // so the name has to land on the role="group" the user actually focuses.
-    expect(
-      screen.getByRole("group", { name: "Duração da Jornada" })
-    ).toBeInTheDocument();
+    expect(screen.getByRole("group", { name: "Jornada" })).toBeInTheDocument();
   });
 
   it("renders a duration the picker can hold", () => {
     renderWithProviders(
       <TimeField
-        label="Duração da Jornada"
+        label="Jornada"
         value={durationToDayjs(fromHM(5, 45))}
         onChange={() => {}}
       />

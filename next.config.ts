@@ -29,7 +29,6 @@ const withSerwist = withSerwistInit({
   // Zero API calls and no server data, so every route is a static shell:
   // precaching all of them is what makes the app work offline in full.
   additionalPrecacheEntries: [
-    { url: "/", revision: pkg.version },
     { url: "/calculadora", revision: pkg.version },
     { url: "/jornada", revision: pkg.version },
     { url: "/tempo-total", revision: pkg.version },

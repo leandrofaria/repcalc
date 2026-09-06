@@ -35,17 +35,16 @@ porque duração dividida por duração é um número sem unidade. As combinaç�
 que não fazem sentido, como duração vezes duração, são recusadas em vez de
 produzirem um resultado sem significado.
 
-**Jornada de trabalho** — a partir do horário de início, da duração da jornada,
-do intervalo e da tolerância, calcula o término previsto e a saída com
+**Jornada de trabalho** — a tela que o app abre. A partir do horário de início,
+da duração da jornada, do intervalo e da tolerância, mostra no topo o horário
+de saída e, enquanto a jornada corre, quanto já foi trabalhado e quanto falta,
+ao vivo. O excedente só é contado depois de ultrapassar a jornada mais a
 tolerância. Um turno que atravessa a meia-noite mostra `02:00 (+1)`, e não um
 `02:00` que parece estar no passado. As definições ficam salvas no navegador.
 
-**Painel em tempo real** — acompanha, enquanto a jornada corre, quanto já foi
-trabalhado, quanto falta e quanto excedeu. O excedente só é contado depois de
-ultrapassar a jornada mais a tolerância.
-
 **Tempo total** — soma o tempo decorrido entre até seis pares de marcações,
-recusando pares fora de ordem cronológica.
+recusando pares fora de ordem cronológica. Cada linha se exclui sozinha, e o
+total é somado conforme os pares vão sendo preenchidos.
 
 ### Atalhos de teclado
 
@@ -62,6 +61,14 @@ Na calculadora, o teclado físico faz tudo o que o teclado da tela faz:
 | `c`, `Esc` ou `Delete` | Limpa a entrada; de novo, limpa a memória |
 
 Combinações com Ctrl, Alt ou Cmd são deixadas para o navegador.
+
+### Layout
+
+A resposta vem antes dos campos. As três telas de cálculo respondem enquanto
+você digita, então o resultado é o assunto da tela e não o fim de um
+formulário — é o que faz ele caber na primeira dobra do celular. No telefone a
+navegação fica na barra inferior, ao alcance do polegar; do breakpoint `sm`
+para cima ela volta para o topo.
 
 ### Instalação como aplicativo
 
@@ -82,7 +89,8 @@ npm ci
 npm run dev
 ```
 
-Disponível em http://localhost:3000. A porta padrão é a 3000.
+Disponível em http://localhost:3000, que abre direto na jornada. A porta
+padrão é a 3000.
 
 ### Scripts
 
@@ -127,7 +135,8 @@ src/
 ├── app/                    Rotas (App Router), manifest e service worker
 ├── components/             Componentes, agrupados por tela
 │   ├── calculadora/        Display, teclado e teclas
-│   ├── jornada/            Formulário, resultados e definições
+│   ├── jornada/            Resumo ao vivo, formulário e definições
+│   ├── tempoTotal/         Linhas de marcação
 │   ├── fields/             TimeField: o único lugar que fala com o picker
 │   └── ui/                 Peças compartilhadas
 └── lib/

@@ -11,13 +11,13 @@ describe("KEYPAD", () => {
   it("describes every key exactly once", () => {
     expect(new Set(KEYPAD.map((key) => key.id)).size).toBe(KEYPAD.length);
     expect(NUMERIC_KEYS).toHaveLength(12);
-    expect(OPERATOR_KEYS).toHaveLength(6);
+    expect(OPERATOR_KEYS).toHaveLength(7);
   });
 
-  it("keeps keyboard-only keys out of the drawn pad", () => {
+  it("draws backspace on the pad", () => {
+    // There is no physical keyboard on a phone, which is where this is used.
     const drawn = [...NUMERIC_KEYS, ...OPERATOR_KEYS].map((key) => key.id);
-    expect(drawn).not.toContain("backspace");
-    expect(KEYPAD.map((key) => key.id)).toContain("backspace");
+    expect(drawn).toContain("backspace");
   });
 
   it("maps physical keys to the same actions as the buttons", () => {

@@ -1,15 +1,11 @@
 "use client";
 
 import { Button } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
 import { useMemo, useRef, useState } from "react";
 import type { Dayjs } from "dayjs";
-import SectionTitle from "./ui/SectionTitle";
 import ContentContainer from "./layout/ContentContainer";
-import LeftAreaContainer from "./layout/LeftAreaContainer";
-import RightAreaContainer from "./layout/RightAreaContainer";
-import FeatureContainer from "./layout/FeatureContainer";
-import TimeField from "./fields/TimeField";
-import ResultReadout from "./ui/ResultReadout";
+import PunchRow from "./tempoTotal/PunchRow";
 import {
   MAX_PAIRS,
   MIN_PAIRS,
@@ -18,9 +14,7 @@ import {
   type PunchPair,
 } from "@/lib/tempoTotal/pairs";
 import { formatHHMM } from "@/lib/time/duration";
-import { dayjsToTimeOfDay, timeOfDayToDayjs } from "@/lib/time/dayjs";
-
-const ACTION_SX = { fontWeight: 600 } as const;
+import { dayjsToTimeOfDay } from "@/lib/time/dayjs";
 
 const TempoTotal = () => {
   const [pairs, setPairs] = useState<PunchPair[]>([emptyPair("pair-0")]);
@@ -33,16 +27,9 @@ const TempoTotal = () => {
     [pairs]
   );
 
-  const addNewPair = (): void => {
-    setPairs((previous) => [
-      ...previous,
-      emptyPair(`pair-${nextId.current++}`),
-    ]);
-  };
-
-  const removeLastPair = (): void => {
-    setPairs((previous) => previous.slice(0, -1));
-  };
+  const counted =
+    pairs.length -
+    useMemo(() => computePairs(pairs).incompleteIndices.length, [pairs]);
 
   const updateEntry = (
     id: string,
@@ -58,75 +45,61 @@ const TempoTotal = () => {
 
   return (
     <ContentContainer>
-      <SectionTitle>Tempo Total de Trabalho</SectionTitle>
-      <p className="mb-6 max-w-[62ch] text-ink-muted">
-        Para calcular o tempo total de trabalho entre pares de pontos, preencha
-        os campos abaixo.
-      </p>
-      <FeatureContainer>
-        <LeftAreaContainer>
-          {pairs.map((pair, index) => {
-            const invalid = invalidIndices.includes(index);
-            return (
-              <div
-                key={pair.id}
-                className="w-full grid grid-flow-row grid-cols-2 gap-6 mb-6"
-              >
-                <TimeField
-                  label={`Marcação ${2 * index + 1}`}
-                  value={timeOfDayToDayjs(pair.in)}
-                  onChange={(value) => updateEntry(pair.id, "in", value)}
-                />
-                <TimeField
-                  label={`Marcação ${2 * index + 2}`}
-                  value={timeOfDayToDayjs(pair.out)}
-                  onChange={(value) => updateEntry(pair.id, "out", value)}
-                  error={invalid}
-                  helperText={
-                    invalid
-                      ? "Deve ser posterior à marcação anterior."
-                      : undefined
-                  }
-                />
-              </div>
-            );
-          })}
-          {!valid && (
-            <p className="mt-12 font-semibold text-danger-ink text-center text-base">
-              Aguardando o preenchimento correto de todos os campos.
-            </p>
+      <h1 className="sr-only">Tempo total de trabalho</h1>
+
+      <section
+        aria-label="Total trabalhado"
+        className="w-full rounded-[12px] border border-result-edge bg-surface p-5"
+      >
+        <p className="text-sm text-ink-muted">Total trabalhado</p>
+        <output
+          aria-live="polite"
+          className="tabular block font-display text-5xl font-extrabold leading-none tracking-tight text-figure"
+        >
+          {formatHHMM(total)}
+        </output>
+        <p className="mt-2 text-sm text-ink-muted">
+          {counted === 0
+            ? "Preencha um par de marcações"
+            : `em ${counted} ${counted === 1 ? "par" : "pares"} de marcações`}
+          {!valid && invalidIndices.length > 0 && (
+            <span className="ml-1 font-semibold text-danger-ink">
+              &middot; há pares fora de ordem
+            </span>
           )}
-        </LeftAreaContainer>
-        <RightAreaContainer>
-          <div className="my-5 w-full border-b border-hairline sm:hidden" />
-          <ResultReadout
-            label="O total trabalhado foi:"
-            value={total !== null ? formatHHMM(total) : "--:--"}
+        </p>
+      </section>
+
+      <div className="flex w-full flex-col gap-3">
+        {pairs.map((pair, index) => (
+          <PunchRow
+            key={pair.id}
+            pair={pair}
+            index={index}
+            invalid={invalidIndices.includes(index)}
+            canRemove={pairs.length > MIN_PAIRS}
+            onChange={(side, value) => updateEntry(pair.id, side, value)}
+            onRemove={() =>
+              setPairs((previous) => previous.filter((p) => p.id !== pair.id))
+            }
           />
-          <div className="w-full flex flex-row sm:flex-col justify-start items-center mt-6">
-            <Button
-              variant="contained"
-              sx={ACTION_SX}
-              className="w-full"
-              disabled={pairs.length >= MAX_PAIRS}
-              onClick={addNewPair}
-            >
-              Adicionar Novo Par
-            </Button>
-            <div className="hidden sm:block sm:w-0" />
-            <Button
-              variant="contained"
-              color="error"
-              sx={ACTION_SX}
-              className="w-full"
-              disabled={pairs.length <= MIN_PAIRS}
-              onClick={removeLastPair}
-            >
-              Excluir Último Par
-            </Button>
-          </div>
-        </RightAreaContainer>
-      </FeatureContainer>
+        ))}
+      </div>
+
+      <Button
+        variant="outlined"
+        startIcon={<AddIcon />}
+        disabled={pairs.length >= MAX_PAIRS}
+        onClick={() =>
+          setPairs((previous) => [
+            ...previous,
+            emptyPair(`pair-${nextId.current++}`),
+          ])
+        }
+        sx={{ borderStyle: "dashed" }}
+      >
+        Adicionar par
+      </Button>
     </ContentContainer>
   );
 };

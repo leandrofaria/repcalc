@@ -1,19 +1,22 @@
 export type NavItem = {
   href: string;
   label: string;
-  icon: string;
-  /** Home only matches its own route; the others match their subtrees. */
-  exact?: boolean;
+  /** Short form for the bottom bar, where five labels share the width. */
+  shortLabel: string;
 };
 
+/**
+ * There is no Home entry any more: with the bar always on screen, a menu of
+ * four cards was one tap between the user and the tool. "/" goes straight to
+ * Jornada, which is the screen people open every day.
+ */
 export const NAV_ITEMS: readonly NavItem[] = [
-  { href: "/", label: "Home", icon: "/img/home.webp", exact: true },
-  { href: "/calculadora", label: "Calculadora", icon: "/img/calculadora.webp" },
-  { href: "/jornada", label: "Jornada", icon: "/img/jornada.webp" },
-  { href: "/tempo-total", label: "Tempo Total", icon: "/img/tempototal.webp" },
-  { href: "/sobre", label: "Sobre", icon: "/img/sobre.webp" },
+  { href: "/jornada", label: "Jornada", shortLabel: "Jornada" },
+  { href: "/calculadora", label: "Calculadora", shortLabel: "Calc" },
+  { href: "/tempo-total", label: "Tempo Total", shortLabel: "Total" },
+  { href: "/sobre", label: "Sobre", shortLabel: "Sobre" },
 ];
 
 export function isActive(item: NavItem, pathname: string): boolean {
-  return item.exact ? pathname === item.href : pathname.startsWith(item.href);
+  return pathname.startsWith(item.href);
 }

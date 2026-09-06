@@ -1,19 +1,25 @@
 import { describe, expect, it } from "vitest";
 import { NAV_ITEMS, isActive } from "./nav";
 
-describe("isActive", () => {
-  const home = NAV_ITEMS[0];
-  const calculadora = NAV_ITEMS[1];
-
-  it("matches Home only on the root route", () => {
-    // The original nav omitted the active-state logic on Home entirely.
-    expect(isActive(home, "/")).toBe(true);
-    expect(isActive(home, "/jornada")).toBe(false);
+describe("NAV_ITEMS", () => {
+  it("opens on Jornada and carries no Home entry", () => {
+    // The menu page was one tap between the user and the tool.
+    expect(NAV_ITEMS[0].href).toBe("/jornada");
+    expect(NAV_ITEMS.map((item) => item.href)).not.toContain("/");
   });
 
-  it("matches the other items on their subtree", () => {
-    expect(isActive(calculadora, "/calculadora")).toBe(true);
-    expect(isActive(calculadora, "/calculadora/qualquer")).toBe(true);
-    expect(isActive(calculadora, "/jornada")).toBe(false);
+  it("gives every item a short label for the bottom bar", () => {
+    for (const item of NAV_ITEMS) {
+      expect(item.shortLabel.length).toBeLessThanOrEqual(item.label.length);
+    }
+  });
+});
+
+describe("isActive", () => {
+  it("matches an item on its own subtree", () => {
+    const jornada = NAV_ITEMS[0];
+    expect(isActive(jornada, "/jornada")).toBe(true);
+    expect(isActive(jornada, "/jornada/qualquer")).toBe(true);
+    expect(isActive(jornada, "/calculadora")).toBe(false);
   });
 });
