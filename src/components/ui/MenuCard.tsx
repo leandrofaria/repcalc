@@ -19,6 +19,7 @@ const MenuCard = (props: {
             alt=""
             width={48}
             height={48}
+            unoptimized
           />
         </div>
         <div className="grow">

@@ -8,6 +8,7 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import DateLocalizationProvider from "@/components/providers/DateLocalizationProvider";
 import Analytics from "@/components/Analytics/Analytics";
+import UpdatePrompt from "@/components/pwa/UpdatePrompt";
 import { COLOR_SCHEME_ATTRIBUTE, DARK, LIGHT } from "@/lib/design/tokens";
 
 // Loaded once here and exposed as CSS variables, which both the MUI theme
@@ -29,6 +30,16 @@ export const metadata: Metadata = {
   description:
     "Calculadora de horas e funcionalidades adicionais de planejamento de jornada de trabalho para uso com relógio eletrônico de ponto.",
   metadataBase: new URL("https://repcalc.leandrofaria.com/"),
+  applicationName: "REP Calc",
+  appleWebApp: {
+    capable: true,
+    title: "REP Calc",
+    statusBarStyle: "default",
+  },
+  icons: {
+    icon: [{ url: "/icons/icon.svg", type: "image/svg+xml" }],
+    apple: [{ url: "/icons/apple-touch-icon.png", sizes: "180x180" }],
+  },
   openGraph: {
     title: "REP Calc",
     description:
@@ -51,6 +62,9 @@ export const metadata: Metadata = {
 // A separate export since Next 14: themeColor inside metadata is deprecated.
 // Two entries so the browser chrome follows the colour scheme.
 export const viewport: Viewport = {
+  // Full width on a phone, which is where this is used.
+  width: "device-width",
+  initialScale: 1,
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: LIGHT.brand },
     { media: "(prefers-color-scheme: dark)", color: DARK.canvas },
@@ -82,6 +96,7 @@ export default function RootLayout({
                 {children}
               </main>
               <Footer />
+              <UpdatePrompt />
             </DateLocalizationProvider>
           </ThemeRegistry>
         </AppRouterCacheProvider>

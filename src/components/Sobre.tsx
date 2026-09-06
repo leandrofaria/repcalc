@@ -84,6 +84,7 @@ const Sobre = () => {
                 alt={tech.alt}
                 width={tech.width}
                 height={28}
+                unoptimized
               />
             </a>
           </li>

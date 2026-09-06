@@ -12,7 +12,8 @@
     "format:check": "prettier --check .",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "icons": "node scripts/generate-icons.mjs"
   },
   "dependencies": {
     "@emotion/cache": "^11.14.0",
@@ -26,9 +27,11 @@
     "next": "^16.3.4",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
+    "serwist": "^9.5.12",
     "sharp": "^0.35.4"
   },
   "devDependencies": {
+    "@serwist/next": "^9.5.12",
     "@tailwindcss/postcss": "^4.3.3",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^7.0.1",

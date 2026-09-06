@@ -38,7 +38,15 @@ const TopNav = () => {
               },
             }}
           >
-            <Image src={item.icon} alt="" width={22} height={22} />
+            <Image
+              src={item.icon}
+              alt=""
+              width={22}
+              height={22}
+              // Already a 64px webp: optimising buys nothing, and the
+              // optimiser's URL cannot be precached for offline use.
+              unoptimized
+            />
             <span className="ml-2 hidden whitespace-nowrap sm:inline-block">
               {item.label}
             </span>

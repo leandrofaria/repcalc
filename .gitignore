@@ -37,3 +37,7 @@ next-env.d.ts
 
 # JetBrains IDEs
 .idea/
+
+# serwist
+public/sw*.js
+public/swe-worker*.js
