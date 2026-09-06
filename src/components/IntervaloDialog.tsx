@@ -11,49 +11,50 @@ import {
   TextField,
 } from "@mui/material";
 import { TimePicker } from "@mui/x-date-pickers";
-import dayjs, { Dayjs } from "dayjs";
-import { useState, useEffect } from "react";
+import { useMemo, useState } from "react";
+import type { Duration, TimeOfDay } from "@/lib/time/units";
+import { ZERO, add, formatHHMM } from "@/lib/time/duration";
+import { difference } from "@/lib/time/timeOfDay";
+import {
+  dayjsToTimeOfDay,
+  pickerReferenceDate,
+  timeOfDayToDayjs,
+} from "@/lib/time/dayjs";
+
+type Entries = { start: TimeOfDay | null; end: TimeOfDay | null };
+
+const EMPTY: Entries = { start: null, end: null };
 
 const IntervaloDialog = (props: {
   showIntervaloDialog: boolean;
   setShowIntervaloDialog: (value: boolean) => void;
-  setBreakDuration: (value: Dayjs | null) => void;
+  setBreakDuration: (value: Duration | null) => void;
 }) => {
-  const [allValid, setAllValid] = useState<boolean>(false);
-  const [duration, setDuration] = useState<Dayjs | null>(null);
-  const [total, setTotal] = useState<Dayjs | null>(null);
+  const [entries, setEntries] = useState<Entries>(EMPTY);
+  const [total, setTotal] = useState<Duration | null>(null);
 
-  type entry = Dayjs | null;
-  const [entries, setEntries] = useState<[entry, entry]>([
-    null, // Início
-    null, // Término
-  ]);
-
-  useEffect(() => {
-    let validEntries = true;
-    let total: Dayjs | null = null;
-
-    setDuration(total);
-
-    entries.forEach((entry) => {
-      if (entry === null || !entry.isValid()) {
-        validEntries = false;
-        return;
-      }
-    });
-
-    setAllValid(validEntries);
-    if (validEntries) {
-      total = dayjs(entries[1])
-        .subtract(entries[0]!.hour(), "hour")
-        .subtract(entries[0]!.minute(), "minute");
-      setDuration(total);
+  const { duration, outOfOrder, complete } = useMemo(() => {
+    const { start, end } = entries;
+    if (start === null || end === null) {
+      return { duration: null, outOfOrder: false, complete: false };
     }
+    // The previous version had no chronological check at all, so an end
+    // before the start produced a wrapped value that was then written into
+    // Jornada's break field.
+    if (end <= start) {
+      return { duration: null, outOfOrder: true, complete: true };
+    }
+    return {
+      duration: difference(start, end),
+      outOfOrder: false,
+      complete: true,
+    };
   }, [entries]);
 
+  const reset = () => setEntries(EMPTY);
+
   const closeModal = () => {
-    setDuration(null);
-    setEntries([null, null]);
+    reset();
     props.setShowIntervaloDialog(false);
   };
 
@@ -61,7 +62,7 @@ const IntervaloDialog = (props: {
     <Dialog
       maxWidth={"sm"}
       open={props.showIntervaloDialog}
-      onClose={() => closeModal()}
+      onClose={closeModal}
     >
       <DialogTitle>Cálculo de Duração</DialogTitle>
       <DialogContent>
@@ -75,12 +76,14 @@ const IntervaloDialog = (props: {
             <TimePicker
               sx={{ width: "100%" }}
               ampm={false}
-              value={entries[0]}
-              onChange={(value) => {
-                const updatedEntries: [entry, entry] = [...entries];
-                updatedEntries[0] = value;
-                setEntries(updatedEntries);
-              }}
+              referenceDate={pickerReferenceDate()}
+              value={timeOfDayToDayjs(entries.start)}
+              onChange={(value) =>
+                setEntries((previous) => ({
+                  ...previous,
+                  start: dayjsToTimeOfDay(value),
+                }))
+              }
             />
           </div>
           <div>
@@ -88,12 +91,15 @@ const IntervaloDialog = (props: {
             <TimePicker
               sx={{ width: "100%" }}
               ampm={false}
-              value={entries[1]}
-              onChange={(value) => {
-                const updatedEntries: [entry, entry] = [...entries];
-                updatedEntries[1] = value;
-                setEntries(updatedEntries);
-              }}
+              referenceDate={pickerReferenceDate()}
+              value={timeOfDayToDayjs(entries.end)}
+              onChange={(value) =>
+                setEntries((previous) => ({
+                  ...previous,
+                  end: dayjsToTimeOfDay(value),
+                }))
+              }
+              slotProps={{ textField: { error: outOfOrder } }}
             />
           </div>
           <div className="block md:hidden">
@@ -102,25 +108,26 @@ const IntervaloDialog = (props: {
           <div>
             <p className="font-semibold">Duração Calculada:</p>
             <TextField
-              id="duracaoCalculada"
+              id="intervalo-duracao-calculada"
               disabled
               fullWidth
               variant="outlined"
               color="primary"
-              value={
-                duration?.isValid()
-                  ? duration?.format("HH") + ":" + duration?.format("mm")
-                  : "--:--"
-              }
+              value={duration === null ? "--:--" : formatHHMM(duration)}
             />
           </div>
         </div>
-        {!allValid && total === null && (
+        {outOfOrder && (
+          <p className="mt-3 font-semibold text-red-600 text-center text-base">
+            O fim do intervalo precisa ser posterior ao início.
+          </p>
+        )}
+        {!complete && total === null && (
           <p className="mt-3 font-semibold text-red-600 text-center text-base">
             Aguardando o preenchimento correto de todos os campos.
           </p>
         )}
-        {!allValid && total !== null && (
+        {!complete && total !== null && (
           <p className="mt-3 font-semibold text-blue-600 text-center text-base">
             Opcionalmente, preencha novamente para adicionar mais intervalos.
           </p>
@@ -133,9 +140,7 @@ const IntervaloDialog = (props: {
               variant="outlined"
               className="h-full"
               disabled={total === null}
-              onClick={() => {
-                setTotal(null);
-              }}
+              onClick={() => setTotal(null)}
             >
               Resetar o Total
             </Button>
@@ -148,17 +153,8 @@ const IntervaloDialog = (props: {
               className="h-full"
               disabled={duration === null}
               onClick={() => {
-                setDuration(null);
-                setEntries([null, null]);
-                setTotal((prevState) => {
-                  if (prevState?.isValid()) {
-                    return prevState
-                      ?.add(duration!.hour(), "hour")
-                      .add(duration!.minute(), "minute");
-                  } else {
-                    return duration;
-                  }
-                });
+                setTotal((previous) => add(previous ?? ZERO, duration!));
+                reset();
               }}
             >
               Adicionar ao Total
@@ -170,29 +166,27 @@ const IntervaloDialog = (props: {
           <div>
             <p className="font-semibold">Total:</p>
             <TextField
-              id="total"
+              id="intervalo-total"
               disabled
               fullWidth
               variant="outlined"
               color="primary"
-              value={total === null ? "--:--" : total.format("HH:mm")}
+              value={total === null ? "--:--" : formatHHMM(total)}
             />
           </div>
         </div>
       </DialogContent>
       <Divider className="!mt-6 !mb-6" />
       <DialogActions>
-        <Button variant="outlined" onClick={() => closeModal()}>
+        <Button variant="outlined" onClick={closeModal}>
           Cancelar
         </Button>
         <Button
           variant="contained"
           disabled={total === null}
           onClick={() => {
-            setTotal(null);
-            setEntries([null, null]);
-            setDuration(null);
             props.setBreakDuration(total);
+            setTotal(null);
             closeModal();
           }}
         >

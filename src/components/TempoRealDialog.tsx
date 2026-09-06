@@ -7,138 +7,96 @@ import {
   DialogActions,
   DialogContent,
   DialogContentText,
-  DialogTitle,
   Divider,
+  DialogTitle,
   FormControlLabel,
-  Grid,
 } from "@mui/material";
-import dayjs, { Dayjs } from "dayjs";
-import { useCallback, useEffect, useState } from "react";
-import { clearInterval, setInterval, setTimeout } from "timers";
+import { useEffect, useMemo, useState } from "react";
+import { formatHHMM } from "@/lib/time/duration";
+import { nowTimeOfDay } from "@/lib/time/timeOfDay";
+import type { TimeOfDay } from "@/lib/time/units";
+import { computeLiveStatus, type LiveInput } from "@/lib/jornada/liveStatus";
+import type { JornadaInput } from "@/lib/jornada/schedule";
 
-type entry = Dayjs | null;
+const TICK_MS = 1000;
 
 const TempoRealDialog = (props: {
   showTempoRealDialog: boolean;
   setShowTempoRealDialog: (value: boolean) => void;
-  entries: [entry, entry, entry, entry];
+  input: JornadaInput;
 }) => {
-  const closeModal = useCallback(() => {
-    props.setShowTempoRealDialog(false);
-  }, [props]);
+  const { showTempoRealDialog, setShowTempoRealDialog, input } = props;
+  const [includeBreak, setIncludeBreak] = useState(true);
+  const [now, setNow] = useState<TimeOfDay | null>(null);
 
-  const [computarComIntervalo, setComputarComIntervalo] =
-    useState<boolean>(true);
-
-  const [tempoTrabalhado, setTempoTrabalhado] = useState<Dayjs | null>(null);
-  const [tempoExcedente, setTempoExcedente] = useState<Dayjs | null>(null);
-  const [tempoRestanteTotal, setTempoRestanteTotal] = useState<Dayjs | null>(
-    null
-  );
-  const [tempoRestanteComTolerancia, setTempoRestanteComTolerancia] =
-    useState<Dayjs | null>(null);
-
+  // The interval only owns the clock. Everything derived from it is computed
+  // during render, so the effect no longer depends on its own output — which
+  // is what used to tear the interval down and rebuild it on every tick.
   useEffect(() => {
-    if (!props.showTempoRealDialog) return;
+    if (!showTempoRealDialog) return;
+    setNow(nowTimeOfDay());
+    const timer = window.setInterval(() => setNow(nowTimeOfDay()), TICK_MS);
+    return () => window.clearInterval(timer);
+  }, [showTempoRealDialog]);
 
-    const timer = setInterval(() => {
-      props.entries.every((entry) => {
-        if (entry?.date() !== dayjs().date()) {
-          closeModal();
-          window.location.reload();
-          return false;
-        }
-      });
+  const liveInput: LiveInput | null = useMemo(() => {
+    const { start, workday, breakTime, tolerance } = input;
+    if (
+      start === null ||
+      workday === null ||
+      breakTime === null ||
+      tolerance === null
+    ) {
+      return null;
+    }
+    return { start, workday, breakTime, tolerance, includeBreak };
+  }, [input, includeBreak]);
 
-      let tempoTrabalhado: Dayjs | null = computarComIntervalo
-        ? dayjs()
-            .subtract(props.entries[0]!.hour(), "hour")
-            .subtract(props.entries[0]!.minute(), "minute")
-            .subtract(props.entries[2]!.hour(), "hour")
-            .subtract(props.entries[2]!.minute(), "minute")
-        : dayjs()
-            .subtract(props.entries[0]!.hour(), "hour")
-            .subtract(props.entries[0]!.minute(), "minute");
-      if (tempoTrabalhado.isBefore(dayjs("00:00:00", "HH:mm:ss")))
-        tempoTrabalhado = null;
-      setTempoTrabalhado(tempoTrabalhado);
+  const status = useMemo(
+    () =>
+      liveInput === null || now === null
+        ? null
+        : computeLiveStatus(liveInput, now),
+    [liveInput, now]
+  );
 
-      if (tempoTrabalhado === null) {
-        setTempoExcedente(null);
-        setTempoRestanteTotal(null);
-        setTempoRestanteComTolerancia(null);
-        return;
-      }
+  const closeModal = () => {
+    setNow(null);
+    setIncludeBreak(true);
+    setShowTempoRealDialog(false);
+  };
 
-      if (tempoTrabalhado.isAfter(props.entries[1]!)) {
-        let tempoExcedente: Dayjs | null = tempoTrabalhado
-          .subtract(props.entries[1]!.hour(), "hour")
-          .subtract(props.entries[1]!.minute(), "minute");
-        if (
-          dayjs(props.entries[3]!.set("second", 0))?.isAfter(
-            dayjs(tempoExcedente.set("second", 0))
-          )
-        ) {
-          tempoExcedente = null;
-        }
-        setTempoExcedente(tempoExcedente);
-        setTempoRestanteTotal(null);
-        setTempoRestanteComTolerancia(null);
-      } else {
-        setTempoExcedente(null);
-        const tempoRestanteTotal = props.entries[1]!.subtract(
-          tempoTrabalhado.hour(),
-          "hour"
-        ).subtract(tempoTrabalhado.minute(), "minute");
-        setTempoRestanteTotal(tempoRestanteTotal);
+  const show = (value: number | null | undefined) =>
+    value === null || value === undefined ? "N/A" : formatHHMM(value as never);
 
-        let tempoRestanteComTolerancia = null;
-        if (
-          tempoTrabalhado.isAfter(
-            props.entries[1]
-              ?.subtract(props.entries[3]!.hour(), "hour")
-              .subtract(props.entries[3]!.minute(), "minute")
-          )
-        ) {
-          tempoRestanteComTolerancia = null;
-        } else {
-          tempoRestanteComTolerancia = props.entries[1]!.subtract(
-            tempoTrabalhado.hour(),
-            "hour"
-          )
-            .subtract(tempoTrabalhado.minute(), "minute")
-            .subtract(props.entries[3]!.hour(), "hour")
-            .subtract(props.entries[3]!.minute(), "minute");
-        }
-        setTempoRestanteComTolerancia(tempoRestanteComTolerancia);
-      }
-    }, 1000);
-
-    return () => {
-      clearInterval(timer);
-    };
-  }, [
-    props.entries,
-    props.showTempoRealDialog,
-    computarComIntervalo,
-    tempoTrabalhado,
-    closeModal,
-  ]);
+  const rows: ReadonlyArray<[string, string]> =
+    liveInput === null
+      ? []
+      : [
+          ["Total a trabalhar", formatHHMM(liveInput.workday)],
+          [
+            "Total a trabalhar com tolerância",
+            show(status?.targetWithTolerance),
+          ],
+          ["Tempo trabalhado", show(status?.worked)],
+          ["Tempo excedente*", show(status?.overtime)],
+          ["Tempo restante total", show(status?.remainingTotal)],
+          [
+            "Tempo restante com tolerância",
+            show(status?.remainingWithTolerance),
+          ],
+        ];
 
   return (
     <Dialog
       maxWidth={"xs"}
-      open={props.showTempoRealDialog}
-      onClose={() => {
-        setTempoTrabalhado(null);
-        setTempoExcedente(null);
-        setTempoRestanteTotal(null);
-        setTempoRestanteComTolerancia(null);
-        setComputarComIntervalo(true);
-        closeModal();
-      }}
+      open={showTempoRealDialog}
+      onClose={closeModal}
+      aria-labelledby="tempo-real-titulo"
     >
-      <DialogTitle>Informações em Tempo Real</DialogTitle>
+      <DialogTitle id="tempo-real-titulo">
+        Informações em Tempo Real
+      </DialogTitle>
       <DialogContent>
         <DialogContentText>
           Acompanhe abaixo informações em tempo real sobre sua jornada de
@@ -149,16 +107,14 @@ const TempoRealDialog = (props: {
           <FormControlLabel
             control={
               <Checkbox
-                checked={computarComIntervalo}
-                onChange={() => {
-                  setComputarComIntervalo((prevState) => !prevState);
-                }}
+                checked={includeBreak}
+                onChange={() => setIncludeBreak((previous) => !previous)}
               />
             }
             label="Calcular incluindo o intervalo"
-          ></FormControlLabel>
+          />
         </div>
-        {tempoTrabalhado === null && (
+        {status !== null && status.worked === null && (
           <div className="mb-6">
             <p className="text-justify text-red-600">
               De acordo com os valores informados, você ainda não trabalhou. O
@@ -168,72 +124,25 @@ const TempoRealDialog = (props: {
             </p>
           </div>
         )}
-        <Grid container spacing={3}>
-          <Grid item xs={8}>
-            <p>Total a trabalhar:&nbsp;</p>
-          </Grid>
-          <Grid item xs={4}>
-            <p className="text-blue-600 text-right">
-              {props.entries[1]!.format("HH:mm")}
-            </p>
-          </Grid>
-          <Grid item xs={8}>
-            <p>Total a trabalhar com tolerância:&nbsp;</p>
-          </Grid>
-          <Grid item xs={4}>
-            <p className="text-blue-600 text-right">
-              {props.entries[1]!.subtract(props.entries[3]!.hour(), "hour")
-                .subtract(props.entries[3]!.minute(), "minute")
-                .format("HH:mm")}
-            </p>
-          </Grid>
-          <Grid item xs={8}>
-            <p>Tempo trabalhado:&nbsp;</p>
-          </Grid>
-          <Grid item xs={4}>
-            <p className="text-blue-600 text-right">
-              {tempoTrabalhado !== null
-                ? tempoTrabalhado?.format("HH:mm")
-                : "N/A"}
-            </p>
-          </Grid>
-          <Grid item xs={8}>
-            <p>Tempo excedente*:&nbsp;</p>
-          </Grid>
-          <Grid item xs={4}>
-            <p className="text-blue-600 text-right">
-              {tempoExcedente !== null
-                ? tempoExcedente?.format("HH:mm")
-                : "N/A"}
-            </p>
-          </Grid>
-          <Grid item xs={8}>
-            <p>Tempo restante total:&nbsp;</p>
-          </Grid>
-          <Grid item xs={4}>
-            <p className="text-blue-600 text-right">
-              {tempoRestanteTotal !== null
-                ? tempoRestanteTotal?.format("HH:mm")
-                : "N/A"}
-            </p>
-          </Grid>
-          <Grid item xs={8}>
-            <p>Tempo restante com tolerância:&nbsp;</p>
-          </Grid>
-          <Grid item xs={4}>
-            <p className="text-blue-600 text-right">
-              {tempoRestanteComTolerancia !== null
-                ? tempoRestanteComTolerancia?.format("HH:mm")
-                : "N/A"}
-            </p>
-          </Grid>
-        </Grid>
+        <dl
+          className="grid grid-cols-[1fr_auto] gap-x-6 gap-y-3"
+          aria-live="polite"
+        >
+          {rows.map(([label, value]) => (
+            <div key={label} className="contents">
+              <dt>{label}:</dt>
+              <dd className="text-blue-600 text-right font-semibold">
+                {value}
+              </dd>
+            </div>
+          ))}
+        </dl>
         <p className="text-center text-sm mt-6 text-gray-600/75">
           * O excedente só é computado após exceder o total mais a tolerância.
         </p>
       </DialogContent>
       <DialogActions>
-        <Button variant="outlined" onClick={() => closeModal()}>
+        <Button variant="outlined" onClick={closeModal}>
           Fechar
         </Button>
       </DialogActions>
