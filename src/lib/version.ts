@@ -1,9 +1,8 @@
-import pkg from "../../package.json";
-
 /**
- * The app version, read from package.json at build time.
+ * The app version, injected at build time from package.json by next.config.ts.
  *
- * Importing package.json is safe here because this module is only reached
- * from Server Components; the value is inlined into the rendered HTML.
+ * Importing package.json directly from a component only worked while that
+ * component stayed server-only; the day it did not, the whole manifest would
+ * have shipped to the browser.
  */
-export const APP_VERSION: string = pkg.version;
+export const APP_VERSION: string = process.env.NEXT_PUBLIC_APP_VERSION ?? "";

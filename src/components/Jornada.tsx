@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import IntervaloDialog from "@/components/IntervaloDialog";
 import SectionTitle from "./ui/SectionTitle";
 import ContentContainer from "./layout/ContentContainer";
@@ -13,29 +13,25 @@ import JornadaResults from "./jornada/JornadaResults";
 import JornadaSettings from "./jornada/JornadaSettings";
 import { computeJornada, type JornadaInput } from "@/lib/jornada/schedule";
 import {
-  JORNADA_DEFAULTS,
-  clearStoredDefaults,
-  readStoredDefaults,
-  writeStoredDefaults,
-} from "@/lib/jornada/defaults";
+  resetDefaults,
+  saveDefaults,
+  useStoredDefaults,
+} from "@/lib/jornada/useStoredDefaults";
 
 const CONFIRMATION_MS = 1500;
 
 const Jornada = () => {
-  const [input, setInput] = useState<JornadaInput>({
-    start: null,
-    ...JORNADA_DEFAULTS,
-  });
+  // The saved defaults are a subscription, and what the user has typed is
+  // held separately as overrides. Deriving the form from both means there is
+  // no effect syncing storage into state, and no window where the server
+  // render and the first client render can disagree.
+  const stored = useStoredDefaults();
+  const [edits, setEdits] = useState<Partial<JornadaInput>>({});
 
-  // Saved defaults load after mount, so the server render and the first
-  // client render agree. Reading localStorage during render behind the
-  // deprecated process.browser flag is what caused the hydration mismatch.
-  useEffect(() => {
-    setInput((previous) => ({
-      ...previous,
-      ...readStoredDefaults(window.localStorage),
-    }));
-  }, []);
+  const input: JornadaInput = useMemo(
+    () => ({ start: null, ...stored, ...edits }),
+    [stored, edits]
+  );
 
   const [showIntervaloDialog, setShowIntervaloDialog] = useState(false);
   const [showTempoRealDialog, setShowTempoRealDialog] = useState(false);
@@ -53,7 +49,7 @@ const Jornada = () => {
 
   const patch = useCallback(
     (values: Partial<JornadaInput>) =>
-      setInput((previous) => ({ ...previous, ...values })),
+      setEdits((previous) => ({ ...previous, ...values })),
     []
   );
 
@@ -107,16 +103,17 @@ const Jornada = () => {
               canSave={settingsReady}
               confirmation={confirmation}
               onSave={() => {
-                writeStoredDefaults(window.localStorage, {
+                saveDefaults({
                   workday: input.workday!,
                   breakTime: input.breakTime!,
                   tolerance: input.tolerance!,
                 });
+                setEdits({});
                 announce("Definições salvas com sucesso!");
               }}
               onReset={() => {
-                clearStoredDefaults(window.localStorage);
-                setInput({ start: null, ...JORNADA_DEFAULTS });
+                resetDefaults();
+                setEdits({});
                 announce("Definições resetadas com sucesso!");
               }}
             />
