@@ -1,0 +1,109 @@
+# Integração contínua do REP Calc.
+#
+# Roda a mesma sequência que se roda localmente antes de publicar. Se isto
+# passa, o deploy no VPS não deveria surpreender.
+name: CI
+
+# "on" é o gatilho. Três entradas:
+#
+#   push              -> quando um commit chega na main. A branch de trabalho
+#                        (claude) é local e nunca vai ao remoto, então não há
+#                        o que listar aqui além da main.
+#   pull_request      -> quando alguém abre ou atualiza um PR para a main. O
+#                        repositório é público; se um dia chegar contribuição
+#                        de fora, ela vem verificada.
+#   workflow_dispatch -> põe um botão "Run workflow" na aba Actions, para
+#                        reexecutar o CI sem precisar inventar um commit.
+#
+# Sem "branches" o workflow rodaria em toda branch, gastando minutos à toa.
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+# Por padrão o GITHUB_TOKEN vem com permissões amplas. Este workflow só lê o
+# código, então declaramos o mínimo. É a prática recomendada mesmo em repo
+# público, e vale copiar para qualquer projeto.
+permissions:
+  contents: read
+
+# Se um push novo chegar enquanto uma execução ainda roda, cancela a antiga.
+# Sem isto, uma sequência de pushes empilha execuções que já nasceram velhas.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # Um job só: os passos são rápidos e sequenciais, e dividir em vários
+  # obrigaria a reinstalar as dependências em cada um.
+  verify:
+    name: Lint, tipos, testes e build
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Traz o código para a máquina do runner. Sem isto não há repositório.
+      - name: Obter o código
+        uses: actions/checkout@v5
+
+      # 2. Instala o Node. O node-version-file lê o .nvmrc do projeto, então a
+      #    versão fica declarada num lugar só: mudou o .nvmrc, mudou o CI.
+      #    O cache guarda o ~/.npm entre execuções usando o package-lock.json
+      #    como chave — é o que faz o npm ci cair de minutos para segundos.
+      - name: Instalar o Node
+        uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      # 3. npm ci, não npm install. O ci instala exatamente o que está no
+      #    lockfile e falha se package.json e lockfile divergirem. É essa
+      #    diferença que torna a build reproduzível.
+      - name: Instalar as dependências
+        run: npm ci
+
+      # 4. Daqui em diante, os mesmos comandos que se roda na própria máquina.
+      #    Ordem do mais barato para o mais caro: o que falha rápido, falha
+      #    primeiro.
+      - name: Verificar a formatação
+        run: npx prettier --check .
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Verificar os tipos
+        run: npm run typecheck
+
+      # Com cobertura, e não `npm test`, porque os limites configurados no
+      # vitest.config.ts (90% de linhas e funções, 85% de ramos em src/lib) são
+      # atendidos com folga. Assim a cobertura é um portão de verdade: se um
+      # refatoramento remover testes, o CI reprova.
+      - name: Testes com cobertura
+        run: npm run test:coverage
+
+      # 5. A única coisa que o CI não consegue reproduzir sozinho.
+      #
+      #    O VPS roda uma glibc anterior à 2.29, então o binário nativo do
+      #    @next/swc não carrega lá e o Turbopack — padrão do Next 16 — não
+      #    roda sem ele. O build precisa continuar no webpack. Se alguém
+      #    "limpar" essa flag, o CI passaria (o runner do GitHub tem glibc
+      #    nova) e só o deploy quebraria. Daí a verificação explícita.
+      #
+      #    `::error::` transforma a mensagem numa anotação na aba Actions, em
+      #    vez de uma linha perdida no log.
+      - name: Garantir que o build continua no webpack
+        run: |
+          node --eval '
+            const script = require("./package.json").scripts.build;
+            if (!script.includes("--webpack")) {
+              console.log("::error file=package.json::O script de build perdeu a flag --webpack. O VPS roda glibc anterior a 2.29, onde o binario nativo do @next/swc nao carrega e o Turbopack nao roda. Ver o comentario no topo de next.config.ts.");
+              process.exit(1);
+            }
+            console.log("build: " + script);
+          '
+
+      # 6. Exercita o bundler de produção a cada push, e não só na hora do
+      #    deploy.
+      - name: Build de produção
+        run: npm run build
