@@ -16,7 +16,16 @@ export default function manifest(): MetadataRoute.Manifest {
     scope: "/",
     display: "standalone",
     orientation: "portrait",
-    background_color: LIGHT.canvas,
+    // Experiment, 2026-09-07: the strip Android paints under the installed
+    // app is the same colour this is, and the page has no reach into it —
+    // the diagnostics put every safe-area inset at zero in standalone, with
+    // the window 68px shorter than the screen, so those 68px are outside it.
+    // If the strip follows this value it turns brand; if it stays pale, it is
+    // the body's own background or the system default, and neither is ours.
+    //
+    // It also happens to be the better splash: the app opens on a brand
+    // header, and starting there is less of a jump than starting on canvas.
+    background_color: LIGHT.brand,
     theme_color: LIGHT.brand,
     categories: ["productivity", "utilities"],
     icons: [
