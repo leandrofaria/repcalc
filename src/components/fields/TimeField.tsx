@@ -4,6 +4,7 @@ import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 import { useId } from "react";
 import type { Dayjs } from "dayjs";
 import { pickerReferenceDate } from "@/lib/time/dayjs";
+import { focusAdjacent } from "./focusStep";
 
 /**
  * Large, centred figures. This used to be a global `input[type="text"]` rule
@@ -61,8 +62,23 @@ const TimeField = ({
 }) => {
   const labelId = useId();
 
+  /**
+   * Tab leaves the field, from whichever section the caret is on.
+   *
+   * The picker marks only the hours section as tabbable, and typing a time
+   * always ends on the minutes, so the browser had no valid place to continue
+   * from and Firefox restarted at the top of the page.
+   */
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (event.key !== "Tab") return;
+    if (event.ctrlKey || event.metaKey || event.altKey) return;
+    if (focusAdjacent(event.currentTarget, event.shiftKey ? -1 : 1)) {
+      event.preventDefault();
+    }
+  };
+
   return (
-    <div className="min-w-0">
+    <div className="min-w-0" onKeyDown={handleKeyDown}>
       <p
         id={labelId}
         className={`mb-1 block font-medium text-ink-muted ${dense ? "text-xs" : "text-sm"}`}
