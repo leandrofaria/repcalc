@@ -48,6 +48,17 @@ export function difference(from: TimeOfDay, to: TimeOfDay): Duration {
   return duration(to - from);
 }
 
+/**
+ * Time from one clock reading forward to the next, wrapping past midnight.
+ *
+ * Always 0..1439: reading 23:00 then 00:30 means an hour and a half has
+ * passed, not minus twenty-two hours. A punch sequence is chronological by
+ * construction, so a clock that appears to go backwards means the day turned.
+ */
+export function elapsedForward(from: TimeOfDay, to: TimeOfDay): Duration {
+  return duration((to - from + MINUTES_PER_DAY) % MINUTES_PER_DAY);
+}
+
 export function compare(a: TimeOfDay, b: TimeOfDay): number {
   return a - b;
 }

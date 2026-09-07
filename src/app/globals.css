@@ -54,7 +54,9 @@
 }
 
 @utility page-container {
-  max-width: 72rem;
+  /* The navigation and every screen share this, so nothing is wider than
+     the bar above it. */
+  max-width: 55rem;
   margin-inline: auto;
 }
 

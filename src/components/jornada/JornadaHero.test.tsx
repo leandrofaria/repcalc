@@ -11,7 +11,7 @@ const LIVE: LiveInput = {
   workday: durationFromHM(5, 45),
   breakTime: durationFromHM(0, 15),
   tolerance: durationFromHM(0, 10),
-  includeBreak: true,
+  breakTaken: true,
 };
 
 /** Clock-out is 08:00 + 05:45 + 00:15. */
@@ -27,6 +27,8 @@ function renderAt(hour: number, minute: number) {
       earlyClockOut={EARLY}
       liveInput={LIVE}
       toleranceLabel="00:10"
+      breakTaken
+      onBreakTakenChange={() => {}}
     />
   );
 }
@@ -54,6 +56,8 @@ describe("JornadaHero", () => {
         earlyClockOut={null}
         liveInput={null}
         toleranceLabel="00:10"
+        breakTaken
+        onBreakTakenChange={() => {}}
       />
     );
     expect(screen.getByText("Informe o horário de início")).toBeInTheDocument();
@@ -85,7 +89,7 @@ describe("JornadaHero", () => {
     expect(screen.getByText("00:11")).toBeInTheDocument();
   });
 
-  it("says the shift ends on the next day when it does", () => {
+  it("says the next day in words, not as a parenthesised number", () => {
     renderWithProviders(
       <JornadaHero
         complete
@@ -93,8 +97,12 @@ describe("JornadaHero", () => {
         earlyClockOut={{ time: timeFromHM(1, 50), dayOffset: 1 }}
         liveInput={null}
         toleranceLabel="00:10"
+        breakTaken
+        onBreakTakenChange={() => {}}
       />
     );
-    expect(screen.getByText("02:00 (+1)")).toBeInTheDocument();
+    // It used to render "02:00 (+1)", a notation nobody should have to learn.
+    expect(screen.getByText("02:00")).toBeInTheDocument();
+    expect(screen.getByText("no dia seguinte")).toBeInTheDocument();
   });
 });

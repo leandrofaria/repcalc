@@ -31,6 +31,10 @@ const Jornada = () => {
   );
 
   const [confirmation, setConfirmation] = useState<string | null>(null);
+  // Whether the break is already off the clock. It only affects the live
+  // figures, never the planned clock-out time, which always assumes the
+  // break will be taken.
+  const [breakTaken, setBreakTaken] = useState(true);
 
   const { complete, clockOut, earlyClockOut } = useMemo(
     () => computeJornada(input),
@@ -49,8 +53,8 @@ const Jornada = () => {
     ) {
       return null;
     }
-    return { start, workday, breakTime, tolerance, includeBreak: true };
-  }, [input]);
+    return { start, workday, breakTime, tolerance, breakTaken };
+  }, [input, breakTaken]);
 
   const settingsReady =
     input.workday !== null &&
@@ -80,6 +84,8 @@ const Jornada = () => {
         toleranceLabel={
           input.tolerance === null ? "--:--" : formatHHMM(input.tolerance)
         }
+        breakTaken={breakTaken}
+        onBreakTakenChange={setBreakTaken}
       />
 
       <JornadaForm input={input} onChange={patch} />

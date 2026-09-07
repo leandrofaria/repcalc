@@ -47,6 +47,18 @@ describe("Calculadora", () => {
     );
   });
 
+  it("clears the history on request, keeping the current value", async () => {
+    const user = userEvent.setup();
+    renderWithProviders(<Calculadora />);
+
+    await user.keyboard("2h+3h{Enter}");
+    expect(screen.getByText("2h + 3h = 5h")).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "Limpar histórico" }));
+    expect(screen.queryByText("2h + 3h = 5h")).not.toBeInTheDocument();
+    expect(screen.getByLabelText("Resultado")).toHaveTextContent("5h");
+  });
+
   it("keeps the digit keys usable after a result with minutes", async () => {
     const user = userEvent.setup();
     renderWithProviders(<Calculadora />);

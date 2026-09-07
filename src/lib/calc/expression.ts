@@ -39,7 +39,8 @@ export type CalcAction =
   | { type: "operator"; op: Operator }
   | { type: "equals" }
   | { type: "backspace" }
-  | { type: "clear" };
+  | { type: "clear" }
+  | { type: "clearHistory" };
 
 const EMPTY_BUFFER: Entry = {
   kind: "buffer",
@@ -259,6 +260,9 @@ export function reduce(state: CalcState, action: CalcAction): CalcState {
       }
       return { ...state, entry: null, error: null };
     }
+
+    case "clearHistory":
+      return { ...state, history: [] };
 
     case "clear": {
       if (state.entry !== null) return { ...state, entry: null, error: null };

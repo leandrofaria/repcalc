@@ -6,7 +6,7 @@
  */
 const ContentContainer = ({ children }: { children: React.ReactNode }) => {
   return (
-    <div className="page-container flex w-full flex-col items-stretch gap-4 sm:max-w-[760px]">
+    <div className="page-container flex w-full flex-col items-stretch gap-4">
       {children}
     </div>
   );

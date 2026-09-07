@@ -155,6 +155,15 @@ describe("history", () => {
     expect(state.history[1]).toBe("2h + 3h = 5h");
   });
 
+  it("can be cleared without touching the calculation", () => {
+    const state = press("2 h + 3 h =");
+    expect(state.history).toHaveLength(1);
+
+    const cleared = reduce(state, { type: "clearHistory" });
+    expect(cleared.history).toEqual([]);
+    expect(displayLine(cleared)).toBe("5h");
+  });
+
   it("caps at twelve entries", () => {
     let state = initialState();
     for (let i = 0; i < HISTORY_LIMIT + 5; i += 1) {

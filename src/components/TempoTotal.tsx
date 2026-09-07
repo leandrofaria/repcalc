@@ -22,14 +22,12 @@ const TempoTotal = () => {
   // client render always agree on the initial pair.
   const nextId = useRef(1);
 
-  const { total, valid, invalidIndices } = useMemo(
-    () => computePairs(pairs),
-    [pairs]
-  );
-
-  const counted =
-    pairs.length -
-    useMemo(() => computePairs(pairs).incompleteIndices.length, [pairs]);
+  const result = useMemo(() => computePairs(pairs), [pairs]);
+  const counted = result.pairs.filter(
+    (state) => !state.incomplete && !state.invalid
+  ).length;
+  const hasInvalid = result.pairs.some((state) => state.invalid);
+  const crossesMidnight = result.pairs.some((state) => state.dayOffset > 0);
 
   const updateEntry = (
     id: string,
@@ -49,22 +47,27 @@ const TempoTotal = () => {
 
       <section
         aria-label="Total trabalhado"
-        className="w-full rounded-[12px] border border-result-edge bg-surface p-5"
+        className="w-full rounded-[12px] border border-result-edge bg-surface p-5 text-center sm:text-left"
       >
         <p className="text-sm text-ink-muted">Total trabalhado</p>
         <output
           aria-live="polite"
           className="tabular block font-display text-5xl font-extrabold leading-none tracking-tight text-figure"
         >
-          {formatHHMM(total)}
+          {formatHHMM(result.total)}
         </output>
         <p className="mt-2 text-sm text-ink-muted">
           {counted === 0
             ? "Preencha um par de marcações"
             : `em ${counted} ${counted === 1 ? "par" : "pares"} de marcações`}
-          {!valid && invalidIndices.length > 0 && (
+          {crossesMidnight && (
+            <span className="ml-1 font-medium text-brand">
+              &middot; a sequência passa da meia-noite
+            </span>
+          )}
+          {hasInvalid && (
             <span className="ml-1 font-semibold text-danger-ink">
-              &middot; há pares fora de ordem
+              &middot; há marcações repetidas
             </span>
           )}
         </p>
@@ -76,7 +79,7 @@ const TempoTotal = () => {
             key={pair.id}
             pair={pair}
             index={index}
-            invalid={invalidIndices.includes(index)}
+            state={result.pairs[index]}
             canRemove={pairs.length > MIN_PAIRS}
             onChange={(side, value) => updateEntry(pair.id, side, value)}
             onRemove={() =>

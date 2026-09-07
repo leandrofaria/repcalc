@@ -8,7 +8,7 @@ const INPUT: LiveInput = {
   workday: durationFromHM(5, 45),
   breakTime: durationFromHM(0, 15),
   tolerance: durationFromHM(0, 10),
-  includeBreak: true,
+  breakTaken: true,
 };
 
 function at(hour: number, minute: number) {
@@ -48,7 +48,7 @@ describe("computeLiveStatus", () => {
 
   it("counts the break back in when asked not to deduct it", () => {
     const status = computeLiveStatus(
-      { ...INPUT, includeBreak: false },
+      { ...INPUT, breakTaken: false },
       timeFromHM(12, 0)
     );
     expect(formatHHMM(status.worked!)).toBe("04:00");
@@ -56,7 +56,7 @@ describe("computeLiveStatus", () => {
 
   it("treats the exact start time as zero worked, not as an error", () => {
     const status = computeLiveStatus(
-      { ...INPUT, includeBreak: false },
+      { ...INPUT, breakTaken: false },
       timeFromHM(8, 0)
     );
     expect(status.worked).toBe(0);
@@ -76,8 +76,9 @@ describe("computeLiveStatus", () => {
       computeLiveStatus(INPUT, timeFromHM(hour, minute)).phase;
 
     it.each([
-      ["before the start time", 7, 59, "before"],
-      ["while the break still covers it", 8, 10, "before"],
+      // 07:00 with an 08:00 start: someone planning tomorrow morning.
+      ["planning a start that has not arrived", 7, 0, "notStarted"],
+      ["while the break still covers it", 8, 10, "breakCovers"],
       ["mid shift", 12, 0, "working"],
       ["one minute short of the tolerance window", 13, 49, "working"],
       // 05:35 worked is the journey minus the tolerance: leaving is allowed.
@@ -93,7 +94,7 @@ describe("computeLiveStatus", () => {
   it("does not depend on the calendar date", () => {
     // The previous implementation reloaded the page when the day rolled over.
     const late = computeLiveStatus(
-      { ...INPUT, start: timeFromHM(23, 0), includeBreak: false },
+      { ...INPUT, start: timeFromHM(23, 0), breakTaken: false },
       timeFromHM(23, 59)
     );
     expect(formatHHMM(late.worked!)).toBe("00:59");

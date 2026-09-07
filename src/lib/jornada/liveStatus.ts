@@ -1,13 +1,14 @@
 import { type Duration, type TimeOfDay } from "../time/units";
 import * as D from "../time/duration";
-import { difference } from "../time/timeOfDay";
+import { elapsedForward } from "../time/timeOfDay";
 
 export type LiveInput = {
   start: TimeOfDay;
   workday: Duration;
   breakTime: Duration;
   tolerance: Duration;
-  includeBreak: boolean;
+  /** Whether the break has already been taken, and so already worked off. */
+  breakTaken: boolean;
 };
 
 /**
@@ -17,14 +18,15 @@ export type LiveInput = {
  * are the tolerance rules and those are worth a test.
  */
 export type ShiftPhase =
-  | "before" // the informed start time has not arrived
-  | "working" // under way, tolerance not yet reached
+  | "notStarted" // the start time is ahead, so this is a plan, not a shift
+  | "breakCovers" // the break accounts for everything since the start
+  | "working"
   | "mayLeave" // inside the tolerance window: leaving now is allowed
   | "overtime"; // past the journey plus the tolerance
 
 export type LiveStatus = {
   phase: ShiftPhase;
-  /** Null when the informed start time has not arrived yet. */
+  /** Null until the shift is actually under way. */
   worked: Duration | null;
   /** Only counted once the excess passes the tolerance. */
   overtime: Duration | null;
@@ -34,36 +36,52 @@ export type LiveStatus = {
 };
 
 /**
- * The live panel's arithmetic, with `now` as a parameter.
+ * How far past the planned journey a shift can run and still be read as under
+ * way rather than as a plan for later today.
+ *
+ * A start time is always in the past — you cannot have clocked in at a time
+ * that has not happened. But this screen is also used to plan ("if I start at
+ * 08:00, when do I leave?"), and then the start time is genuinely ahead. The
+ * two are indistinguishable from the clock alone, so this is a judgment: a
+ * shift running more than six hours over is less likely than someone planning
+ * their morning the night before.
+ */
+const PLAUSIBLE_OVERRUN = 6 * 60;
+
+/**
+ * The live figures, with `now` as a parameter.
  *
  * Taking the clock as an argument is what makes this testable at all: the
  * previous implementation called dayjs() three times inside a setInterval.
  * It also means the calculation has no notion of a calendar date, so the
  * midnight page reload it used to need is gone.
  *
- * A start time later than `now` yields worked: null. That also covers a shift
- * that began yesterday, which the live panel has never supported.
+ * Elapsed time runs forward from the start, wrapping past midnight, so a
+ * shift that began at 23:00 and is checked at 01:00 reads as two hours rather
+ * than as minus twenty-two.
  */
 export function computeLiveStatus(
   input: LiveInput,
   now: TimeOfDay
 ): LiveStatus {
-  const { start, workday, breakTime, tolerance, includeBreak } = input;
+  const { start, workday, breakTime, tolerance, breakTaken } = input;
   const targetWithTolerance = D.subtract(workday, tolerance);
 
-  const elapsed = difference(start, now);
-  const worked = includeBreak ? D.subtract(elapsed, breakTime) : elapsed;
+  const elapsed = elapsedForward(start, now);
+  const idle: Omit<LiveStatus, "phase"> = {
+    worked: null,
+    overtime: null,
+    remainingTotal: null,
+    remainingWithTolerance: null,
+    targetWithTolerance,
+  };
 
-  if (worked < 0) {
-    return {
-      phase: "before",
-      worked: null,
-      overtime: null,
-      remainingTotal: null,
-      remainingWithTolerance: null,
-      targetWithTolerance,
-    };
+  if (elapsed > workday + breakTime + PLAUSIBLE_OVERRUN) {
+    return { phase: "notStarted", ...idle };
   }
+
+  const worked = breakTaken ? D.subtract(elapsed, breakTime) : elapsed;
+  if (worked < 0) return { phase: "breakCovers", ...idle };
 
   if (worked > workday) {
     const excess = D.subtract(worked, workday);

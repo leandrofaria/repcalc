@@ -1,6 +1,6 @@
 import { type Duration, type TimeOfDay } from "../time/units";
 import * as D from "../time/duration";
-import { difference } from "../time/timeOfDay";
+import { elapsedForward } from "../time/timeOfDay";
 
 export const MIN_PAIRS = 1;
 export const MAX_PAIRS = 6;
@@ -12,15 +12,20 @@ export type PunchPair = {
   out: TimeOfDay | null;
 };
 
+export type PairState = {
+  /** How many days past the first punch this pair's clock-in falls on. */
+  dayOffset: number;
+  /** Filled in, but says nothing: the two readings are the same. */
+  invalid: boolean;
+  /** Still waiting on a value. Not an error. */
+  incomplete: boolean;
+};
+
 export type PairsResult = {
-  /** The sum of every complete, well-ordered pair so far. */
+  /** The sum of every complete, well-formed pair so far. */
   total: Duration;
-  /** True when every pair is complete and in order. */
   valid: boolean;
-  /** Pairs that are filled in but out of order: a real error. */
-  invalidIndices: readonly number[];
-  /** Pairs still waiting on a value: not an error, just unfinished. */
-  incompleteIndices: readonly number[];
+  pairs: readonly PairState[];
 };
 
 export function emptyPair(id: string): PunchPair {
@@ -28,47 +33,60 @@ export function emptyPair(id: string): PunchPair {
 }
 
 /**
- * Sums a sequence of punch pairs, requiring each to be ordered and to start
- * after the previous one ended.
+ * Sums a sequence of punch pairs.
  *
- * Incomplete and invalid are reported separately, and deliberately so: a pair
- * nobody has typed into yet is unfinished, not wrong, and marking it red the
- * moment the row appears is noise the user cannot act on.
+ * Marks are chronological by construction, so a clock that appears to run
+ * backwards means the day turned: 22:00 to 23:00 followed by 00:00 to 00:30
+ * is a night shift of an hour and a half, not a sequence "out of order".
+ * Refusing it was wrong in the previous version and in the one before that.
  *
- * The total counts every pair that is complete and ordered, so it grows as
- * the form is filled instead of staying blank until the last field.
+ * Because that reading is an interpretation, each pair reports the day it
+ * landed on, and the screen shows it. Nothing is assumed silently.
+ *
+ * The only thing left that cannot mean anything is a pair whose two readings
+ * are identical: zero minutes, or exactly twenty-four hours, with no way to
+ * tell which.
  */
 export function computePairs(pairs: readonly PunchPair[]): PairsResult {
-  const invalidIndices: number[] = [];
-  const incompleteIndices: number[] = [];
-  let previousOut: TimeOfDay | null = null;
+  const states: PairState[] = [];
   let total: Duration = D.ZERO;
+  let dayOffset = 0;
+  let previousOut: TimeOfDay | null = null;
 
-  pairs.forEach((pair, index) => {
+  for (const pair of pairs) {
     const { in: start, out: end } = pair;
 
     if (start === null || end === null) {
-      incompleteIndices.push(index);
-      // A half-filled pair still fixes the floor for the ones after it.
-      if (start !== null) previousOut = start;
-      return;
+      states.push({ dayOffset, invalid: false, incomplete: true });
+      continue;
     }
 
-    const outOfOrder =
-      end <= start || (previousOut !== null && start <= previousOut);
-    if (outOfOrder) {
-      invalidIndices.push(index);
-      return;
+    if (previousOut !== null) {
+      const gap = elapsedForward(previousOut, start);
+      if (gap === 0) {
+        // Same reading as the previous clock-out: zero gap or a whole day.
+        states.push({ dayOffset, invalid: true, incomplete: false });
+        continue;
+      }
+      if (start <= previousOut) dayOffset += 1;
     }
 
+    const worked = elapsedForward(start, end);
+    if (worked === 0) {
+      states.push({ dayOffset, invalid: true, incomplete: false });
+      continue;
+    }
+
+    states.push({ dayOffset, invalid: false, incomplete: false });
+    total = D.add(total, worked);
+    // A pair that runs past midnight leaves the cursor on the next day.
+    if (end < start) dayOffset += 1;
     previousOut = end;
-    total = D.add(total, difference(start, end));
-  });
+  }
 
   return {
     total,
-    valid: invalidIndices.length === 0 && incompleteIndices.length === 0,
-    invalidIndices,
-    incompleteIndices,
+    valid: states.every((state) => !state.invalid && !state.incomplete),
+    pairs: states,
   };
 }

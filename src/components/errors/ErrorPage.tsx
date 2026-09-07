@@ -11,7 +11,7 @@ const ErrorPage = ({
   message: string;
   action?: React.ReactNode;
 }) => (
-  <div className="page-container flex w-full flex-col items-start gap-4 rounded-[12px] border border-hairline bg-surface p-6 sm:max-w-[760px]">
+  <div className="page-container flex w-full flex-col items-start gap-4 rounded-[12px] border border-hairline bg-surface p-6">
     <h1 className="font-display text-xl font-bold tracking-tight">{title}</h1>
     <p className="text-ink-muted">{message}</p>
     {action}
