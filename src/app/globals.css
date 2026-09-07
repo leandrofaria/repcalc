@@ -93,6 +93,16 @@
   }
 }
 
+/* Installed — standalone, fullscreen or minimal-ui — as a Tailwind variant,
+   so a screen can differ there without repeating the three conditions. */
+@custom-variant installed {
+  @media (display-mode: standalone),
+    (display-mode: fullscreen),
+    (display-mode: minimal-ui) {
+    @slot;
+  }
+}
+
 /* The frame every screen sits in, exactly one screen tall.
    svh and not dvh: dvh tracks the phone's address bar as it collapses, so the
    whole column changed height mid-scroll and the spacing above the bottom bar

@@ -40,7 +40,7 @@ const Page = () => {
   return (
     <AppShell>
       <ContentContainer className="sm:mb-10">
-        <header className="w-full">
+        <header className="w-full installed:sr-only">
           <h1 className="font-display text-xl font-extrabold tracking-tight text-balance sm:text-2xl">
             Calculadora de horas para quem bate ponto em relógio eletrônico
           </h1>

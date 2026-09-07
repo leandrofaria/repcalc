@@ -65,6 +65,20 @@ export const viewport: Viewport = {
   // Full width on a phone, which is where this is used.
   width: "device-width",
   initialScale: 1,
+  /**
+   * Draw behind the phone's system bars.
+   *
+   * Without this the viewport stops above them, every env(safe-area-inset-*)
+   * is zero, and the strip under the app is whatever colour Android paints
+   * its navigation bar — white, against a screen that is otherwise edge to
+   * edge. With it, those insets carry real values and the app is the one that
+   * decides what shows there.
+   *
+   * It cuts both ways, so the header reserves the top inset in the same
+   * change: the status bar area stops being Android's to paint and becomes
+   * ours, and without that padding the app's name would sit under the clock.
+   */
+  viewportFit: "cover",
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: LIGHT.brand },
     { media: "(prefers-color-scheme: dark)", color: DARK.canvas },
