@@ -1,7 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
-  <rect width="512" height="512" rx="112.64" fill="#0F766E"/>
-  <circle cx="256" cy="256" r="150.016" fill="none" stroke="#FFFFFF" stroke-opacity="0.3" stroke-width="28.16"/>
-  <path d="M 256.00 105.98 A 150.02 150.02 0 0 1 275.58 404.73"
-        fill="none" stroke="#FFFFFF" stroke-width="28.16" stroke-linecap="round"/>
-  <circle cx="275.58" cy="404.73" r="26.624" fill="#FFFFFF"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="166" height="166" viewBox="0 0 166 166">
+  <title>REP Calc</title>
+  <circle cx="83" cy="83" r="78.5" fill="none" stroke="#171D1C" stroke-width="9"/>
+  <circle cx="83" cy="83" r="64" fill="#FFFFFF"/>
+  <circle cx="83" cy="83" r="64" fill="none" stroke="#C3C3C3" stroke-width="20"/>
+  <path d="M 27.57 115 A 64 64 0 0 1 83 19" fill="none" stroke="#0F766E" stroke-width="20" stroke-linecap="butt"/>
+  <circle cx="83" cy="83" r="53" fill="none" stroke="#171D1C" stroke-width="2"/>
+  <rect x="79" y="37" width="8" height="46" rx="4" fill="#131817"/>
+  <rect x="79" y="49" width="8" height="34" rx="4" fill="#131817" transform="rotate(240 83 83)"/>
+  <circle cx="83" cy="83" r="7" fill="#131817"/>
 </svg>

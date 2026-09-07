@@ -12,17 +12,30 @@ import { existsSync } from "node:fs";
 import { join } from "node:path";
 import opentype from "opentype.js";
 import sharp from "sharp";
+import {
+  MARK,
+  MARK_COLORS,
+  arcPath,
+  haloInnerRadius,
+  haloOuterRadius,
+} from "../src/lib/design/mark.mjs";
 
 const OUT = join(process.cwd(), "public", "icons");
 // Next serves these two by file convention, which is what replaces
 // the old favicon.ico.
 const APP = join(process.cwd(), "src", "app");
 
-const BRAND = "#0F766E";
 const ON_BRAND = "#FFFFFF";
 
-/** The dial position the mark freezes at: 5h45 of a 12-hour face. */
-const SWEEP = (5.75 / 12) * 360;
+/**
+ * The ground the app icon sits on.
+ *
+ * Deliberately the same value as the mark's outer halo, so the halo vanishes
+ * inside the icon and reappears the moment the mark is used anywhere else.
+ * It is not pure black: a near-black carrying the palette's hue belongs to
+ * the app, and pure black reads as a hole on a home screen.
+ */
+const TILE = MARK_COLORS.halo;
 
 /**
  * The two faces the app uses, pinned to the exact files Google serves today.
@@ -124,45 +137,68 @@ function textPath(font, text, x, y, size, fill, opacity = 1) {
 const textWidth = (font, text, size) => layout(font, text, size).width;
 
 /**
- * A clock ring with the worked part of a shift drawn over it. The default
- * journey is 5h45 of a 12-hour dial, which is the arc below.
+ * The mark itself, in its own 166x166 space.
+ *
+ * Everything here comes from src/lib/design/mark.mjs, which the Logo
+ * component reads too, so the icon and the one in the header cannot drift.
  */
-function mark({ size = 512, inset = 1, rounded = true }) {
-  const c = size / 2;
-  const radius = size * 0.293 * inset;
-  const stroke = size * 0.055 * inset;
-  const dot = size * 0.052 * inset;
+function markBody() {
+  const { center: c } = MARK;
+  return `<circle cx="${c}" cy="${c}" r="${haloOuterRadius}" fill="none" stroke="${MARK_COLORS.halo}" stroke-width="${MARK.haloOuter}"/>
+  <circle cx="${c}" cy="${c}" r="${MARK.ringRadius}" fill="${MARK_COLORS.face}"/>
+  <circle cx="${c}" cy="${c}" r="${MARK.ringRadius}" fill="none" stroke="${MARK_COLORS.track}" stroke-width="${MARK.ringWidth}"/>
+  <path d="${arcPath()}" fill="none" stroke="${MARK_COLORS.arc}" stroke-width="${MARK.ringWidth}" stroke-linecap="butt"/>
+  <circle cx="${c}" cy="${c}" r="${haloInnerRadius}" fill="none" stroke="${MARK_COLORS.halo}" stroke-width="${MARK.haloInner}"/>
+  <rect x="${c - MARK.handWidth / 2}" y="${c - MARK.minuteHand}" width="${MARK.handWidth}" height="${MARK.minuteHand}" rx="${MARK.handWidth / 2}" fill="${MARK_COLORS.hands}"/>
+  <rect x="${c - MARK.handWidth / 2}" y="${c - MARK.hourHand}" width="${MARK.handWidth}" height="${MARK.hourHand}" rx="${MARK.handWidth / 2}" fill="${MARK_COLORS.hands}" transform="rotate(${MARK.hourAngle} ${c} ${c})"/>
+  <circle cx="${c}" cy="${c}" r="${MARK.pin}" fill="${MARK_COLORS.hands}"/>`;
+}
 
-  const sweep = SWEEP;
-  const point = (deg) => {
-    const rad = ((deg - 90) * Math.PI) / 180;
-    return [c + radius * Math.cos(rad), c + radius * Math.sin(rad)];
-  };
-  const [x0, y0] = point(0);
-  const [x1, y1] = point(sweep);
-  const largeArc = sweep > 180 ? 1 : 0;
+/** The mark on its own, with nothing behind it. */
+function bareMark() {
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${MARK.size}" height="${MARK.size}" viewBox="0 0 ${MARK.size} ${MARK.size}">
+  <title>REP Calc</title>
+  ${markBody()}
+</svg>`;
+}
+
+/**
+ * The mark on the app's tile.
+ *
+ * `occupies` is how much of the tile the drawing takes. The outer halo is the
+ * tile colour, so roughly a tenth of that is invisible padding — which is
+ * why the visible clock lands where it should without a second margin.
+ */
+function tiledMark({ size = 512, occupies = 0.76, rounded = true }) {
+  const inner = size * occupies;
+  const offset = (size - inner) / 2;
 
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
-  <rect width="${size}" height="${size}"${rounded ? ` rx="${size * 0.22}"` : ""} fill="${BRAND}"/>
-  <circle cx="${c}" cy="${c}" r="${radius}" fill="none" stroke="${ON_BRAND}" stroke-opacity="0.3" stroke-width="${stroke}"/>
-  <path d="M ${x0.toFixed(2)} ${y0.toFixed(2)} A ${radius.toFixed(2)} ${radius.toFixed(2)} 0 ${largeArc} 1 ${x1.toFixed(2)} ${y1.toFixed(2)}"
-        fill="none" stroke="${ON_BRAND}" stroke-width="${stroke}" stroke-linecap="round"/>
-  <circle cx="${x1.toFixed(2)}" cy="${y1.toFixed(2)}" r="${dot}" fill="${ON_BRAND}"/>
+  <title>REP Calc</title>
+  <rect width="${size}" height="${size}"${rounded ? ` rx="${size * 0.22}"` : ""} fill="${TILE}"/>
+  <g transform="translate(${offset} ${offset}) scale(${inner / MARK.size})">${markBody()}</g>
 </svg>`;
 }
 
 const TARGETS = [
-  { file: "icon.svg", svg: mark({}) },
-  { file: "icon-192.png", size: 192, svg: mark({}) },
-  { file: "icon-512.png", size: 512, svg: mark({}) },
-  // Maskable icons are cropped to a circle by some launchers, so the glyph
-  // sits inside the 80% safe zone and the ground bleeds to the edges.
+  // On its own: the browser tab, and anywhere the mark is used loose. The
+  // halo is what gives it a contour against whatever it lands on.
+  { file: "icon.svg", svg: bareMark() },
+  { file: "icon-192.png", size: 192, svg: tiledMark({}) },
+  { file: "icon-512.png", size: 512, svg: tiledMark({}) },
+  // Maskable icons get cropped to a circle by some launchers, so the drawing
+  // sits well inside the safe zone and the tile bleeds to the edges.
   {
     file: "icon-maskable-512.png",
     size: 512,
-    svg: mark({ inset: 0.72, rounded: false }),
+    svg: tiledMark({ occupies: 0.6, rounded: false }),
   },
-  { file: "apple-touch-icon.png", size: 180, svg: mark({ rounded: false }) },
+  // iOS rounds this one itself, so it ships square.
+  {
+    file: "apple-touch-icon.png",
+    size: 180,
+    svg: tiledMark({ rounded: false }),
+  },
 ];
 
 await mkdir(OUT, { recursive: true });
@@ -220,28 +256,15 @@ async function ogCard() {
     );
   }
 
-  // The app's own mark, at card scale. Same geometry as the icons, so the
-  // thing someone sees in a link preview is the thing on their home screen.
-  const cx = 960;
-  const cy = H / 2;
-  // Literally the icon's proportions, read off the same ratios mark() uses,
-  // so the thing in a link preview is the thing on the home screen.
-  const nominal = 512;
-  const radius = nominal * 0.293;
-  const stroke = nominal * 0.055;
-  const point = (deg) => {
-    const rad = ((deg - 90) * Math.PI) / 180;
-    return [cx + radius * Math.cos(rad), cy + radius * Math.sin(rad)];
-  };
-  const [x0, y0] = point(0);
-  const [x1, y1] = point(SWEEP);
+  // The mark at card scale, on the same ground as the app icon — so the halo
+  // is invisible here too and a link preview looks like the installed app.
+  const markSize = 300;
+  const markX = 820;
+  const markY = (H - markSize) / 2;
 
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
-  <rect width="${W}" height="${H}" fill="${BRAND}"/>
-  <circle cx="${cx}" cy="${cy}" r="${radius}" fill="none" stroke="${ON_BRAND}" stroke-opacity="0.3" stroke-width="${stroke}"/>
-  <path d="M ${x0.toFixed(2)} ${y0.toFixed(2)} A ${radius} ${radius} 0 ${SWEEP > 180 ? 1 : 0} 1 ${x1.toFixed(2)} ${y1.toFixed(2)}"
-        fill="none" stroke="${ON_BRAND}" stroke-width="${stroke}" stroke-linecap="round"/>
-  <circle cx="${x1.toFixed(2)}" cy="${y1.toFixed(2)}" r="${nominal * 0.052}" fill="${ON_BRAND}"/>
+  <rect width="${W}" height="${H}" fill="${TILE}"/>
+  <g transform="translate(${markX} ${markY}) scale(${markSize / MARK.size})">${markBody()}</g>
   ${textPath(display, title, X, 322, titleSize, ON_BRAND)}
   ${textPath(body, tagline, X, 382, taglineSize, ON_BRAND, 0.9)}
   ${textPath(body, url, X, 520, urlSize, ON_BRAND, 0.6)}
@@ -255,8 +278,8 @@ console.log("wrote public/og.png");
 
 // The browser tab icon and the iOS home-screen icon, by Next's file
 // convention. Same source, so they cannot drift from the palette.
-await writeFile(join(APP, "icon.svg"), mark({}), "utf8");
-await sharp(Buffer.from(mark({ rounded: false })))
+await writeFile(join(APP, "icon.svg"), bareMark(), "utf8");
+await sharp(Buffer.from(tiledMark({ rounded: false })))
   .resize(180)
   .png()
   .toFile(join(APP, "apple-icon.png"));

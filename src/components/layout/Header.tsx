@@ -1,6 +1,7 @@
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import Link from "next/link";
+import Logo from "@/components/layout/Logo";
 import ThemeToggle from "@/components/ThemeRegistry/ThemeToggle";
 import { APP_VERSION } from "@/lib/version";
 
@@ -11,8 +12,9 @@ const Header = () => {
         <Toolbar variant="dense" className="gap-2">
           <Link
             href="/"
-            className="grow font-display text-xl font-bold tracking-tight"
+            className="flex grow items-center gap-2 font-display text-xl font-bold tracking-tight"
           >
+            <Logo />
             REP Calc
           </Link>
           <ThemeToggle />
