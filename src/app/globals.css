@@ -82,7 +82,13 @@
 @media (display-mode: standalone),
   (display-mode: fullscreen),
   (display-mode: minimal-ui) {
-  [data-bottom-bar] {
+  /* Whichever of the two is the foot of the shell reserves it, and its own
+     background fills the strip — otherwise the page's canvas shows through
+     below and the band reads as a gap. Only one of them is ever on screen:
+     the footer is hidden wherever the bar shows, and the bar is hidden from
+     the small breakpoint up. */
+  [data-bottom-bar],
+  footer {
     padding-bottom: env(safe-area-inset-bottom);
   }
 }
