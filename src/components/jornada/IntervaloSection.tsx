@@ -95,11 +95,19 @@ const IntervaloSection = ({
             />
           </div>
 
-          <p className="tabular flex items-baseline justify-between text-sm text-ink-muted">
+          <p className="tabular flex items-baseline justify-between gap-3 text-sm text-ink-muted">
             <span>Duração</span>
-            <b className="font-display text-lg text-figure">
-              {duration === null ? "--:--" : formatHHMM(duration)}
-            </b>
+            {duration === null ? (
+              <span className="text-right text-xs text-ink-faint">
+                {outOfOrder
+                  ? "Fim precisa ser após o início"
+                  : "Informe início e fim"}
+              </span>
+            ) : (
+              <b className="font-display text-lg text-figure">
+                {formatHHMM(duration)}
+              </b>
+            )}
           </p>
 
           {total !== null && (

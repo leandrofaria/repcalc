@@ -92,13 +92,31 @@ const TimeField = ({
                 // element, which is what actually takes focus.
                 input: {
                   "aria-labelledby": labelId,
-                  // One tab stop per field, not three. The accessible field
-                  // structure makes the sections container focusable as well
-                  // as the section inside it, and the two look identical on
-                  // screen — so Tab appeared to do nothing and people reached
-                  // for the mouse. The section keeps the spinbutton role and
-                  // the arrow keys; only the duplicate stop goes.
-                  slotProps: { input: { tabIndex: -1 } },
+                  slotProps: {
+                    // One tab stop per field, not three.
+                    //
+                    // The accessible field structure makes the sections
+                    // container focusable as well as the section inside it,
+                    // and the two look identical on screen, so Tab appeared
+                    // to do nothing and people reached for the mouse.
+                    //
+                    // Forcing the container to tabIndex -1 fixed the count
+                    // but broke Firefox: focus would land on it anyway, and
+                    // a focused element outside the tab order leaves Firefox
+                    // without a starting point, so the next Tab jumped back
+                    // to the top of the page. The picker already drops the
+                    // container from the tab order once a section is
+                    // selected, so the fix is to make that happen at once:
+                    // hand focus straight to the first section.
+                    input: {
+                      onFocus: (event: React.FocusEvent<HTMLDivElement>) => {
+                        if (event.target !== event.currentTarget) return;
+                        event.currentTarget
+                          .querySelector<HTMLElement>('[role="spinbutton"]')
+                          ?.focus();
+                      },
+                    },
+                  },
                 },
               },
             },

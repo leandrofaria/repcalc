@@ -130,9 +130,11 @@ const JornadaHero = ({
       aria-label="Resumo da jornada"
       className="w-full overflow-hidden rounded-[12px] border border-result-edge bg-surface"
     >
-      {/* items-stretch, and the divider on the second column, so the rule
-          runs the full height of the card and lands on its centre line —
-          the same centre the navigation and the fields below share. */}
+      {/* The divider is its own element rather than a border on the second
+          column, so it can be inset: a rule that runs edge to edge reads as
+          a seam between two cards instead of a division inside one. Halves
+          either side put it on the same centre line as the navigation and
+          the fields below. */}
       <div className="flex flex-col items-stretch sm:flex-row">
         {/* The answer. */}
         <div className="p-5 sm:w-1/2 sm:p-6">
@@ -159,9 +161,16 @@ const JornadaHero = ({
           </p>
         </div>
 
+        {liveInput !== null && (
+          <div
+            aria-hidden
+            className="mx-5 h-px shrink-0 bg-hairline sm:mx-0 sm:my-6 sm:h-auto sm:w-px"
+          />
+        )}
+
         {/* The live figures. */}
         {liveInput !== null && (
-          <div className="flex flex-col gap-3 border-t border-hairline p-5 sm:w-1/2 sm:border-l sm:border-t-0 sm:p-6">
+          <div className="flex flex-col gap-3 p-5 sm:w-1/2 sm:p-6">
             {worked !== null && (
               <>
                 <div

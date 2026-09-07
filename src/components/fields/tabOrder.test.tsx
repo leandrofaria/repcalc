@@ -32,6 +32,31 @@ describe("tab order", () => {
     expect(second.contains(document.activeElement)).toBe(true);
   });
 
+  it("leaves focus on an element that is itself a tab stop", async () => {
+    // Firefox loses its place when focus sits on a tabindex="-1" element:
+    // the next Tab restarts from the top of the document, which sent people
+    // back to the header instead of on to the next field.
+    const user = userEvent.setup();
+    renderWithProviders(
+      <TimeField label="Primeiro" value={null} onChange={() => {}} />
+    );
+
+    await user.tab();
+    const active = document.activeElement as HTMLElement;
+    expect(active.getAttribute("role")).toBe("spinbutton");
+    expect(active.tabIndex).toBe(0);
+  });
+
+  it("puts focus on a real tab stop when the field is clicked", async () => {
+    const user = userEvent.setup();
+    renderWithProviders(
+      <TimeField label="Primeiro" value={null} onChange={() => {}} />
+    );
+
+    await user.click(screen.getByRole("group", { name: "Primeiro" }));
+    expect((document.activeElement as HTMLElement).tabIndex).toBe(0);
+  });
+
   it("reaches every field in a four-field form within four presses", async () => {
     const user = userEvent.setup();
     renderWithProviders(
