@@ -4,12 +4,11 @@ import { AppRouterCacheProvider } from "@mui/material-nextjs/v16-appRouter";
 import InitColorSchemeScript from "@mui/material/InitColorSchemeScript";
 import "./globals.css";
 import ThemeRegistry from "@/components/ThemeRegistry/ThemeRegistry";
-import ThemeColorMeta from "@/components/ThemeRegistry/ThemeColorMeta";
 import Header from "@/components/layout/Header";
 import DateLocalizationProvider from "@/components/providers/DateLocalizationProvider";
 import Analytics from "@/components/Analytics/Analytics";
 import UpdatePrompt from "@/components/pwa/UpdatePrompt";
-import { COLOR_SCHEME_ATTRIBUTE, DARK, LIGHT } from "@/lib/design/tokens";
+import { COLOR_SCHEME_ATTRIBUTE } from "@/lib/design/tokens";
 
 // Loaded once here and exposed as CSS variables, which both the MUI theme
 // and Tailwind read.
@@ -66,24 +65,12 @@ export const viewport: Viewport = {
   // Full width on a phone, which is where this is used.
   width: "device-width",
   initialScale: 1,
-  /**
-   * Draw behind the phone's system bars.
-   *
-   * Without this the viewport stops above them, every env(safe-area-inset-*)
-   * is zero, and the strip under the app is whatever colour Android paints
-   * its navigation bar — white, against a screen that is otherwise edge to
-   * edge. With it, those insets carry real values and the app is the one that
-   * decides what shows there.
-   *
-   * It cuts both ways, so the header reserves the top inset in the same
-   * change: the status bar area stops being Android's to paint and becomes
-   * ours, and without that padding the app's name would sit under the clock.
-   */
-  viewportFit: "cover",
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: LIGHT.brand },
-    { media: "(prefers-color-scheme: dark)", color: DARK.canvas },
-  ],
+  // One value, deliberately, and black. Keyed on prefers-color-scheme it
+  // followed the phone while the app followed its own switch, so the two
+  // disagreed and the status bar came out green above a dark header. Black
+  // agrees with the strip Android paints at the foot of the screen, and the
+  // pair reads as the frame the app sits in.
+  themeColor: "#000000",
 };
 
 export default function RootLayout({
@@ -106,7 +93,6 @@ export default function RootLayout({
         <AppRouterCacheProvider options={{ key: "mui", enableCssLayer: true }}>
           <ThemeRegistry>
             <DateLocalizationProvider>
-              <ThemeColorMeta />
               <Header />
               {/* Each screen brings its own AppShell, because only the tool
                   screens carry a bottom bar and it has to sit outside the

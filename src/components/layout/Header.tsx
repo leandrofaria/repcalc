@@ -8,13 +8,7 @@ import { APP_VERSION } from "@/lib/version";
 const Header = () => {
   return (
     <header className="z-50">
-      <AppBar
-        position="static"
-        color="primary"
-        elevation={0}
-        data-theme-color-source
-        className="pt-[env(safe-area-inset-top)]"
-      >
+      <AppBar position="static" color="primary" elevation={0}>
         <Toolbar variant="dense" className="gap-2">
           <Link
             href="/"

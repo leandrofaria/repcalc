@@ -53,6 +53,12 @@
   --radius-control: 9px;
 }
 
+/* A altura da barra inferior, num lugar so: a propria barra a usa, e a tarja
+   de atualizacao se desloca por cima dela sem repetir o numero. */
+:root {
+  --rc-bottom-bar: 57px;
+}
+
 @utility page-container {
   /* The navigation and every screen share this, so nothing is wider than
      the bar above it. */
@@ -67,29 +73,6 @@
 @media (width < 40rem) {
   body:has([data-bottom-bar]) footer {
     display: none;
-  }
-}
-
-/* Room for the phone's gesture area, and only where the app is the one that
-   has to leave it.
-
-   Installed, the app is drawn edge to edge and this inset is what keeps the
-   labels off the gesture pill. In a browser tab the viewport already stops
-   above it, so adding it again is dead space at the foot of the bar. That
-   went unnoticed while the bar was `fixed`: anchored to the layout viewport,
-   which on Android runs past the visible area, the padding hung off the
-   bottom of the screen. Standing in the flow, it started taking real room. */
-@media (display-mode: standalone),
-  (display-mode: fullscreen),
-  (display-mode: minimal-ui) {
-  /* Whichever of the two is the foot of the shell reserves it, and its own
-     background fills the strip — otherwise the page's canvas shows through
-     below and the band reads as a gap. Only one of them is ever on screen:
-     the footer is hidden wherever the bar shows, and the bar is hidden from
-     the small breakpoint up. */
-  [data-bottom-bar],
-  footer {
-    padding-bottom: env(safe-area-inset-bottom);
   }
 }
 

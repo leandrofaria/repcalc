@@ -51,6 +51,11 @@ const UpdatePrompt = () => {
     <Snackbar
       open
       anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      // Anchored to the bottom, it landed on top of the navigation bar — a
+      // fixed element at z-index 1400 over one in the flow — and every tap
+      // meant for a nav item hit the banner instead. Two taps to change
+      // screens, for as long as an update was pending. It clears the bar now.
+      sx={{ bottom: { xs: "calc(var(--rc-bottom-bar) + 12px)", sm: 24 } }}
       message="Nova versão disponível"
       action={
         <Button

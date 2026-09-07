@@ -20,8 +20,10 @@ import { NAV_ITEMS, isActive } from "@/lib/nav";
  * a bottom padding to clear it. The previous guess was 76px against a bar that
  * is 57px in a browser tab and taller than that in an installed app.
  *
- * The room for the phone's gesture area is added in globals.css, and only
- * when the app owns the whole screen — see the note there.
+ * It carries the header's colour rather than the page's. In dark mode MUI
+ * paints the header with the surface, which is what this bar was already
+ * using, so the two matched by accident; in light mode one was brand and the
+ * other white. Brand on both closes the frame at the same colour it opens.
  */
 const BottomBar = () => {
   const pathname = usePathname();
@@ -30,7 +32,7 @@ const BottomBar = () => {
     <nav
       aria-label="Navegação principal"
       data-bottom-bar
-      className="grid shrink-0 grid-cols-4 border-t border-hairline bg-surface sm:hidden"
+      className="grid h-[var(--rc-bottom-bar)] shrink-0 grid-cols-4 bg-brand sm:hidden dark:border-t dark:border-hairline dark:bg-surface"
     >
       {NAV_ITEMS.map((item) => {
         const active = isActive(item, pathname);
@@ -39,10 +41,10 @@ const BottomBar = () => {
             key={item.href}
             href={item.href}
             aria-current={active ? "page" : undefined}
-            className={`flex min-h-[56px] flex-col items-center justify-center gap-0.5 text-[11px] font-semibold ${
+            className={`flex h-full flex-col items-center justify-center gap-0.5 text-[11px] font-semibold ${
               active
-                ? "text-brand shadow-[inset_0_2px_0_var(--rc-brand)]"
-                : "text-ink-faint"
+                ? "text-on-brand shadow-[inset_0_3px_0_var(--rc-on-brand)] dark:text-brand dark:shadow-[inset_0_3px_0_var(--rc-brand)]"
+                : "text-on-brand/70 dark:text-ink-faint"
             }`}
           >
             <NavIcon href={item.href} fontSize="medium" />
