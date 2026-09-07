@@ -85,9 +85,7 @@ const Jornada = () => {
         clockOut={clockOut}
         earlyClockOut={earlyClockOut}
         liveInput={liveInput}
-        toleranceLabel={
-          input.tolerance === null ? "--:--" : formatHHMM(input.tolerance)
-        }
+        tolerance={input.tolerance}
         breakTaken={breakTaken}
         onBreakTakenChange={setBreakTaken}
       />

@@ -3,11 +3,13 @@
 import { FormControlLabel, Switch } from "@mui/material";
 import { useMemo } from "react";
 import { formatHHMM } from "@/lib/time/duration";
+import type { Duration } from "@/lib/time/units";
 import { formatClock } from "@/lib/time/timeOfDay";
 import { useClock } from "@/lib/time/useClock";
 import type { Clock } from "@/lib/jornada/schedule";
 import {
   computeLiveStatus,
+  secondFigure,
   type LiveInput,
   type ShiftPhase,
 } from "@/lib/jornada/liveStatus";
@@ -26,8 +28,8 @@ export function dayNote(clock: Clock | null): string | null {
     : `${clock.dayOffset} dias depois`;
 }
 
-export function formatClockOut(clock: Clock | null): string {
-  return clock === null ? "--:--" : formatClock(clock.time);
+export function formatClockOut(clock: Clock): string {
+  return formatClock(clock.time);
 }
 
 const PHASE_LABEL: Record<ShiftPhase, string> = {
@@ -67,7 +69,7 @@ const JornadaHero = ({
   clockOut,
   earlyClockOut,
   liveInput,
-  toleranceLabel,
+  tolerance,
   breakTaken,
   onBreakTakenChange,
 }: {
@@ -77,7 +79,7 @@ const JornadaHero = ({
   clockOut: Clock | null;
   earlyClockOut: Clock | null;
   liveInput: LiveInput | null;
-  toleranceLabel: string;
+  tolerance: Duration | null;
   breakTaken: boolean;
   onBreakTakenChange: (value: boolean) => void;
 }) => {
@@ -98,7 +100,15 @@ const JornadaHero = ({
    * answer. While the form is incomplete the card says what is missing, and
    * says nothing else.
    */
-  if (!complete) {
+  // Narrowing all three here is what lets the rest of this component read
+  // values that exist. computeJornada only reports complete when every field
+  // is filled, so the card below can never be asked to render a blank.
+  if (
+    !complete ||
+    clockOut === null ||
+    earlyClockOut === null ||
+    tolerance === null
+  ) {
     return (
       <section
         aria-label="Resumo da jornada"
@@ -117,6 +127,7 @@ const JornadaHero = ({
   }
 
   const phase = status?.phase ?? "notStarted";
+  const figure = status === null ? null : secondFigure(status);
   const note = dayNote(clockOut);
   const hint = PHASE_HINT[phase];
   const worked = status?.worked ?? null;
@@ -157,7 +168,7 @@ const JornadaHero = ({
 
           <p className="tabular mt-2 text-sm text-ink-muted">
             ou <b className="text-figure">{formatClockOut(earlyClockOut)}</b>{" "}
-            com a tolerância de {toleranceLabel}
+            com a tolerância de {formatHHMM(tolerance)}
           </p>
         </div>
 
@@ -195,22 +206,22 @@ const JornadaHero = ({
                       {formatHHMM(worked)}
                     </dd>
                   </div>
-                  <div>
-                    <dt className="text-ink-muted">
-                      {status?.overtime !== null ? "Excedente" : "Faltam"}
-                    </dt>
-                    <dd
-                      className={`font-display text-xl font-bold ${
-                        status?.overtime !== null ? "text-warn" : "text-figure"
-                      }`}
-                    >
-                      {status?.overtime !== null
-                        ? formatHHMM(status!.overtime!)
-                        : status?.remainingTotal !== null
-                          ? formatHHMM(status!.remainingTotal!)
-                          : "--:--"}
-                    </dd>
-                  </div>
+                  {figure !== null && (
+                    <div>
+                      <dt className="text-ink-muted">
+                        {figure.kind === "overtime" ? "Excedente" : "Faltam"}
+                      </dt>
+                      <dd
+                        className={`font-display text-xl font-bold ${
+                          figure.kind === "overtime"
+                            ? "text-warn"
+                            : "text-figure"
+                        }`}
+                      >
+                        {formatHHMM(figure.value)}
+                      </dd>
+                    </div>
+                  )}
                 </dl>
               </>
             )}

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { formatHHMM, fromHM as durationFromHM } from "../time/duration";
 import { fromHM as timeFromHM } from "../time/timeOfDay";
-import { computeLiveStatus, type LiveInput } from "./liveStatus";
+import { computeLiveStatus, secondFigure, type LiveInput } from "./liveStatus";
 
 const INPUT: LiveInput = {
   start: timeFromHM(8, 0),
@@ -98,5 +98,42 @@ describe("computeLiveStatus", () => {
       timeFromHM(23, 59)
     );
     expect(formatHHMM(late.worked!)).toBe("00:59");
+  });
+});
+
+describe("secondFigure", () => {
+  const figureAt = (hour: number, minute: number) => {
+    const figure = secondFigure(
+      computeLiveStatus(INPUT, timeFromHM(hour, minute))
+    );
+    return figure === null
+      ? null
+      : { kind: figure.kind, value: formatHHMM(figure.value) };
+  };
+
+  it("counts down while the journey is not yet done", () => {
+    expect(figureAt(12, 0)).toEqual({ kind: "remaining", value: "02:00" });
+  });
+
+  it("still counts down once leaving is allowed but the journey is short", () => {
+    // 13:51 is inside the tolerance window, so the phase is already
+    // "mayLeave" — but two minutes of the journey are genuinely left.
+    expect(figureAt(13, 51)).toEqual({ kind: "remaining", value: "00:09" });
+  });
+
+  it("counts up once the excess passes the tolerance", () => {
+    expect(figureAt(14, 11)).toEqual({ kind: "overtime", value: "00:11" });
+  });
+
+  it("gives nothing while over the journey but inside the tolerance", () => {
+    // The one state with no honest number: the journey is done, so nothing is
+    // missing, and the excess is not overtime yet. It used to print "--:--",
+    // which is a placeholder pretending to be an answer.
+    expect(figureAt(14, 5)).toBeNull();
+  });
+
+  it("gives nothing before the shift is under way", () => {
+    expect(figureAt(7, 59)).toBeNull();
+    expect(figureAt(8, 10)).toBeNull();
   });
 });

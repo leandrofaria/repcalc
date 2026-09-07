@@ -110,3 +110,28 @@ export function computeLiveStatus(
     targetWithTolerance,
   };
 }
+
+/**
+ * The figure that sits beside the time worked, when there is one.
+ *
+ * Three outcomes, and the third is the point: while the journey is short there
+ * is time remaining; once the excess passes the tolerance there is overtime;
+ * and in between — journey done, excess still inside the tolerance — there is
+ * no honest number at all. Nothing is missing, and it is not overtime yet.
+ *
+ * That state used to render "--:--" beneath the label "Faltam", which is a
+ * placeholder pretending to be an answer to a question that has none. It also
+ * kept the decision in JSX, where a wrong number is not a test away from
+ * being caught.
+ */
+export function secondFigure(
+  status: LiveStatus
+): { kind: "remaining" | "overtime"; value: Duration } | null {
+  if (status.overtime !== null) {
+    return { kind: "overtime", value: status.overtime };
+  }
+  if (status.remainingTotal !== null) {
+    return { kind: "remaining", value: status.remainingTotal };
+  }
+  return null;
+}

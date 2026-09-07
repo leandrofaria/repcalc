@@ -27,7 +27,7 @@ function renderAt(hour: number, minute: number) {
       clockOut={CLOCK_OUT}
       earlyClockOut={EARLY}
       liveInput={LIVE}
-      toleranceLabel="00:10"
+      tolerance={durationFromHM(0, 10)}
       breakTaken
       onBreakTakenChange={() => {}}
     />
@@ -57,7 +57,7 @@ describe("JornadaHero", () => {
         clockOut={null}
         earlyClockOut={null}
         liveInput={null}
-        toleranceLabel="00:10"
+        tolerance={durationFromHM(0, 10)}
         breakTaken
         onBreakTakenChange={() => {}}
       />
@@ -79,7 +79,7 @@ describe("JornadaHero", () => {
         clockOut={null}
         earlyClockOut={null}
         liveInput={null}
-        toleranceLabel="00:10"
+        tolerance={durationFromHM(0, 10)}
         breakTaken
         onBreakTakenChange={() => {}}
       />
@@ -114,6 +114,27 @@ describe("JornadaHero", () => {
     expect(screen.getByText("00:11")).toBeInTheDocument();
   });
 
+  it("drops the second figure while over the journey but inside the tolerance", () => {
+    // The journey is done, so nothing is missing, and the excess is not
+    // overtime yet. It used to read "Faltam --:--".
+    renderAt(14, 5);
+
+    expect(screen.getByText("05:50")).toBeInTheDocument();
+    expect(screen.queryByText("--:--")).not.toBeInTheDocument();
+    expect(screen.queryByText("Faltam")).not.toBeInTheDocument();
+    expect(screen.queryByText("Excedente")).not.toBeInTheDocument();
+  });
+
+  it("still counts down when leaving is allowed and the journey is short", () => {
+    // "Já pode sair" starts inside the tolerance window, before the journey
+    // is actually complete — there the countdown is real and must stay.
+    renderAt(13, 51);
+
+    expect(screen.getByText("Já pode sair")).toBeInTheDocument();
+    expect(screen.getByText("Faltam")).toBeInTheDocument();
+    expect(screen.getByText("00:09")).toBeInTheDocument();
+  });
+
   it("says the next day in words, not as a parenthesised number", () => {
     renderWithProviders(
       <JornadaHero
@@ -122,7 +143,7 @@ describe("JornadaHero", () => {
         clockOut={{ time: timeFromHM(2, 0), dayOffset: 1 }}
         earlyClockOut={{ time: timeFromHM(1, 50), dayOffset: 1 }}
         liveInput={null}
-        toleranceLabel="00:10"
+        tolerance={durationFromHM(0, 10)}
         breakTaken
         onBreakTakenChange={() => {}}
       />
