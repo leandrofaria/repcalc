@@ -1,6 +1,45 @@
+import { execSync } from "node:child_process";
 import withSerwistInit from "@serwist/next";
 import type { NextConfig } from "next";
 import pkg from "./package.json" with { type: "json" };
+
+/**
+ * What tells an installed app that what it has cached is out of date.
+ *
+ * Routes and static files are precached by URL, and the revision is part of
+ * the cache key — `/jornada?__WB_REVISION__=...`. An unchanged revision means
+ * Serwist treats what it already holds as current and never asks again.
+ *
+ * Keyed on the package version, as it was, publishing without bumping that
+ * version left every installed app on the previous HTML: a shell pointing at
+ * chunk names the new deploy no longer precaches, which is a broken app with
+ * no symptom on the machine that published it.
+ *
+ * The commit is what actually changed, so the commit is what the revision
+ * names — and a client's cache keys then say which commit it is running,
+ * which is worth having when someone reports what you cannot reproduce.
+ * Uncommitted work, or no git at all, falls back to the clock: invalidating
+ * too often costs a handful of small files, invalidating too rarely costs
+ * the app.
+ */
+function precacheRevision(): string {
+  const git = (command: string) =>
+    execSync(command, { stdio: ["ignore", "pipe", "ignore"] })
+      .toString()
+      .trim();
+
+  try {
+    const commit = git("git rev-parse --short HEAD");
+    const dirty = git("git status --porcelain").length > 0;
+    return dirty
+      ? `${pkg.version}-${commit}-${Date.now().toString(36)}`
+      : `${pkg.version}-${commit}`;
+  } catch {
+    return `${pkg.version}-${Date.now().toString(36)}`;
+  }
+}
+
+const revision = precacheRevision();
 
 const nextConfig: NextConfig = {
   // The production VPS runs a glibc older than 2.29, so @next/swc's native
@@ -27,20 +66,21 @@ const withSerwist = withSerwistInit({
   disable: process.env.NODE_ENV === "development",
   reloadOnOnline: false,
   // Zero API calls and no server data, so every route is a static shell:
-  // precaching all of them is what makes the app work offline in full.
+  // precaching all of them is what makes the app work offline in full. They
+  // all share one revision, so a deploy invalidates the set or none of it.
   additionalPrecacheEntries: [
-    { url: "/", revision: pkg.version },
-    { url: "/calculadora", revision: pkg.version },
-    { url: "/jornada", revision: pkg.version },
-    { url: "/tempo-total", revision: pkg.version },
-    { url: "/sobre", revision: pkg.version },
-    { url: "/offline", revision: pkg.version },
+    { url: "/", revision },
+    { url: "/calculadora", revision },
+    { url: "/jornada", revision },
+    { url: "/tempo-total", revision },
+    { url: "/sobre", revision },
+    { url: "/offline", revision },
     // Served unoptimised so these exact URLs are what the browser asks for.
     ...["next", "react", "typescript", "tailwind", "mui", "node"].map(
-      (name) => ({ url: `/img/badges/${name}.svg`, revision: pkg.version })
+      (name) => ({ url: `/img/badges/${name}.svg`, revision })
     ),
     ...["icon-192.png", "icon-512.png", "icon.svg", "apple-touch-icon.png"].map(
-      (file) => ({ url: `/icons/${file}`, revision: pkg.version })
+      (file) => ({ url: `/icons/${file}`, revision })
     ),
   ],
 });
