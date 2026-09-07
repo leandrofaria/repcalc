@@ -1,4 +1,5 @@
 import Image from "next/image";
+import ScreenDiagnostics from "./sobre/ScreenDiagnostics";
 import ContentContainer from "./layout/ContentContainer";
 
 const Card = ({
@@ -142,6 +143,8 @@ const Sobre = () => {
           {/* eslint-enable @next/next/no-img-element */}
         </div>
       </Card>
+
+      <ScreenDiagnostics />
     </ContentContainer>
   );
 };
