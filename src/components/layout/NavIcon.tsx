@@ -2,6 +2,7 @@ import CalculateOutlinedIcon from "@mui/icons-material/CalculateOutlined";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import ScheduleOutlinedIcon from "@mui/icons-material/ScheduleOutlined";
 import SummarizeOutlinedIcon from "@mui/icons-material/SummarizeOutlined";
+import type { SvgIconProps } from "@mui/material/SvgIcon";
 
 /**
  * Monochrome stroke icons, in the theme's colour.
@@ -10,21 +11,24 @@ import SummarizeOutlinedIcon from "@mui/icons-material/SummarizeOutlined";
  * house, a calculator, a bar chart, some map pins and a speech bubble — and
  * lost all definition at 20px next to the new palette.
  */
-const ICONS = {
+export const ICONS: Record<
+  string,
+  React.ComponentType<SvgIconProps> | undefined
+> = {
   "/jornada": ScheduleOutlinedIcon,
   "/calculadora": CalculateOutlinedIcon,
   "/tempo-total": SummarizeOutlinedIcon,
   "/sobre": InfoOutlinedIcon,
-} as const;
+};
 
 const NavIcon = ({
   href,
   fontSize = "small",
 }: {
   href: string;
-  fontSize?: "small" | "medium";
+  fontSize?: SvgIconProps["fontSize"];
 }) => {
-  const Icon = ICONS[href as keyof typeof ICONS];
+  const Icon = ICONS[href];
   return Icon === undefined ? null : <Icon fontSize={fontSize} aria-hidden />;
 };
 

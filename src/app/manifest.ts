@@ -12,8 +12,7 @@ export default function manifest(): MetadataRoute.Manifest {
     description:
       "Calculadora de horas e planejamento de jornada para uso com relógio eletrônico de ponto.",
     lang: "pt-BR",
-    // Straight to the screen people open daily, skipping the "/" redirect.
-    start_url: "/jornada",
+    start_url: "/",
     scope: "/",
     display: "standalone",
     orientation: "portrait",

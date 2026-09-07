@@ -89,8 +89,7 @@ npm ci
 npm run dev
 ```
 
-Disponível em http://localhost:3000, que abre direto na jornada. A porta
-padrão é a 3000.
+Disponível em http://localhost:3000. A porta padrão é a 3000.
 
 ### Scripts
 

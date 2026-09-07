@@ -80,10 +80,10 @@ export default function RootLayout({
   return (
     <html
       lang="pt-br"
-      className={`${display.variable} ${body.variable} h-dvh`}
+      className={`${display.variable} ${body.variable} min-h-dvh`}
       suppressHydrationWarning
     >
-      <body className="h-dvh flex flex-col justify-between items-stretch bg-canvas text-ink antialiased">
+      <body className="flex min-h-dvh flex-col items-stretch justify-between bg-canvas text-ink antialiased">
         {/* Must be the first child of body: it stamps the colour scheme
             before first paint, so the page never flashes the wrong theme. */}
         <InitColorSchemeScript attribute={COLOR_SCHEME_ATTRIBUTE} />

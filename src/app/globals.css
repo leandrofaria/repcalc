@@ -60,6 +60,16 @@
   margin-inline: auto;
 }
 
+/* On a phone the tool screens end in the fixed navigation bar, which the
+   footer would sit behind. The home has no bar, so it keeps its footer.
+   Keyed off the bar itself, so adding or removing a screen from the
+   navigation cannot leave this behind. */
+@media (width < 40rem) {
+  body:has(nav.fixed) footer {
+    display: none;
+  }
+}
+
 /* Figures line up in columns across the whole app: results, keypad,
    the live panel. */
 @utility tabular {

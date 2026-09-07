@@ -1,14 +1,16 @@
 export type NavItem = {
   href: string;
   label: string;
-  /** Short form for the bottom bar, where five labels share the width. */
+  /** Short form for the bottom bar, where four labels share the width. */
   shortLabel: string;
 };
 
 /**
- * There is no Home entry any more: with the bar always on screen, a menu of
- * four cards was one tap between the user and the tool. "/" goes straight to
- * Jornada, which is the screen people open every day.
+ * The four tool screens.
+ *
+ * The home is deliberately absent: it is reached by the app's name in the
+ * header, not by the bar. A bar entry for it would mean two controls for the
+ * same destination, one of them on the destination itself.
  */
 export const NAV_ITEMS: readonly NavItem[] = [
   { href: "/jornada", label: "Jornada", shortLabel: "Jornada" },

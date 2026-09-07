@@ -2,8 +2,9 @@ import { describe, expect, it } from "vitest";
 import { NAV_ITEMS, isActive } from "./nav";
 
 describe("NAV_ITEMS", () => {
-  it("opens on Jornada and carries no Home entry", () => {
-    // The menu page was one tap between the user and the tool.
+  it("carries no Home entry", () => {
+    // The home exists as a page, but it is reached by the app's name in the
+    // header. A bar entry would be a second control for the same place.
     expect(NAV_ITEMS[0].href).toBe("/jornada");
     expect(NAV_ITEMS.map((item) => item.href)).not.toContain("/");
   });

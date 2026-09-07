@@ -1,5 +1,5 @@
 import Link from "next/link";
-import ScheduleOutlinedIcon from "@mui/icons-material/ScheduleOutlined";
+import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 
 /** Shared body for the error and not-found pages, which were near-identical. */
 const ErrorPage = ({
@@ -16,11 +16,11 @@ const ErrorPage = ({
     <p className="text-ink-muted">{message}</p>
     {action}
     <Link
-      href="/jornada"
+      href="/"
       className="mx-auto mt-6 flex flex-col items-center gap-1 font-semibold text-brand"
     >
-      <ScheduleOutlinedIcon fontSize="large" aria-hidden />
-      Ir para a jornada
+      <HomeOutlinedIcon fontSize="large" aria-hidden />
+      Voltar ao início
     </Link>
   </div>
 );
