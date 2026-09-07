@@ -66,7 +66,9 @@ const IntervaloSection = ({
         Calcular o intervalo
       </Button>
 
-      <Collapse in={open}>
+      {/* unmountOnExit: a collapsed section is still in the DOM, and
+          without this Tab walks into two fields nobody can see. */}
+      <Collapse in={open} unmountOnExit>
         <div className="flex flex-col gap-3 border-t border-hairline p-3">
           <div className="grid grid-cols-2 gap-3">
             <TimeField

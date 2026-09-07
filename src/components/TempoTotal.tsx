@@ -47,7 +47,7 @@ const TempoTotal = () => {
 
       <section
         aria-label="Total trabalhado"
-        className="w-full rounded-[12px] border border-result-edge bg-surface p-5 text-center sm:text-left"
+        className="w-full rounded-[12px] border border-result-edge bg-surface p-5 text-center"
       >
         <p className="text-sm text-ink-muted">Total trabalhado</p>
         <output
@@ -58,7 +58,7 @@ const TempoTotal = () => {
         </output>
         <p className="mt-2 text-sm text-ink-muted">
           {counted === 0
-            ? "Preencha um par de marcações"
+            ? "Preencha pelo menos um par de marcações"
             : `em ${counted} ${counted === 1 ? "par" : "pares"} de marcações`}
           {crossesMidnight && (
             <span className="ml-1 font-medium text-brand">

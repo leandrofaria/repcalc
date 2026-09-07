@@ -15,18 +15,14 @@ const Calculadora = () => {
   return (
     <ContentContainer>
       <h1 className="sr-only">Calculadora de horas</h1>
-      <div className="flex w-full flex-col gap-4 sm:flex-row sm:items-start">
-        <div className="w-full rounded-[12px] border border-calc-edge bg-calc-face p-4 sm:max-w-[420px]">
-          <CalcDisplay state={state} />
-          <CalcKeypad state={state} dispatch={dispatch} />
-        </div>
-        <div className="w-full sm:flex-1">
-          <CalcHistory
-            entries={state.history}
-            onClear={() => dispatch({ type: "clearHistory" })}
-          />
-        </div>
+      <div className="w-full rounded-[12px] border border-calc-edge bg-calc-face p-4">
+        <CalcDisplay state={state} />
+        <CalcKeypad state={state} dispatch={dispatch} />
       </div>
+      <CalcHistory
+        entries={state.history}
+        onClear={() => dispatch({ type: "clearHistory" })}
+      />
     </ContentContainer>
   );
 };

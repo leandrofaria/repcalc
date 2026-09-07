@@ -23,6 +23,7 @@ function renderAt(hour: number, minute: number) {
   return renderWithProviders(
     <JornadaHero
       complete
+      startMissing={false}
       clockOut={CLOCK_OUT}
       earlyClockOut={EARLY}
       liveInput={LIVE}
@@ -48,10 +49,11 @@ describe("JornadaHero", () => {
     expect(screen.getByText("13:50")).toBeInTheDocument();
   });
 
-  it("asks for a start time before anything is filled in", () => {
+  it("says what is missing instead of showing a placeholder answer", () => {
     renderWithProviders(
       <JornadaHero
         complete={false}
+        startMissing
         clockOut={null}
         earlyClockOut={null}
         liveInput={null}
@@ -60,8 +62,31 @@ describe("JornadaHero", () => {
         onBreakTakenChange={() => {}}
       />
     );
-    expect(screen.getByText("Informe o horário de início")).toBeInTheDocument();
-    expect(screen.getByText("--:--")).toBeInTheDocument();
+    // A giant "--:--" under "Você sai às" is a placeholder pretending to be
+    // an answer.
+    expect(
+      screen.getByText("Informe o horário de início para ver sua saída")
+    ).toBeInTheDocument();
+    expect(screen.queryByText("--:--")).not.toBeInTheDocument();
+    expect(screen.queryByText("Você sai às")).not.toBeInTheDocument();
+  });
+
+  it("says something different when a field was cleared", () => {
+    renderWithProviders(
+      <JornadaHero
+        complete={false}
+        startMissing={false}
+        clockOut={null}
+        earlyClockOut={null}
+        liveInput={null}
+        toleranceLabel="00:10"
+        breakTaken
+        onBreakTakenChange={() => {}}
+      />
+    );
+    expect(
+      screen.getByText("Complete os campos para ver seu horário de saída")
+    ).toBeInTheDocument();
   });
 
   it("shows the live figures inline, without a dialog", () => {
@@ -93,6 +118,7 @@ describe("JornadaHero", () => {
     renderWithProviders(
       <JornadaHero
         complete
+        startMissing={false}
         clockOut={{ time: timeFromHM(2, 0), dayOffset: 1 }}
         earlyClockOut={{ time: timeFromHM(1, 50), dayOffset: 1 }}
         liveInput={null}

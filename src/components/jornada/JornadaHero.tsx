@@ -16,7 +16,7 @@ import {
  * Says which day a clock reading falls on, in words.
  *
  * This used to render as "02:00 (+1)". A parenthesised number is a notation,
- * not a sentence, and nobody should have to learn it to read their own
+ * not a sentence, and nobody should have to learn one to read their own
  * clock-out time.
  */
 export function dayNote(clock: Clock | null): string | null {
@@ -51,7 +51,7 @@ const PHASE_HINT: Partial<Record<ShiftPhase, string>> = {
   notStarted:
     "O horário informado ainda não chegou, então isto é o planejamento da jornada.",
   breakCovers:
-    "Todo o tempo desde o início cabe dentro do intervalo. Se ainda não o tirou, desmarque a opção abaixo.",
+    "Todo o tempo desde o início cabe dentro do intervalo. Se ainda não o tirou, desligue a opção abaixo.",
 };
 
 /**
@@ -63,6 +63,7 @@ const PHASE_HINT: Partial<Record<ShiftPhase, string>> = {
  */
 const JornadaHero = ({
   complete,
+  startMissing,
   clockOut,
   earlyClockOut,
   liveInput,
@@ -71,6 +72,8 @@ const JornadaHero = ({
   onBreakTakenChange,
 }: {
   complete: boolean;
+  /** True when the start time is the only thing still to fill in. */
+  startMissing: boolean;
   clockOut: Clock | null;
   earlyClockOut: Clock | null;
   liveInput: LiveInput | null;
@@ -88,9 +91,34 @@ const JornadaHero = ({
     [liveInput, now]
   );
 
+  /**
+   * Nothing to show yet.
+   *
+   * A giant "--:--" under "Você sai às" is a placeholder pretending to be an
+   * answer. While the form is incomplete the card says what is missing, and
+   * says nothing else.
+   */
+  if (!complete) {
+    return (
+      <section
+        aria-label="Resumo da jornada"
+        className="flex min-h-[112px] w-full items-center justify-center rounded-[12px] border border-dashed border-field-edge bg-surface p-5 text-center"
+      >
+        <p
+          aria-live="polite"
+          className="rounded-full bg-ok-bg px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-ink-muted"
+        >
+          {startMissing
+            ? "Informe o horário de início para ver sua saída"
+            : "Complete os campos para ver seu horário de saída"}
+        </p>
+      </section>
+    );
+  }
+
   const phase = status?.phase ?? "notStarted";
   const note = dayNote(clockOut);
-  const hint = complete ? PHASE_HINT[phase] : undefined;
+  const hint = PHASE_HINT[phase];
   const worked = status?.worked ?? null;
   const progress =
     worked === null || liveInput === null
@@ -100,15 +128,18 @@ const JornadaHero = ({
   return (
     <section
       aria-label="Resumo da jornada"
-      className="w-full rounded-[12px] border border-result-edge bg-surface p-5 sm:p-6"
+      className="w-full overflow-hidden rounded-[12px] border border-result-edge bg-surface"
     >
-      <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:gap-8">
+      {/* items-stretch, and the divider on the second column, so the rule
+          runs the full height of the card and lands on its centre line —
+          the same centre the navigation and the fields below share. */}
+      <div className="flex flex-col items-stretch sm:flex-row">
         {/* The answer. */}
-        <div className="sm:flex-1">
+        <div className="p-5 sm:w-1/2 sm:p-6">
           <span
             className={`inline-block rounded-full px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wider ${PHASE_CLASS[phase]}`}
           >
-            {complete ? PHASE_LABEL[phase] : "Informe o horário de início"}
+            {PHASE_LABEL[phase]}
           </span>
 
           <p className="mt-3 text-sm text-ink-muted">Você sai às</p>
@@ -122,17 +153,15 @@ const JornadaHero = ({
             <p className="mt-1 text-sm font-semibold text-brand">{note}</p>
           )}
 
-          {complete && (
-            <p className="tabular mt-2 text-sm text-ink-muted">
-              ou <b className="text-figure">{formatClockOut(earlyClockOut)}</b>{" "}
-              com a tolerância de {toleranceLabel}
-            </p>
-          )}
+          <p className="tabular mt-2 text-sm text-ink-muted">
+            ou <b className="text-figure">{formatClockOut(earlyClockOut)}</b>{" "}
+            com a tolerância de {toleranceLabel}
+          </p>
         </div>
 
         {/* The live figures. */}
         {liveInput !== null && (
-          <div className="flex flex-col gap-3 border-t border-hairline pt-4 sm:w-[46%] sm:border-l sm:border-t-0 sm:pl-8 sm:pt-0">
+          <div className="flex flex-col gap-3 border-t border-hairline p-5 sm:w-1/2 sm:border-l sm:border-t-0 sm:p-6">
             {worked !== null && (
               <>
                 <div
@@ -196,6 +225,7 @@ const JornadaHero = ({
               sx={{
                 marginLeft: 0,
                 marginRight: 0,
+                marginTop: "auto",
                 "& .MuiFormControlLabel-label": { fontSize: 14 },
               }}
             />

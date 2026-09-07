@@ -18,7 +18,7 @@ describe("TempoTotal", () => {
     renderWithProviders(<TempoTotal />);
     expect(screen.getByText("00:00")).toBeInTheDocument();
     expect(
-      screen.getByText("Preencha um par de marcações")
+      screen.getByText("Preencha pelo menos um par de marcações")
     ).toBeInTheDocument();
   });
 

@@ -87,11 +87,24 @@ const TimeField = ({
             textField: {
               error,
               helperText,
-              // The picker's own slotProps.input reaches the role="group"
-              // element, which is what actually takes focus.
-              slotProps: { input: { "aria-labelledby": labelId } },
+              slotProps: {
+                // The picker's own slotProps.input reaches the role="group"
+                // element, which is what actually takes focus.
+                input: {
+                  "aria-labelledby": labelId,
+                  // One tab stop per field, not three. The accessible field
+                  // structure makes the sections container focusable as well
+                  // as the section inside it, and the two look identical on
+                  // screen — so Tab appeared to do nothing and people reached
+                  // for the mouse. The section keeps the spinbutton role and
+                  // the arrow keys; only the duplicate stop goes.
+                  slotProps: { input: { tabIndex: -1 } },
+                },
+              },
             },
-            openPickerButton: { "aria-describedby": labelId },
+            // An adornment, not a separate control: the same time can be set
+            // by typing, so it is reachable by keyboard without its own stop.
+            openPickerButton: { "aria-describedby": labelId, tabIndex: -1 },
           }}
         />
       </div>

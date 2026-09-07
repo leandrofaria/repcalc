@@ -78,6 +78,7 @@ const Jornada = () => {
 
       <JornadaHero
         complete={complete}
+        startMissing={input.start === null && settingsReady}
         clockOut={clockOut}
         earlyClockOut={earlyClockOut}
         liveInput={liveInput}
