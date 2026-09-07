@@ -15,6 +15,8 @@ import {
 } from "@/lib/tempoTotal/pairs";
 import { formatHHMM } from "@/lib/time/duration";
 import { dayjsToTimeOfDay } from "@/lib/time/dayjs";
+import PunchPaste from "./punches/PunchPaste";
+import { stillClockedIn } from "@/lib/punches/parse";
 
 const TempoTotal = () => {
   const [pairs, setPairs] = useState<PunchPair[]>([emptyPair("pair-0")]);
@@ -88,6 +90,30 @@ const TempoTotal = () => {
           />
         ))}
       </div>
+
+      <PunchPaste
+        hint="A linha do sistema oficial. Cada duas marcações formam um par; uma marcação sobrando fica em aberto."
+        describe={(times) => {
+          const complete = Math.floor(times.length / 2);
+          const pairs = `${complete} ${complete === 1 ? "par" : "pares"}`;
+          return stillClockedIn(times)
+            ? `${pairs} e uma marcação em aberto`
+            : pairs;
+        }}
+        onApply={(times) => {
+          // Two marks make a pair; an odd one out is someone still on the
+          // clock, so its row is left half-filled rather than refused.
+          const filled: PunchPair[] = [];
+          for (let index = 0; index < times.length; index += 2) {
+            filled.push({
+              id: `pair-${nextId.current++}`,
+              in: times[index],
+              out: times[index + 1] ?? null,
+            });
+          }
+          setPairs(filled.slice(0, MAX_PAIRS));
+        }}
+      />
 
       <Button
         variant="outlined"

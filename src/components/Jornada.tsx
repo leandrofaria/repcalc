@@ -6,6 +6,9 @@ import JornadaForm from "./jornada/JornadaForm";
 import JornadaHero from "./jornada/JornadaHero";
 import JornadaSettings from "./jornada/JornadaSettings";
 import IntervaloSection from "./jornada/IntervaloSection";
+import PunchPaste from "./punches/PunchPaste";
+import { breakCount, breaksBetween, stillClockedIn } from "@/lib/punches/parse";
+import { formatClock } from "@/lib/time/timeOfDay";
 import { computeJornada, type JornadaInput } from "@/lib/jornada/schedule";
 import type { LiveInput } from "@/lib/jornada/liveStatus";
 import { formatHHMM } from "@/lib/time/duration";
@@ -90,6 +93,33 @@ const Jornada = () => {
       />
 
       <JornadaForm input={input} onChange={patch} />
+
+      <PunchPaste
+        hint="A linha do sistema oficial. A última marcação é a saída que esta tela calcula, então normalmente são 1, 3 ou 5 marcações."
+        describe={(times) => {
+          const breaks = breakCount(times);
+          const start = `Início ${formatClock(times[0])}`;
+          const rest =
+            breaks === 0
+              ? ", sem intervalo registrado ainda"
+              : `, intervalo de ${formatHHMM(breaksBetween(times))}`;
+          const closed = stillClockedIn(times)
+            ? ""
+            : ". A última marcação é uma saída, então a jornada já foi encerrada.";
+          return `${start}${rest}${closed}`;
+        }}
+        onApply={(times) => {
+          // The first mark is the clock-in. The gaps between the marks are
+          // the breaks already taken; with none yet, the saved default is
+          // left alone, because the plan still assumes one will be taken.
+          const taken = breakCount(times) > 0;
+          patch({
+            start: times[0],
+            ...(taken ? { breakTime: breaksBetween(times) } : {}),
+          });
+          setBreakTaken(taken);
+        }}
+      />
 
       <IntervaloSection onApply={(breakTime) => patch({ breakTime })} />
 
