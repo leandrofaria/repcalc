@@ -12,6 +12,7 @@ const Header = () => {
         position="static"
         color="primary"
         elevation={0}
+        data-theme-color-source
         className="pt-[env(safe-area-inset-top)]"
       >
         <Toolbar variant="dense" className="gap-2">

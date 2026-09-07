@@ -4,6 +4,7 @@ import { AppRouterCacheProvider } from "@mui/material-nextjs/v16-appRouter";
 import InitColorSchemeScript from "@mui/material/InitColorSchemeScript";
 import "./globals.css";
 import ThemeRegistry from "@/components/ThemeRegistry/ThemeRegistry";
+import ThemeColorMeta from "@/components/ThemeRegistry/ThemeColorMeta";
 import Header from "@/components/layout/Header";
 import DateLocalizationProvider from "@/components/providers/DateLocalizationProvider";
 import Analytics from "@/components/Analytics/Analytics";
@@ -105,6 +106,7 @@ export default function RootLayout({
         <AppRouterCacheProvider options={{ key: "mui", enableCssLayer: true }}>
           <ThemeRegistry>
             <DateLocalizationProvider>
+              <ThemeColorMeta />
               <Header />
               {/* Each screen brings its own AppShell, because only the tool
                   screens carry a bottom bar and it has to sit outside the
