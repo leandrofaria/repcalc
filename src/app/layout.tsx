@@ -49,10 +49,10 @@ export const metadata: Metadata = {
     siteName: "REP Calc",
     images: [
       {
-        url: "https://repcalc.leandrofaria.com/og.jpg",
+        url: "https://repcalc.leandrofaria.com/og.png",
         width: 1200,
         height: 630,
-        alt: "REP Calc",
+        alt: "REP Calc — calculadora de horas para quem bate ponto",
       },
     ],
     locale: "pt_BR",
