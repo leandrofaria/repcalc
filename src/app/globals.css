@@ -70,6 +70,23 @@
   }
 }
 
+/* Room for the phone's gesture area, and only where the app is the one that
+   has to leave it.
+
+   Installed, the app is drawn edge to edge and this inset is what keeps the
+   labels off the gesture pill. In a browser tab the viewport already stops
+   above it, so adding it again is dead space at the foot of the bar. That
+   went unnoticed while the bar was `fixed`: anchored to the layout viewport,
+   which on Android runs past the visible area, the padding hung off the
+   bottom of the screen. Standing in the flow, it started taking real room. */
+@media (display-mode: standalone),
+  (display-mode: fullscreen),
+  (display-mode: minimal-ui) {
+  [data-bottom-bar] {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
 /* The frame every screen sits in, exactly one screen tall.
    svh and not dvh: dvh tracks the phone's address bar as it collapses, so the
    whole column changed height mid-scroll and the spacing above the bottom bar

@@ -18,8 +18,10 @@ import { NAV_ITEMS, isActive } from "@/lib/nav";
  *
  * Being in the flow also means it takes real space, so no screen has to guess
  * a bottom padding to clear it. The previous guess was 76px against a bar that
- * is 57px in a browser tab and up to 105px in an installed app on a phone with
- * gesture navigation, where the safe-area inset is not zero.
+ * is 57px in a browser tab and taller than that in an installed app.
+ *
+ * The room for the phone's gesture area is added in globals.css, and only
+ * when the app owns the whole screen — see the note there.
  */
 const BottomBar = () => {
   const pathname = usePathname();
@@ -28,7 +30,7 @@ const BottomBar = () => {
     <nav
       aria-label="Navegação principal"
       data-bottom-bar
-      className="grid shrink-0 grid-cols-4 border-t border-hairline bg-surface pb-[env(safe-area-inset-bottom)] sm:hidden"
+      className="grid shrink-0 grid-cols-4 border-t border-hairline bg-surface sm:hidden"
     >
       {NAV_ITEMS.map((item) => {
         const active = isActive(item, pathname);
