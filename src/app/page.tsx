@@ -1,3 +1,4 @@
+import AppShell from "@/components/layout/AppShell";
 import ContentContainer from "@/components/layout/ContentContainer";
 import MenuCard from "@/components/ui/MenuCard";
 
@@ -37,22 +38,24 @@ const FEATURES = [
  */
 const Page = () => {
   return (
-    <ContentContainer className="sm:mb-10">
-      <header className="w-full">
-        <h1 className="font-display text-xl font-extrabold tracking-tight text-balance sm:text-2xl">
-          Calculadora de horas para quem bate ponto em relógio eletrônico
-        </h1>
-        <p className="mt-2 text-ink-muted">
-          Funciona no celular, mesmo sem conexão.
-        </p>
-      </header>
+    <AppShell>
+      <ContentContainer className="sm:mb-10">
+        <header className="w-full">
+          <h1 className="font-display text-xl font-extrabold tracking-tight text-balance sm:text-2xl">
+            Calculadora de horas para quem bate ponto em relógio eletrônico
+          </h1>
+          <p className="mt-2 text-ink-muted">
+            Funciona no celular, mesmo sem conexão.
+          </p>
+        </header>
 
-      <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-2">
-        {FEATURES.map((feature) => (
-          <MenuCard key={feature.href} {...feature} />
-        ))}
-      </div>
-    </ContentContainer>
+        <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-2">
+          {FEATURES.map((feature) => (
+            <MenuCard key={feature.href} {...feature} />
+          ))}
+        </div>
+      </ContentContainer>
+    </AppShell>
   );
 };
 

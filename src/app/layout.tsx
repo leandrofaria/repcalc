@@ -5,7 +5,6 @@ import InitColorSchemeScript from "@mui/material/InitColorSchemeScript";
 import "./globals.css";
 import ThemeRegistry from "@/components/ThemeRegistry/ThemeRegistry";
 import Header from "@/components/layout/Header";
-import Footer from "@/components/layout/Footer";
 import DateLocalizationProvider from "@/components/providers/DateLocalizationProvider";
 import Analytics from "@/components/Analytics/Analytics";
 import UpdatePrompt from "@/components/pwa/UpdatePrompt";
@@ -80,10 +79,10 @@ export default function RootLayout({
   return (
     <html
       lang="pt-br"
-      className={`${display.variable} ${body.variable} min-h-dvh`}
+      className={`${display.variable} ${body.variable} app-shell overflow-hidden`}
       suppressHydrationWarning
     >
-      <body className="flex min-h-dvh flex-col items-stretch justify-between bg-canvas text-ink antialiased">
+      <body className="app-shell flex flex-col items-stretch overflow-hidden bg-canvas text-ink antialiased">
         {/* Must be the first child of body: it stamps the colour scheme
             before first paint, so the page never flashes the wrong theme. */}
         <InitColorSchemeScript attribute={COLOR_SCHEME_ATTRIBUTE} />
@@ -93,10 +92,10 @@ export default function RootLayout({
           <ThemeRegistry>
             <DateLocalizationProvider>
               <Header />
-              <main className="flex grow flex-col items-stretch justify-start px-4 pt-4 pb-[76px] sm:justify-center sm:px-6 sm:py-6 sm:pb-6">
-                {children}
-              </main>
-              <Footer />
+              {/* Each screen brings its own AppShell, because only the tool
+                  screens carry a bottom bar and it has to sit outside the
+                  scrolling area. */}
+              {children}
               <UpdatePrompt />
             </DateLocalizationProvider>
           </ThemeRegistry>

@@ -65,9 +65,19 @@
    Keyed off the bar itself, so adding or removing a screen from the
    navigation cannot leave this behind. */
 @media (width < 40rem) {
-  body:has(nav.fixed) footer {
+  body:has([data-bottom-bar]) footer {
     display: none;
   }
+}
+
+/* The frame every screen sits in, exactly one screen tall.
+   svh and not dvh: dvh tracks the phone's address bar as it collapses, so the
+   whole column changed height mid-scroll and the spacing above the bottom bar
+   visibly grew and shrank. svh is the height with that bar shown and never
+   changes. 100vh first, as the fallback for anything without svh. */
+@utility app-shell {
+  height: 100vh;
+  height: 100svh;
 }
 
 /* Figures line up in columns across the whole app: results, keypad,
