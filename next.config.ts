@@ -1,7 +1,28 @@
 import { execSync } from "node:child_process";
 import withSerwistInit from "@serwist/next";
 import type { NextConfig } from "next";
-import pkg from "./package.json" with { type: "json" };
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
+
+/**
+ * Read rather than imported.
+ *
+ * `import pkg from "./package.json" with { type: "json" }` builds fine
+ * anywhere the native @next/swc binary loads — and dies on the production
+ * host, whose glibc is too old for it. The WASM fallback transpiles this file
+ * without preserving the import attribute, so Node then refuses the JSON with
+ * ERR_IMPORT_ATTRIBUTE_MISSING and the config never loads.
+ *
+ * CI cannot catch it: a GitHub runner has a modern glibc and never reaches
+ * the fallback. Reading the file has no attribute to lose.
+ *
+ * process.cwd() rather than import.meta.url on purpose. The failure was a
+ * transpiler dropping an ESM-only construct, so this deliberately uses none:
+ * Next only ever evaluates this file from the project root.
+ */
+const pkg = JSON.parse(
+  readFileSync(join(process.cwd(), "package.json"), "utf8")
+) as { version: string };
 
 /**
  * What tells an installed app that what it has cached is out of date.
