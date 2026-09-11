@@ -15,6 +15,8 @@ import { formatHHMM } from "@/lib/time/duration";
 import {
   resetDefaults,
   saveDefaults,
+  setLeaveWithTolerance,
+  useLeaveWithTolerance,
   useStoredDefaults,
 } from "@/lib/jornada/useStoredDefaults";
 
@@ -26,6 +28,9 @@ const Jornada = () => {
   // no effect syncing storage into state, and no window where the server
   // render and the first client render can disagree.
   const stored = useStoredDefaults();
+  // Remembered on the device and saved the moment it is flipped, unlike the
+  // fields, which wait for "Salvar definições".
+  const leaveWithTolerance = useLeaveWithTolerance();
   const [edits, setEdits] = useState<Partial<JornadaInput>>({});
 
   const input: JornadaInput = useMemo(
@@ -88,6 +93,8 @@ const Jornada = () => {
         tolerance={input.tolerance}
         breakTaken={breakTaken}
         onBreakTakenChange={setBreakTaken}
+        leaveWithTolerance={leaveWithTolerance}
+        onLeaveWithToleranceChange={setLeaveWithTolerance}
       />
 
       <JornadaForm input={input} onChange={patch} />

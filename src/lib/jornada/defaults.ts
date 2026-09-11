@@ -72,3 +72,42 @@ export function clearStoredDefaults(storage: StorageLike): void {
     }
   }
 }
+
+/**
+ * Whether the card leads with the tolerance rather than the full journey.
+ *
+ * A preference rather than a jornada setting, so it lives under its own key
+ * instead of joining the three above: those hold HH:mm and are a contract with
+ * settings saved since 2023. "1" means on; absent, or anything else, off — so
+ * a device that has never seen the switch reads exactly as it did before.
+ */
+export const LEAVE_WITH_TOLERANCE_KEY = "sairNaTolerancia";
+
+export function readLeaveWithTolerance(storage: StorageLike): boolean {
+  try {
+    return storage.getItem(LEAVE_WITH_TOLERANCE_KEY) === "1";
+  } catch {
+    return false;
+  }
+}
+
+/** Off is stored as no key at all, which is also what "never set" looks like. */
+export function writeLeaveWithTolerance(
+  storage: StorageLike,
+  value: boolean
+): void {
+  try {
+    if (value) storage.setItem(LEAVE_WITH_TOLERANCE_KEY, "1");
+    else storage.removeItem(LEAVE_WITH_TOLERANCE_KEY);
+  } catch {
+    // Nothing useful to do if the browser refuses to persist.
+  }
+}
+
+export function clearLeaveWithTolerance(storage: StorageLike): void {
+  try {
+    storage.removeItem(LEAVE_WITH_TOLERANCE_KEY);
+  } catch {
+    // As above.
+  }
+}

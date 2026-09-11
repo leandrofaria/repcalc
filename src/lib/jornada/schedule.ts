@@ -55,3 +55,40 @@ export function computeJornada(input: JornadaInput): JornadaResult {
     },
   };
 }
+
+/** The two clock-out times, in the order the card shows them. */
+export type ClockOutFigures = {
+  headline: Clock;
+  alternate: Clock;
+  /** Whether the smaller, second time is the one with the tolerance. */
+  alternateWithTolerance: boolean;
+};
+
+/**
+ * Which clock-out time the card leads with.
+ *
+ * By default the full journey, with the tolerance as the smaller line; for
+ * someone who leaves on the tolerance as a rule, the other way round. Each
+ * clock keeps its own day offset, because the two can fall either side of
+ * midnight and the day note has to describe whichever one leads.
+ *
+ * Takes the two clocks rather than a JornadaResult: the card only reaches
+ * this once it has narrowed them, and a result would hand the nulls back.
+ */
+export function clockOutFigures(
+  clockOut: Clock,
+  earlyClockOut: Clock,
+  leaveWithTolerance: boolean
+): ClockOutFigures {
+  return leaveWithTolerance
+    ? {
+        headline: earlyClockOut,
+        alternate: clockOut,
+        alternateWithTolerance: false,
+      }
+    : {
+        headline: clockOut,
+        alternate: earlyClockOut,
+        alternateWithTolerance: true,
+      };
+}

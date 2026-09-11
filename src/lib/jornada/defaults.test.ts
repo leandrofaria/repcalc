@@ -2,9 +2,13 @@ import { describe, expect, it, vi } from "vitest";
 import { fromHM } from "../time/duration";
 import {
   JORNADA_DEFAULTS,
+  LEAVE_WITH_TOLERANCE_KEY,
   STORAGE_KEYS,
+  clearLeaveWithTolerance,
   clearStoredDefaults,
+  readLeaveWithTolerance,
   readStoredDefaults,
+  writeLeaveWithTolerance,
   writeStoredDefaults,
 } from "./defaults";
 
@@ -90,5 +94,58 @@ describe("clearStoredDefaults", () => {
     clearStoredDefaults(storage);
     expect(storage.data.size).toBe(0);
     expect(readStoredDefaults(storage)).toEqual(JORNADA_DEFAULTS);
+  });
+});
+
+describe("leave with tolerance", () => {
+  it("is stored under its own key, apart from the 2023 ones", () => {
+    expect(LEAVE_WITH_TOLERANCE_KEY).toBe("sairNaTolerancia");
+    expect(Object.values(STORAGE_KEYS)).not.toContain(LEAVE_WITH_TOLERANCE_KEY);
+  });
+
+  it("is off when nothing is stored", () => {
+    expect(readLeaveWithTolerance(fakeStorage())).toBe(false);
+  });
+
+  it("is on only for the value it writes", () => {
+    expect(readLeaveWithTolerance(fakeStorage({ sairNaTolerancia: "1" }))).toBe(
+      true
+    );
+    for (const other of ["0", "true", "yes", ""]) {
+      expect(
+        readLeaveWithTolerance(fakeStorage({ sairNaTolerancia: other }))
+      ).toBe(false);
+    }
+  });
+
+  it("round-trips, and turning it off leaves no key behind", () => {
+    const storage = fakeStorage();
+    writeLeaveWithTolerance(storage, true);
+    expect(storage.data.get("sairNaTolerancia")).toBe("1");
+    expect(readLeaveWithTolerance(storage)).toBe(true);
+
+    writeLeaveWithTolerance(storage, false);
+    expect(storage.data.has("sairNaTolerancia")).toBe(false);
+    expect(readLeaveWithTolerance(storage)).toBe(false);
+  });
+
+  it("survives storage that throws", () => {
+    const denied = () => {
+      throw new DOMException("denied");
+    };
+    const storage = {
+      getItem: vi.fn(denied),
+      setItem: vi.fn(denied),
+      removeItem: vi.fn(denied),
+    };
+    expect(readLeaveWithTolerance(storage)).toBe(false);
+    expect(() => writeLeaveWithTolerance(storage, true)).not.toThrow();
+    expect(() => clearLeaveWithTolerance(storage)).not.toThrow();
+  });
+
+  it("clears back to off", () => {
+    const storage = fakeStorage({ sairNaTolerancia: "1" });
+    clearLeaveWithTolerance(storage);
+    expect(readLeaveWithTolerance(storage)).toBe(false);
   });
 });

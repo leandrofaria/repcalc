@@ -4,8 +4,11 @@ import { useSyncExternalStore } from "react";
 import {
   JORNADA_DEFAULTS,
   STORAGE_KEYS,
+  clearLeaveWithTolerance,
   clearStoredDefaults,
+  readLeaveWithTolerance,
   readStoredDefaults,
+  writeLeaveWithTolerance,
   writeStoredDefaults,
   type JornadaDefaults,
 } from "./defaults";
@@ -70,7 +73,35 @@ export function saveDefaults(values: JornadaDefaults): void {
   emit();
 }
 
+/**
+ * Back to the built-in settings, the tolerance preference included: "Resetar"
+ * reads as a return to how the app came, not to three fields of it.
+ */
 export function resetDefaults(): void {
   clearStoredDefaults(window.localStorage);
+  clearLeaveWithTolerance(window.localStorage);
+  emit();
+}
+
+/**
+ * Whether the card leads with the tolerance, as a subscription.
+ *
+ * A boolean is its own stable snapshot, so unlike the defaults above it needs
+ * no cache. Off during the prerender, which is also its default.
+ */
+export function useLeaveWithTolerance(): boolean {
+  return useSyncExternalStore(
+    subscribe,
+    () => readLeaveWithTolerance(window.localStorage),
+    () => false
+  );
+}
+
+/**
+ * Saved the moment it is flipped: it is a switch, and a switch that waited
+ * for "Salvar definições" would look like it had not worked.
+ */
+export function setLeaveWithTolerance(value: boolean): void {
+  writeLeaveWithTolerance(window.localStorage, value);
   emit();
 }

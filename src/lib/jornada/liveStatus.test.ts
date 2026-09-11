@@ -1,7 +1,12 @@
 import { describe, expect, it } from "vitest";
 import { formatHHMM, fromHM as durationFromHM } from "../time/duration";
 import { fromHM as timeFromHM } from "../time/timeOfDay";
-import { computeLiveStatus, secondFigure, type LiveInput } from "./liveStatus";
+import {
+  computeLiveStatus,
+  liveFigures,
+  secondFigure,
+  type LiveInput,
+} from "./liveStatus";
 
 const INPUT: LiveInput = {
   start: timeFromHM(8, 0),
@@ -135,5 +140,143 @@ describe("secondFigure", () => {
   it("gives nothing before the shift is under way", () => {
     expect(figureAt(7, 59)).toBeNull();
     expect(figureAt(8, 10)).toBeNull();
+  });
+});
+
+describe("liveFigures", () => {
+  const figuresAt = (
+    hour: number,
+    minute: number,
+    leaveWithTolerance: boolean,
+    input: LiveInput = INPUT
+  ) => {
+    const figures = liveFigures(
+      input,
+      computeLiveStatus(input, timeFromHM(hour, minute)),
+      leaveWithTolerance
+    );
+    return {
+      progress: Math.round(figures.progress),
+      second:
+        figures.second === null
+          ? null
+          : `${figures.second.kind} ${formatHHMM(figures.second.value)}`,
+      alternate:
+        figures.alternate === null
+          ? null
+          : `${formatHHMM(figures.alternate.value)} ${
+              figures.alternate.withTolerance ? "com" : "sem"
+            }`,
+    };
+  };
+
+  describe("leading with the full journey", () => {
+    it.each([
+      ["mid shift", 12, 0, 65, "remaining 02:00", "01:50 com"],
+      // 05:35 worked: the tolerance is reached, so there is no tolerance
+      // figure left to give, only the journey's own ten minutes.
+      ["at the tolerance edge", 13, 50, 97, "remaining 00:10", null],
+      ["inside the tolerance window", 13, 51, 97, "remaining 00:09", null],
+      ["over the journey, inside the tolerance", 14, 5, 100, null, null],
+      [
+        "past the journey plus the tolerance",
+        14,
+        11,
+        100,
+        "overtime 00:11",
+        null,
+      ],
+    ])("%s", (_label, hour, minute, progress, second, alternate) => {
+      expect(figuresAt(hour as number, minute as number, false)).toEqual({
+        progress,
+        second,
+        alternate,
+      });
+    });
+  });
+
+  describe("leading with the tolerance", () => {
+    it.each([
+      // The bar is measured against 05:35 here, so it completes at the moment
+      // leaving becomes allowed rather than stopping at 97% of the journey.
+      ["mid shift", 12, 0, 67, "remaining 01:50", "02:00 sem"],
+      ["at the tolerance edge", 13, 50, 100, null, null],
+      ["inside the tolerance window", 13, 51, 100, null, null],
+      ["over the journey, inside the tolerance", 14, 5, 100, null, null],
+      // Overtime is a rule, not a display preference: it reads the same.
+      [
+        "past the journey plus the tolerance",
+        14,
+        11,
+        100,
+        "overtime 00:11",
+        null,
+      ],
+    ])("%s", (_label, hour, minute, progress, second, alternate) => {
+      expect(figuresAt(hour as number, minute as number, true)).toEqual({
+        progress,
+        second,
+        alternate,
+      });
+    });
+  });
+
+  it("shows nothing and an empty bar before the shift is under way", () => {
+    for (const leave of [false, true]) {
+      expect(figuresAt(7, 59, leave)).toEqual({
+        progress: 0,
+        second: null,
+        alternate: null,
+      });
+      expect(figuresAt(8, 10, leave)).toEqual({
+        progress: 0,
+        second: null,
+        alternate: null,
+      });
+    }
+  });
+
+  it("does not divide by zero when the tolerance swallows the journey", () => {
+    // A tolerance as long as the journey leaves a target of zero minutes.
+    const odd: LiveInput = {
+      ...INPUT,
+      workday: durationFromHM(0, 10),
+      tolerance: durationFromHM(0, 10),
+      breakTaken: false,
+    };
+    const figures = liveFigures(
+      odd,
+      computeLiveStatus(odd, timeFromHM(8, 5)),
+      true
+    );
+    expect(Number.isFinite(figures.progress)).toBe(true);
+    expect(figures.progress).toBe(100);
+  });
+
+  describe("the note under the time worked", () => {
+    const noteFor = (input: LiveInput, leaveWithTolerance = false) =>
+      liveFigures(
+        input,
+        computeLiveStatus(input, timeFromHM(12, 0)),
+        leaveWithTolerance
+      ).breakDeducted;
+
+    it("names the break already taken off the clock", () => {
+      expect(formatHHMM(noteFor(INPUT)!)).toBe("00:15");
+    });
+
+    it("reads the same whichever way the card leads", () => {
+      expect(formatHHMM(noteFor(INPUT, true)!)).toBe("00:15");
+    });
+
+    it("is plain elapsed time while the break is still ahead", () => {
+      expect(noteFor({ ...INPUT, breakTaken: false })).toBeNull();
+    });
+
+    it("does not print a break of nothing", () => {
+      // A journey short enough to need no break: the switch can be on, but
+      // "00:00 de intervalo" would describe a deduction that did not happen.
+      expect(noteFor({ ...INPUT, breakTime: durationFromHM(0, 0) })).toBeNull();
+    });
   });
 });

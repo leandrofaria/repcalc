@@ -135,3 +135,101 @@ export function secondFigure(
   }
   return null;
 }
+
+/** The live half of the card, as it is shown. */
+export type LiveFigures = {
+  /** How far along the bar is, from 0 to 100. */
+  progress: number;
+  /** The figure beside the time worked, when there is one. */
+  second: { kind: "remaining" | "overtime"; value: Duration } | null;
+  /**
+   * The other reading of the time left, printed small beneath it: with the
+   * tolerance when the card leads with the full journey, without it when the
+   * card leads with the tolerance.
+   */
+  alternate: { value: Duration; withTolerance: boolean } | null;
+  /**
+   * What the time worked is measured against, printed small beneath it: the
+   * break already taken off the clock, or null for plain elapsed time.
+   */
+  breakDeducted: Duration | null;
+};
+
+const positive = (value: Duration | null): value is Duration =>
+  value !== null && value > 0;
+
+/**
+ * What the live half of the card shows, for either way of reading the day.
+ *
+ * At the bank people leave on the tolerance as a matter of course, so the
+ * number they act on is the time left until the journey minus the tolerance.
+ * Leading with the full journey, the card now says that number as well;
+ * leading with the tolerance, it says it first and measures the bar against
+ * it, so the bar completes at the moment leaving is allowed instead of
+ * stopping at 97% of a journey nobody intends to finish.
+ *
+ * The small line only accompanies a countdown, and only with something left
+ * to count — the same rule as secondFigure: no number where there is none.
+ *
+ * Overtime reads the same either way. It is a rule — only the excess past the
+ * journey plus the tolerance counts — and not a matter of display.
+ *
+ * The time worked gets a small line of its own, so the two columns read alike.
+ * Unlike the one under the countdown it is always there, which also keeps the
+ * row the same height when the countdown goes. A break of zero is reported as
+ * elapsed time, since nothing was taken off.
+ */
+export function liveFigures(
+  input: LiveInput,
+  status: LiveStatus,
+  leaveWithTolerance: boolean
+): LiveFigures {
+  const target = leaveWithTolerance
+    ? status.targetWithTolerance
+    : input.workday;
+  // A tolerance as long as the journey leaves a target of zero, and the bar
+  // is simply full rather than a division by zero.
+  const progress =
+    status.worked === null
+      ? 0
+      : target <= 0
+        ? 100
+        : Math.min(100, (status.worked / target) * 100);
+  const breakDeducted =
+    input.breakTaken && input.breakTime > 0 ? input.breakTime : null;
+
+  if (status.overtime !== null) {
+    return {
+      progress,
+      breakDeducted,
+      second: { kind: "overtime", value: status.overtime },
+      alternate: null,
+    };
+  }
+
+  const full = status.remainingTotal;
+  const withTolerance = status.remainingWithTolerance;
+
+  if (leaveWithTolerance) {
+    if (!positive(withTolerance)) {
+      return { progress, breakDeducted, second: null, alternate: null };
+    }
+    return {
+      progress,
+      breakDeducted,
+      second: { kind: "remaining", value: withTolerance },
+      alternate: full === null ? null : { value: full, withTolerance: false },
+    };
+  }
+
+  const second = secondFigure(status);
+  return {
+    progress,
+    breakDeducted,
+    second,
+    alternate:
+      second?.kind === "remaining" && positive(withTolerance)
+        ? { value: withTolerance, withTolerance: true }
+        : null,
+  };
+}

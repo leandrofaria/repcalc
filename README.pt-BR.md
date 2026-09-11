@@ -41,8 +41,12 @@ jornada, do intervalo e da tolerância, mostra no topo o horário de saída e,
 enquanto a jornada corre, quanto já foi trabalhado e quanto falta, ao vivo. O
 excedente só é contado depois de ultrapassar a jornada mais a tolerância. Um
 interruptor diz se o intervalo já foi tirado, o que muda a conta em tempo
-real. Um turno que atravessa a meia-noite mostra `02:00 (+1)`, e não um
-`02:00` que parece estar no passado. As definições ficam salvas no navegador.
+real. Um segundo interruptor, _sair na tolerância_, faz o cartão liderar com a
+tolerância: o horário de saída, o tempo que falta e a barra passam a contar até
+a jornada menos a tolerância, que é como se sai no banco. Ele fica lembrado no
+aparelho. Um turno que atravessa a meia-noite diz isso por extenso — "no dia
+seguinte" — em vez de mostrar um `02:00` que parece estar no passado. As
+definições ficam salvas no navegador.
 
 **Calculadora** — soma, subtrai, multiplica e divide, misturando durações e
 números puros. `2h 30min + 1h 45min` dá `4h 15m`; `7h 30min ÷ 2h 30min` dá `3`,

@@ -45,9 +45,13 @@
 tolerance, it shows the clock-out time up top and, while the shift runs, how
 much has been worked and how much is left, live. Overtime is only counted past
 the shift plus the tolerance. A switch says whether the break has been taken
-already, which changes the running figures. A shift crossing midnight reads
-`02:00 (+1)` rather than an `02:00` that looks like it is in the past.
-Settings are saved in the browser.
+already, which changes the running figures. A second switch, _leave on the
+tolerance_, makes the card lead with the tolerance instead: the clock-out time,
+the countdown and the progress bar all measure against the journey minus the
+tolerance, which is how people at the bank actually leave. It is remembered on
+the device. A shift crossing midnight says so in words — "no dia seguinte" —
+rather than showing an `02:00` that looks like it is in the past. Settings are
+saved in the browser.
 
 **Calculator** — adds, subtracts, multiplies and divides, mixing durations and
 plain numbers. `2h 30min + 1h 45min` gives `4h 15m`; `7h 30min ÷ 2h 30min`

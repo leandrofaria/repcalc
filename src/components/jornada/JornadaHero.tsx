@@ -6,10 +6,10 @@ import { formatHHMM } from "@/lib/time/duration";
 import type { Duration } from "@/lib/time/units";
 import { formatClock } from "@/lib/time/timeOfDay";
 import { useClock } from "@/lib/time/useClock";
-import type { Clock } from "@/lib/jornada/schedule";
+import { clockOutFigures, type Clock } from "@/lib/jornada/schedule";
 import {
   computeLiveStatus,
-  secondFigure,
+  liveFigures,
   type LiveInput,
   type ShiftPhase,
 } from "@/lib/jornada/liveStatus";
@@ -57,6 +57,17 @@ const PHASE_HINT: Partial<Record<ShiftPhase, string>> = {
 };
 
 /**
+ * Shared by both switches. The margin MUI puts on a label is what places its
+ * track, so when one switch wraps beneath the other the two only line up if
+ * this is literally the same object on both.
+ */
+const SWITCH_LABEL_SX = {
+  marginLeft: 0,
+  marginRight: 0,
+  "& .MuiFormControlLabel-label": { fontSize: 14 },
+};
+
+/**
  * The answer, and the live figures that used to sit behind a button in a
  * modal.
  *
@@ -72,6 +83,8 @@ const JornadaHero = ({
   tolerance,
   breakTaken,
   onBreakTakenChange,
+  leaveWithTolerance,
+  onLeaveWithToleranceChange,
 }: {
   complete: boolean;
   /** True when the start time is the only thing still to fill in. */
@@ -82,6 +95,12 @@ const JornadaHero = ({
   tolerance: Duration | null;
   breakTaken: boolean;
   onBreakTakenChange: (value: boolean) => void;
+  /**
+   * Lead with the tolerance rather than the full journey: the clock-out time,
+   * the countdown and the bar all measure against the journey minus it.
+   */
+  leaveWithTolerance: boolean;
+  onLeaveWithToleranceChange: (value: boolean) => void;
 }) => {
   const now = useClock();
 
@@ -127,14 +146,20 @@ const JornadaHero = ({
   }
 
   const phase = status?.phase ?? "notStarted";
-  const figure = status === null ? null : secondFigure(status);
-  const note = dayNote(clockOut);
+  const clocks = clockOutFigures(clockOut, earlyClockOut, leaveWithTolerance);
+  const figures =
+    status === null || liveInput === null
+      ? null
+      : liveFigures(liveInput, status, leaveWithTolerance);
+  const figure = figures?.second ?? null;
+  const alternate = figures?.alternate ?? null;
+  const breakDeducted = figures?.breakDeducted ?? null;
+  const progress = figures?.progress ?? 0;
+  // The day note describes whichever clock leads, since the two can fall
+  // either side of midnight.
+  const note = dayNote(clocks.headline);
   const hint = PHASE_HINT[phase];
   const worked = status?.worked ?? null;
-  const progress =
-    worked === null || liveInput === null
-      ? 0
-      : Math.min(100, (worked / liveInput.workday) * 100);
 
   return (
     <section
@@ -160,15 +185,17 @@ const JornadaHero = ({
             aria-live="polite"
             className="tabular block font-display text-6xl font-extrabold leading-none tracking-tight text-figure"
           >
-            {formatClockOut(clockOut)}
+            {formatClockOut(clocks.headline)}
           </output>
           {note !== null && (
             <p className="mt-1 text-sm font-semibold text-brand">{note}</p>
           )}
 
           <p className="tabular mt-2 text-sm text-ink-muted">
-            ou <b className="text-figure">{formatClockOut(earlyClockOut)}</b>{" "}
-            com a tolerância de {formatHHMM(tolerance)}
+            ou <b className="text-figure">{formatClockOut(clocks.alternate)}</b>{" "}
+            {clocks.alternateWithTolerance
+              ? `com a tolerância de ${formatHHMM(tolerance)}`
+              : "sem a tolerância"}
           </p>
         </div>
 
@@ -190,7 +217,11 @@ const JornadaHero = ({
                   aria-valuemin={0}
                   aria-valuemax={100}
                   aria-valuenow={Math.round(progress)}
-                  aria-label="Progresso da jornada"
+                  aria-label={
+                    leaveWithTolerance
+                      ? "Progresso até a saída na tolerância"
+                      : "Progresso da jornada"
+                  }
                 >
                   <div
                     className={`h-full rounded-full ${
@@ -204,6 +235,13 @@ const JornadaHero = ({
                     <dt className="text-ink-muted">Trabalhado</dt>
                     <dd className="font-display text-xl font-bold text-figure">
                       {formatHHMM(worked)}
+                    </dd>
+                    {/* What the figure counts, in the same small type as the
+                        line under the countdown, so the columns read alike. */}
+                    <dd className="text-xs text-ink-muted">
+                      {breakDeducted === null
+                        ? "tempo corrido"
+                        : `${formatHHMM(breakDeducted)} de intervalo`}
                     </dd>
                   </div>
                   {figure !== null && (
@@ -220,6 +258,15 @@ const JornadaHero = ({
                       >
                         {formatHHMM(figure.value)}
                       </dd>
+                      {/* The other reading of the same wait, small, the way
+                          the left half already gives the other clock-out. */}
+                      {alternate !== null && (
+                        <dd className="text-xs text-ink-muted">
+                          {`${formatHHMM(alternate.value)} ${
+                            alternate.withTolerance ? "com" : "sem"
+                          } a tolerância`}
+                        </dd>
+                      )}
                     </div>
                   )}
                 </dl>
@@ -230,25 +277,41 @@ const JornadaHero = ({
               <p className="text-sm text-ink-muted">{hint}</p>
             )}
 
-            {/* Without this the worked figure always assumed the break was
-                already off the clock, which is wrong for the first half of
-                any shift — and for a journey short enough not to need one. */}
-            <FormControlLabel
-              control={
-                <Switch
-                  checked={breakTaken}
-                  onChange={(event) => onBreakTakenChange(event.target.checked)}
-                  size="small"
-                />
-              }
-              label="Intervalo já tirado"
-              sx={{
-                marginLeft: 0,
-                marginRight: 0,
-                marginTop: "auto",
-                "& .MuiFormControlLabel-label": { fontSize: 14 },
-              }}
-            />
+            {/* Side by side while both fit; when they do not, the second
+                drops beneath the first, starting at the same left edge.
+                flex-wrap decides by the width of the content, so there is
+                no breakpoint to keep in step with the labels. */}
+            <div className="mt-auto flex flex-wrap items-center gap-x-5 gap-y-1">
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={leaveWithTolerance}
+                    onChange={(event) =>
+                      onLeaveWithToleranceChange(event.target.checked)
+                    }
+                    size="small"
+                  />
+                }
+                label="Sair na tolerância"
+                sx={SWITCH_LABEL_SX}
+              />
+              {/* Without this the worked figure always assumed the break was
+                  already off the clock, which is wrong for the first half of
+                  any shift — and for a journey short enough not to need one. */}
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={breakTaken}
+                    onChange={(event) =>
+                      onBreakTakenChange(event.target.checked)
+                    }
+                    size="small"
+                  />
+                }
+                label="Intervalo já tirado"
+                sx={SWITCH_LABEL_SX}
+              />
+            </div>
           </div>
         )}
       </div>
